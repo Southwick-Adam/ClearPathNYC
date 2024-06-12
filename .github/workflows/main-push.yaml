@@ -8,6 +8,9 @@ on:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
+
+    env:
+      $(cat /.gitignore/credentials.env | xargs)
     
     steps:
     - name: Checkout code
