@@ -11,6 +11,7 @@ WORKDIR /app
 COPY --from=build /app/out .
 
 #for App
+EXPOSE 80
 EXPOSE 8080
 #for DB
 EXPOSE 3307
