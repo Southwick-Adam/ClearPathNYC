@@ -41,9 +41,9 @@ jobs:
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > /Users/adamsouthwick/Documents/UCD/Summer/NewYorkApp/test/test1.txt
-          echo "    \n     " >> /Users/adamsouthwick/Documents/UCD/Summer/NewYorkApp/test/test1.txt
-          echo "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" >> /Users/adamsouthwick/Documents/UCD/Summer/NewYorkApp/test/test1.txt
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > /Users/adamsouthwick/Documents/UCD/Summer/NewYorkApp/test.txt
+          echo "    \n     " >> /Users/adamsouthwick/Documents/UCD/Summer/NewYorkApp/test.txt
+          echo "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" >> /Users/adamsouthwick/Documents/UCD/Summer/NewYorkApp/test.txt
       -
         name: Connect and pull
         run: |
