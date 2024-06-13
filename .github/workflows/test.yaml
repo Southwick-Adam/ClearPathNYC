@@ -1,0 +1,22 @@
+name: Print Secret
+
+on:
+  push:
+    branches:
+      - dev
+
+jobs:
+  print_secret:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Print Secret to File
+        run: echo "${{ secrets.SSH_PRIVATE_KEY }}" > test.txt
+        run: echo "       \n          " > test.txt
+        run: echo "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" > test.txt
+
+      - name: Display File Content
+        run: cat test.txt
