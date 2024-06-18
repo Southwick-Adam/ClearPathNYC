@@ -1,0 +1,65 @@
+/* BusyToggleSwitch.css */
+
+.toggle-switch-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  .toggle-label {
+    margin: 0 10px;
+    font-weight: bold;
+  }
+  
+  .toggle-switch {
+    position: relative;
+    width: 60px;
+    display: inline-block;
+    text-align: left;
+  }
+  
+  .toggle-switch-checkbox {
+    display: none;
+  }
+  
+  .toggle-switch-label {
+    display: block;
+    overflow: hidden;
+    cursor: pointer;
+    height: 24px;
+    padding: 0;
+    line-height: 24px;
+    border: 2px solid #dddddd;
+    border-radius: 20px;
+    background-color: #ff5c5c; /* Default red color for busy state */
+    transition: background-color 0.3s ease-in;
+  }
+  
+  .toggle-switch-label:before {
+    content: '';
+    display: block;
+    width: 24px;
+    height: 24px;
+    margin: 0px;
+    background: #ffffff;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 34px;
+    border: 2px solid #dddddd;
+    border-radius: 20px;
+    transition: all 0.3s ease-in 0s;
+  }
+  
+  .toggle-switch-checkbox:checked + .toggle-switch-label {
+    background-color: #4cd964; /* Green color for quiet state */
+  }
+  
+  .toggle-switch-checkbox:checked + .toggle-switch-label:before {
+    right: 0px;
+  }
+  
+  .toggle-switch-switch {
+    display: none;
+  }
+  

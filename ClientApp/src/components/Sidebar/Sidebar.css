@@ -1,0 +1,27 @@
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: -320px; /* Start hidden off-screen */
+    width: 350px;
+    height: 100%;
+    background-color: #f8f9fa;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.5);
+    transition: left 0.3s ease;
+    z-index: 1000;
+  }
+  
+  .sidebar.open {
+    left: 0;
+  }
+  
+  .toggle-btn {
+    position: absolute;
+    top: 50vh;
+    right: -50px;
+    transform-origin: top right;
+  }
+  
+  .sidebar-content {
+    padding: 20px;
+  }
+  
