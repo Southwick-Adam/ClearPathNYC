@@ -2,18 +2,21 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /app
 
-# Install Node.js and npm
-RUN apt-get update && \
-    apt-get install -y curl && \
-    curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
-    apt-get install -y nodejs
-
-# Copy only the necessary files
+# Restore dotnet packages
 COPY NewYorkApp.csproj .
 RUN dotnet restore NewYorkApp.csproj
 
-# Copy the rest of the source code and publish
+# Copy everything else, install node and build
 COPY . .
+WORKDIR /app/ClientApp
+RUN apt-get update && apt-get install -y curl
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
+RUN apt-get install -y nodejs
+RUN npm install
+RUN npx update-browserslist-db@latest
+
+#Publish
+WORKDIR /app
 RUN dotnet publish -c Release -o /app/out
 
 # RUNTIME STAGE
