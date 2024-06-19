@@ -10,6 +10,12 @@
   .ptp_row
   {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     width: 100%;
+  }
+
+  .ptp_label{
+    font-size: 20px;
+    font-weight: bold;
+    padding-right: 5%;
   }

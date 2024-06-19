@@ -18,18 +18,19 @@ const Loop = () => {
   return (
     <form className="loop_container">
 
-        <h1>Loop</h1>
-      
-      <div className="loop_toggle_container">
-        <BusyToggleSwitch mode={mode} handleToggleChange={handleToggleChange} />
-      </div>
+      <div className='container_title'>Loop</div>
+
       <div>
         <LocationFinder />
       </div>
       <div className="loop_distance_selector">
         <DistanceSelector />
       </div>
+      <div className='busy_go_row'>
+      <BusyToggleSwitch mode={mode} handleToggleChange={handleToggleChange} /> 
       <GoButton />
+      </div>
+      
     </form>
   );
 };

@@ -13,30 +13,20 @@ function PointToPoint(){
   };
     return(
         <div className='pointtopoint_container'>
-            <h1>Point To Point</h1>
+            <div className='container_title'>Point To Point</div>
             <div className='ptp_row'>
-                <h3>Start</h3>
+            <div className='ptp_label'>Start</div>
                 <LocationFinder />
             </div>
             <div className='ptp_row'>
-                <h3>End</h3>
+                <div className='ptp_label'>End</div>
                 <LocationFinder />
             </div>
-            {/* POI  */}
-            {/* <div>
-                <h3>Add POIs to Routes</h3>
-                <LocationFinder />
-
-            </div> */}
-            <div>
-                <BusyToggleSwitch mode={mode} handleToggleChange={handleToggleChange}/>
-            </div>
-            <div>
+            <div className='busy_go_row'>
+                <BusyToggleSwitch mode={mode} handleToggleChange={handleToggleChange} /> 
                 <GoButton />
             </div>
-            
         </div>
-        
     )
 };
 
