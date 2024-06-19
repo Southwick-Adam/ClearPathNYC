@@ -17,7 +17,6 @@ const DistanceSelector = () => {
 
     return (
         <div className="distance_selector_container">
-      <label className="distance_selector_label" htmlFor="distance_input">Distance:</label>
       <InputGroup className="number_selector_input_group">
       <InputGroup.Text>miles</InputGroup.Text>
         <FormControl
