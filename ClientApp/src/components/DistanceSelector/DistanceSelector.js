@@ -1,34 +1,32 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {InputGroup, FormControl } from 'react-bootstrap'
 
-const DistanceSelector = () => {
-    const [value, setValue] = useState(0);
-
+const DistanceSelector = ({distance, onDistanceChange}) => {
     const handleChange = (e) => {
       // Validation for non-negative distance
       const newValue = Number(e.target.value);
       if (newValue >= 0) {
-        setValue(newValue);
+        onDistanceChange(newValue);
       } else {
-        setValue(0);
+        onDistanceChange(0);
       }
     };
   
 
-    return (
-        <div className="distance_selector_container">
+  return (
+    <div className="distance_selector_container">
       <InputGroup className="number_selector_input_group">
       <InputGroup.Text>miles</InputGroup.Text>
         <FormControl
           id="distance_input"
           type="number"
-          value={value}
+          value={distance}
           onChange={handleChange}
           className="distance_selector_input"
         />
       </InputGroup>
     </div>
-    );
+  );
 };
 
 export default DistanceSelector;

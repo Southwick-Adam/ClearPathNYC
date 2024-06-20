@@ -1,11 +1,9 @@
 import React, { useEffect } from 'react';
-import { InputGroup, FormControl } from 'react-bootstrap';
 import mapboxgl from 'mapbox-gl';
 import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
 import '../../../node_modules/@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css'
 import './LocationInput.css';
-import { MAPBOX_TOKEN, MAPBOX_GEOCODING_URL } from '../.././config';
-import AutoLocationButton from '../AutoLocationButton/AutoLocationButton'
+import { MAPBOX_TOKEN} from '../.././config';
 
 
 mapboxgl.accessToken = MAPBOX_TOKEN
@@ -47,7 +45,6 @@ const LocationInput = ({ setCoordinates, geocoderRef }) => {
   return (
     <div className="location_input_container">
       <div ref={geocoderContainer}></div>
-      {/* <AutoLocationButton /> */}
     </div>
   );
 };

@@ -3,7 +3,7 @@ import './GoButton.css';
 
 const GoButton = () => {
     return(
-        <Button className='go_button'>GO!</Button>
+        <Button type='submit' className='go_button'>GO!</Button>
     )
 }
 
