@@ -13,7 +13,6 @@ function PointToPoint(){
   };
     return(
         <div className='pointtopoint_container'>
-            <div className='container_title'>Point To Point</div>
             <div className='ptp_row'>
             <div className='ptp_label'>Start</div>
                 <LocationFinder />

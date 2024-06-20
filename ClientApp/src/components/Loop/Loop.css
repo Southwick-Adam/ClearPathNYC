@@ -3,7 +3,6 @@
 .loop_container {
     /* background-color: #ffffcc; */
     padding: 20px;
-    border-bottom: 1px solid black;
     display: flex;
     flex-direction: column;
     align-items: center;
