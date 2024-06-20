@@ -6,19 +6,35 @@ import LocationFinder from '../LocationFinder/LocationFinder';
 import GoButton from '../GoButton/GoButton';
 
 const Loop = () => {
+  const [coordinates, setCoordinates] = useState(null);
+  const [distance, setDistance] = useState('');
   const [mode, setMode] = useState('quiet');
 
-  const handleToggleChange = (val) => {
+  function handleToggleChange(val){
     setMode(val);
   };
 
+  function handleDistanceChange(dist){
+    setDistance(dist);
+  }
+
+  function handleSubmit(event){
+    event.preventDefault(); // prevent default form submission processses for smoother user interaction
+    const formData = {
+      coordinates,
+      distance,
+      mode,
+    };
+    console.log('Loop Form submitted: ', formData) // dev log, remove after adding logic to send data to backend
+  };
+
   return (
-    <form className="loop_container">
+    <form className="loop_container" onSubmit={handleSubmit}>
       <div>
-        <LocationFinder />
+        <LocationFinder setCoordinates={setCoordinates}/>
       </div>
       <div className="loop_distance_selector">
-        <DistanceSelector />
+        <DistanceSelector distance={distance} onDistanceChange={handleDistanceChange}/>
       </div>
       <div className='busy_go_row'>
       <BusyToggleSwitch mode={mode} handleToggleChange={handleToggleChange} /> 
