@@ -4,8 +4,7 @@ services:
   webapp:
     image: asouthwick1/nycapp:latest
     ports:
-      - "80:80"
-      - "443:443"
+      - "8080:8080"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - MAPBOX_ACCESS_TOKEN=${MAPBOX_ACCESS_TOKEN}
