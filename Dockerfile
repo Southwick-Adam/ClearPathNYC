@@ -9,6 +9,12 @@ RUN dotnet restore NewYorkApp.csproj
 # Copy everything else, install node and build
 COPY . .
 WORKDIR /app/ClientApp
+
+# Set up env
+ARG MAPBOX_ACCESS_TOKEN
+ENV REACT_APP_MAPBOX_ACCESS_TOKEN=$MAPBOX_ACCESS_TOKEN
+
+# Install npm
 RUN apt-get update && apt-get install -y curl
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
 RUN apt-get install -y nodejs
@@ -26,7 +32,6 @@ WORKDIR /app
 COPY --from=build /app/out .
 
 EXPOSE 80
-EXPOSE 8080
-EXPOSE 3307
+EXPOSE 443
 
 ENTRYPOINT ["dotnet", "NewYorkApp.dll"]
