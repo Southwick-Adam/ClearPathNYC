@@ -105,7 +105,10 @@ function MapComponent({route}){
       const startMarker = document.createElement('div');
       startMarker.className='marker start_marker';
 
-      startMarkerRef.current = new mapboxgl.Marker(startMarker)
+      startMarkerRef.current = new mapboxgl.Marker({
+        element: startMarker,
+        offset: [0, -15]
+      })
         .setLngLat(startCoord)
         .addTo(mapRef.current);
 
@@ -123,7 +126,10 @@ function MapComponent({route}){
         const endMarker = document.createElement('div');
         endMarker.className='marker end_marker';
 
-        endMarkerRef.current = new mapboxgl.Marker(endMarker)
+        endMarkerRef.current = new mapboxgl.Marker({
+          element: endMarker,
+          offset: [0, -15]
+        })
           .setLngLat(endCoord)
           .addTo(mapRef.current);
 
@@ -164,7 +170,10 @@ function MapComponent({route}){
       const poimarker = document.createElement('div');
       poimarker.className = 'marker poi_marker';
 
-      new mapboxgl.Marker(poimarker)
+      new mapboxgl.Marker({
+        element: poimarker,
+        offset: [0, -10]
+      })
         .setLngLat(poi.coordinates)
         .setPopup(new mapboxgl.Popup({offset:25}).setText(poi.name))
         .addTo(mapRef.current);
