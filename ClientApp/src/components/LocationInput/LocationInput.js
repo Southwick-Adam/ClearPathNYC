@@ -6,14 +6,14 @@ import './LocationInput.css';
 import { MAPBOX_TOKEN} from '../.././config';
 
 
-mapboxgl.accessToken = MAPBOX_TOKEN
+mapboxgl.accessToken = MAPBOX_TOKEN;
 
 const LocationInput = ({ setCoordinates, geocoderRef }) => {
   const geocoderContainer = React.useRef(null);
 
   useEffect(() => {
     const geocoder = new MapboxGeocoder({
-      accessToken: mapboxgl.accessToken,
+      accessToken: MAPBOX_TOKEN,
       // Including address and POI for finer search result
       types: 'country,region,place,postcode,locality,neighborhood,address,poi',
       // Adding fuzzyMatch to handle misspelled/ partial names

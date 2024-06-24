@@ -5,7 +5,7 @@ import BusyToggleSwitch from '../BusyToggleSwitch/BusyToggleSwitch';
 import LocationFinder from '../LocationFinder/LocationFinder';
 import GoButton from '../GoButton/GoButton';
 
-const Loop = () => {
+function Loop({onFormSubmit}) {
   const [coordinates, setCoordinates] = useState(null);
   const [distance, setDistance] = useState('');
   const [mode, setMode] = useState('quiet');
@@ -25,7 +25,7 @@ const Loop = () => {
       distance,
       mode,
     };
-    console.log('Loop Form submitted: ', formData) // dev log, remove after adding logic to send data to backend
+    onFormSubmit('loop',formData);
   };
 
   return (

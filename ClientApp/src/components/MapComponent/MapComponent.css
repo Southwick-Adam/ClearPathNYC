@@ -1,5 +1,40 @@
-.MapContainer
+.map, .App
 {
     height: 100vh;
     width: 100%;
 }
+
+@keyframes landing {
+    0% {
+        opacity: 0;
+        transform: translateY(-2000px) rotate(-45deg);
+      }
+      60% {
+        opacity: 1;
+        transform:scaleY(0.6) translateY(30px) rotate(-45deg);
+      }
+      100% {
+        transform:  scaleY(1) translateY(0) rotate(-45deg);
+      }
+  }
+
+
+.marker {
+    width: 30px;
+    height: 44.4px;
+    background-size: contain;
+    background-repeat: no-repeat;
+  }
+
+.start_marker{
+    background-image: url('../../assets/images/PTP_A.png');
+}
+
+.end_marker{
+    background-image: url('../../assets/images/PTP_B.png');
+}
+
+.poi_marker{
+    background-image: url('../../assets/images/POI_marker.png');
+}
+
