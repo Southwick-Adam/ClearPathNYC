@@ -6,7 +6,7 @@ import mapboxgl from 'mapbox-gl';
 import './LocationFinder.css';
 import AutoLocationButton from '../AutoLocationButton/AutoLocationButton';
 
-mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
+mapboxgl.accessToken = process.env.MAPBOX_ACCESS_TOKEN;
 
 
 const LocationFinder = ({setCoordinates}) => {

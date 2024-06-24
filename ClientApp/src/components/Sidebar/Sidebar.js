@@ -3,7 +3,7 @@ import './Sidebar.css';
 import Loop from '../Loop/Loop.js';
 import PointToPoint from '../PointToPoint/PointToPoint.js'
 
-function Sidebar() {
+function Sidebar( {onFormSubmit} ) {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoopOpen, setLoopOpen] = useState(false);
   const [isPtPOpen, setPtPOpen] = useState(false);
@@ -35,7 +35,7 @@ function Sidebar() {
             <div className='container_title'>Loop</div>
           </div>
           <div className={`loop_box ${isLoopOpen ? 'open' : 'closed'}`}>
-            <Loop />
+            <Loop onFormSubmit={onFormSubmit}/>
         </div>
         </div>
 
@@ -47,7 +47,7 @@ function Sidebar() {
             <div className='container_title'>Point To Point</div>
           </div>
           <div className={`ptp_box ${isPtPOpen ? 'open' : 'closed'}`}>
-            <PointToPoint />
+            <PointToPoint onFormSubmit={onFormSubmit}/>
           </div>
         </div>
       </div>

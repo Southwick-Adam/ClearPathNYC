@@ -5,12 +5,12 @@ import BusyToggleSwitch from '../BusyToggleSwitch/BusyToggleSwitch';
 import './PointToPoint.css';
 
 
-function PointToPoint(){
+function PointToPoint({onFormSubmit}){
     const [startCord, setStartCord] = useState(null);
     const [endCord, setEndCord] = useState(null);
     const [mode, setMode] = useState('quiet');
 
-    const handleToggleChange = (newMode) => {
+    function handleToggleChange(newMode) {
         setMode(newMode);
 
     };
@@ -22,7 +22,7 @@ function PointToPoint(){
             endCord,
             mode,
         };
-        console.log('PTP Form submitted: ', formData) // dev log, remove after adding logic to send data to backend
+        onFormSubmit('pointToPoint',formData);
     }
     return(
         <form className='pointtopoint_container' onSubmit={handleSubmit}>
