@@ -1,11 +1,8 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using ;
+using aspRun.Data;
 
-namespace asp_run.Controllers
+namespace aspRun.Controllers
 {
     [Route("api")]
     [ApiController]
@@ -21,10 +18,10 @@ namespace asp_run.Controllers
         [HttpGet]
     public async Task<IActionResult> GetRoute()
     {
-        var people = await _neo4jService.ExecuteReadTransactionAsync(async tx =>
+        var people = await _neo4jService.ReadAsync(async queryRunner =>
         {
-            var query = "MATCH (p:Person) RETURN p.name AS Name, p.age AS Age";
-            var result = await tx.RunAsync(query);
+            var query = "MATCH (p:Person) RETURN p.name AS Name, p.age AS Age"; //get real query from micheal
+            var result = await queryRunner.RunAsync(query);
             var peopleList = new List<Person>();
 
             await result.ForEachAsync(record =>

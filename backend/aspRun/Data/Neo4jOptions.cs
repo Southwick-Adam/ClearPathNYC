@@ -1,6 +1,6 @@
 using System;
 
-namespace backend.Data
+namespace aspRun.Data
 {
     public class Neo4jOptions
     {
