@@ -1,0 +1,15 @@
+/* LocationFinder.css */
+
+.location_finder_container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 15px;
+
+  }
+  
+  #geocoder_container {
+    width: 100%;
+  }
+  

@@ -1,0 +1,24 @@
+
+.location_input_container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+/* Hide these two initially by default */
+.mapboxgl-ctrl-geocoder--button, .mapboxgl-ctrl-geocoder--icon.mapboxgl-ctrl-geocoder--icon-loading
+{
+    display: none;
+}
+
+.map_container {
+    height: 300px;
+    width: 100%;
+    margin-top: 10px;
+}
+
+/* Overriding default z-index in mapbox geocoder styling */
+.mapboxgl-ctrl-geocoder {
+    z-index: unset;
+}

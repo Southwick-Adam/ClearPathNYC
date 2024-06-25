@@ -1,0 +1,30 @@
+/* Loop.css */
+
+.loop_container {
+    /* background-color: #ffffcc; */
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+  }
+  
+  .loop-toggle_container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .loop_toggle {
+    margin-left: 10px;
+  }
+  
+  .loop_label {
+    font-weight: bold;
+    margin-right: 5px;
+  }
+  
+  .loop_distance_selector {
+    display: flex;
+    align-items: center;
+  }
