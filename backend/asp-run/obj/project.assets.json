@@ -633,11 +633,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/adamsouthwick/Documents/UCD/Summer/ClearPathNYC/backend/backend.csproj",
-      "projectName": "backend",
-      "projectPath": "/Users/adamsouthwick/Documents/UCD/Summer/ClearPathNYC/backend/backend.csproj",
+      "projectUniqueName": "/Users/adamsouthwick/Documents/UCD/Summer/ClearPathNYC/backend/asp-run/asp-run.csproj",
+      "projectName": "asp-run",
+      "projectPath": "/Users/adamsouthwick/Documents/UCD/Summer/ClearPathNYC/backend/asp-run/asp-run.csproj",
       "packagesPath": "/Users/adamsouthwick/.nuget/packages/",
-      "outputPath": "/Users/adamsouthwick/Documents/UCD/Summer/ClearPathNYC/backend/obj/",
+      "outputPath": "/Users/adamsouthwick/Documents/UCD/Summer/ClearPathNYC/backend/asp-run/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "/Users/adamsouthwick/.nuget/NuGet/NuGet.Config"

@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "/Users/adamsouthwick/Documents/UCD/Summer/ClearPathNYC/backend/backend.csproj": {}
+    "/Users/adamsouthwick/Documents/UCD/Summer/ClearPathNYC/backend/asp-build/asp-build.csproj": {}
   },
   "projects": {
-    "/Users/adamsouthwick/Documents/UCD/Summer/ClearPathNYC/backend/backend.csproj": {
+    "/Users/adamsouthwick/Documents/UCD/Summer/ClearPathNYC/backend/asp-build/asp-build.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/adamsouthwick/Documents/UCD/Summer/ClearPathNYC/backend/backend.csproj",
-        "projectName": "backend",
-        "projectPath": "/Users/adamsouthwick/Documents/UCD/Summer/ClearPathNYC/backend/backend.csproj",
+        "projectUniqueName": "/Users/adamsouthwick/Documents/UCD/Summer/ClearPathNYC/backend/asp-build/asp-build.csproj",
+        "projectName": "asp-build",
+        "projectPath": "/Users/adamsouthwick/Documents/UCD/Summer/ClearPathNYC/backend/asp-build/asp-build.csproj",
         "packagesPath": "/Users/adamsouthwick/.nuget/packages/",
-        "outputPath": "/Users/adamsouthwick/Documents/UCD/Summer/ClearPathNYC/backend/obj/",
+        "outputPath": "/Users/adamsouthwick/Documents/UCD/Summer/ClearPathNYC/backend/asp-build/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/Users/adamsouthwick/.nuget/NuGet/NuGet.Config"
