@@ -1,0 +1,10 @@
+svg {
+    height: 36px;
+    width: auto;
+    color: #0d6efd;
+}
+
+svg:hover {
+    color:#0a53be;
+    cursor: pointer;
+}

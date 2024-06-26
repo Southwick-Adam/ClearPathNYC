@@ -1,0 +1,17 @@
+.distance_selector_container {
+    display: flex;
+    align-items: center;
+  }
+  
+  .distance_selector_label {
+    margin-right: 10px;
+    font-weight: bold;
+  }
+  
+  .distance_selector_input_group {
+    width: 50px;
+  }
+  
+  .distance_selector_input {
+    text-align: right;
+  }
