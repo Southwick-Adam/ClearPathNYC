@@ -2,22 +2,18 @@ version: '3.8'
 
 services:
   react-app:
-    image: my-react-app
+    image: asouthwick1/nycapp:react
     container_name: react-app
-    build:
-      context: .
-      dockerfile: Dockerfile.react
     ports:
-      - "3000:3000"
+      - "3000:80"
     networks:
       - webnet
 
   nginx:
     image: nginx:alpine
     container_name: nginx
-    build:
-      context: .
-      dockerfile: Dockerfile.nginx
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
     ports:
       - "80:80"
     depends_on:
