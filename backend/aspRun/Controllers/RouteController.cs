@@ -15,12 +15,13 @@ namespace aspRun.Controllers
             _neo4jService = neo4jService;
         }
 
-        [HttpGet]
+
+    [HttpGet]
     public async Task<IActionResult> GetRoute()
     {
         var people = await _neo4jService.ReadAsync(async queryRunner =>
         {
-            var query = "MATCH (p:Person) RETURN p.name AS Name, p.age AS Age"; //get real query from micheal
+            var query = "MATCH (p:Person) RETURN p";
             var result = await queryRunner.RunAsync(query);
             var peopleList = new List<Person>();
 
