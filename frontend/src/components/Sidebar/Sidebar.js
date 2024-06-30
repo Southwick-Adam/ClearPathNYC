@@ -28,7 +28,8 @@ function Sidebar( {onFormSubmit} ) {
       <div className="sidebar-content">
 
         <div className='loop_wrapper'>
-          <div className='toggle_title_row'>
+          {/* The id here is used to hide the loop container for MVP*/}
+          <div className='toggle_title_row' id='loop_toggle_title_row'> 
             <button className='btn' onClick={toggleLoop}>
               {isLoopOpen ? '▼' : '▶'}
             </button>
