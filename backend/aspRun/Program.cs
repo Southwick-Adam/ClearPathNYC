@@ -1,8 +1,11 @@
 using aspRun.Data;
+using aspRun.ApiCalls;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
+builder.Services.AddHttpClient();
+builder.Services.AddHttpClient<WeatherAPI>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

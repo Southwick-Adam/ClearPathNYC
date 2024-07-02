@@ -1,0 +1,14 @@
+*.config
+.vs/
+.vscode/
+.vscode/**/*
+bin/
+obj/
+**/bin/
+**/obj/
+*.user
+*.suo
+*.log
+*.tmp
+.nuget
+.env

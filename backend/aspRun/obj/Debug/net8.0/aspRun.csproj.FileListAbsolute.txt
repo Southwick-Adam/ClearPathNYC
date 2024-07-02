@@ -34,3 +34,6 @@
 /Users/adamsouthwick/Documents/UCD/Summer/ClearPathNYC/backend/aspRun/obj/Debug/net8.0/aspRun.pdb
 /Users/adamsouthwick/Documents/UCD/Summer/ClearPathNYC/backend/aspRun/obj/Debug/net8.0/aspRun.genruntimeconfig.cache
 /Users/adamsouthwick/Documents/UCD/Summer/ClearPathNYC/backend/aspRun/obj/Debug/net8.0/ref/aspRun.dll
+/Users/adamsouthwick/Documents/UCD/Summer/ClearPathNYC/backend/aspRun/bin/Debug/net8.0/Newtonsoft.Json.dll
+/Users/adamsouthwick/Documents/UCD/Summer/ClearPathNYC/backend/aspRun/bin/Debug/net8.0/DotNetEnv.dll
+/Users/adamsouthwick/Documents/UCD/Summer/ClearPathNYC/backend/aspRun/bin/Debug/net8.0/Sprache.dll
