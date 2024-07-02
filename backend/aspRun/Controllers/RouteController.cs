@@ -1,6 +1,7 @@
 using System;
 using Microsoft.AspNetCore.Mvc;
 using aspRun.Data;
+using Neo4j.Driver;
 
 namespace aspRun.Controllers
 {
@@ -15,29 +16,33 @@ namespace aspRun.Controllers
             _neo4jService = neo4jService;
         }
 
-
-    [HttpGet]
-    public async Task<IActionResult> GetRoute()
-    {
-        var people = await _neo4jService.ReadAsync(async queryRunner =>
+        [HttpGet]
+        [Route("{PointArr}/{Quiet}")]
+        public async Task<IActionResult> GetRoutes([FromRoute] float[][] PointArr, bool Quiet)
         {
-            var query = "MATCH (p:Person) RETURN p";
-            var result = await queryRunner.RunAsync(query);
-            var peopleList = new List<Person>();
-
-            await result.ForEachAsync(record =>
+            try
             {
-                peopleList.Add(new Person
+                var result = await _neo4jService.ReadAsync(async queryRunner =>
                 {
-                    Name = record["Name"].As<string>(),
-                    Age = record["Age"].As<int>()
+                    var query = "";
+                    var queryResult = await queryRunner.RunAsync(query);
+                    await queryResult.SingleAsync();//??????
+                    return true;
                 });
-            });
 
-            return peopleList;
-        });
-
-        return Ok(people);
-    }
+                if (result)
+                {
+                    return Ok("Successfully connected to the Neo4j database.");
+                }
+                else
+                {
+                    return StatusCode(500, "Failed to execute test query.");
+                }
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "An error occurred while connecting to the Neo4j database.");
+            }
+        }
     }
 }
