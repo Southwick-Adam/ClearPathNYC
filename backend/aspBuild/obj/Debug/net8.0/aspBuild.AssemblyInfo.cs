@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("aspBuild")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+72999bd3e0f7f2ab257095141b0b6d792adddcae")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1ab65d0ef59d3247e564d1851cb6bcdc3f079059")]
 [assembly: System.Reflection.AssemblyProductAttribute("aspBuild")]
 [assembly: System.Reflection.AssemblyTitleAttribute("aspBuild")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
