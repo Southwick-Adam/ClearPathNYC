@@ -57,7 +57,7 @@
             },
             "Neo4j.Driver": {
               "target": "Package",
-              "version": "[5.21.0, )"
+              "version": "[5.22.0, )"
             },
             "NetTopologySuite": {
               "target": "Package",

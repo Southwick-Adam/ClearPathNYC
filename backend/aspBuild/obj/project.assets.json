@@ -124,7 +124,7 @@
           }
         }
       },
-      "Neo4j.Driver/5.21.0": {
+      "Neo4j.Driver/5.22.0": {
         "type": "package",
         "dependencies": {
           "Microsoft.Bcl.AsyncInterfaces": "5.0.0",
@@ -1328,10 +1328,10 @@
         "microsoft.openapi.nuspec"
       ]
     },
-    "Neo4j.Driver/5.21.0": {
-      "sha512": "EGl3xCW36EKcgZq7Chrub1x830+lX6TNp3Jtc8pReVi+lcO1znar80xaJqCHh9KbuxUrAKtz/fjGIhb2W6Vxtg==",
+    "Neo4j.Driver/5.22.0": {
+      "sha512": "F3sPMnpDfrl/6JPToE0IIYwdWE7kV4FIpbKl+eYK0Zv1y9cYrBDJb5E9frkKZ0TJ+FBXZSyBVXTZqIgWVfpJVw==",
       "type": "package",
-      "path": "neo4j.driver/5.21.0",
+      "path": "neo4j.driver/5.22.0",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
@@ -1342,7 +1342,7 @@
         "lib/net8.0/Neo4j.Driver.xml",
         "lib/netstandard2.0/Neo4j.Driver.dll",
         "lib/netstandard2.0/Neo4j.Driver.xml",
-        "neo4j.driver.5.21.0.nupkg.sha512",
+        "neo4j.driver.5.22.0.nupkg.sha512",
         "neo4j.driver.nuspec"
       ]
     },
@@ -3447,7 +3447,7 @@
       "GeoAPI >= 1.7.5",
       "GeoJSON.Net >= 1.2.19",
       "Microsoft.AspNetCore.OpenApi >= 8.0.6",
-      "Neo4j.Driver >= 5.21.0",
+      "Neo4j.Driver >= 5.22.0",
       "NetTopologySuite >= 2.5.0",
       "NetTopologySuite.IO.GeoJSON >= 4.0.0",
       "OsmSharp >= 6.2.0",
@@ -3511,7 +3511,7 @@
           },
           "Neo4j.Driver": {
             "target": "Package",
-            "version": "[5.21.0, )"
+            "version": "[5.22.0, )"
           },
           "NetTopologySuite": {
             "target": "Package",

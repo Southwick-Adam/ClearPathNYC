@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "vI3EyqNtkdM=",
+  "dgSpecHash": "UQ17ZA6f7l0=",
   "success": true,
   "projectFilePath": "C:\\Users\\micha\\OneDrive\\UCD Computer Science\\Semester3\\ClearPathNYC\\backend\\aspBuild\\aspBuild.csproj",
   "expectedPackageFiles": [
@@ -14,7 +14,7 @@
     "C:\\Users\\micha\\.nuget\\packages\\microsoft.netcore.platforms\\1.1.0\\microsoft.netcore.platforms.1.1.0.nupkg.sha512",
     "C:\\Users\\micha\\.nuget\\packages\\microsoft.netcore.targets\\1.1.0\\microsoft.netcore.targets.1.1.0.nupkg.sha512",
     "C:\\Users\\micha\\.nuget\\packages\\microsoft.openapi\\1.4.3\\microsoft.openapi.1.4.3.nupkg.sha512",
-    "C:\\Users\\micha\\.nuget\\packages\\neo4j.driver\\5.21.0\\neo4j.driver.5.21.0.nupkg.sha512",
+    "C:\\Users\\micha\\.nuget\\packages\\neo4j.driver\\5.22.0\\neo4j.driver.5.22.0.nupkg.sha512",
     "C:\\Users\\micha\\.nuget\\packages\\nettopologysuite\\2.5.0\\nettopologysuite.2.5.0.nupkg.sha512",
     "C:\\Users\\micha\\.nuget\\packages\\nettopologysuite.features\\2.0.0\\nettopologysuite.features.2.0.0.nupkg.sha512",
     "C:\\Users\\micha\\.nuget\\packages\\nettopologysuite.io.geojson\\4.0.0\\nettopologysuite.io.geojson.4.0.0.nupkg.sha512",

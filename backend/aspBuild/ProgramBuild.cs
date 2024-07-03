@@ -11,7 +11,7 @@ using NetTopologySuite.Geometries;
 using NetTopologySuite;
 using System.Diagnostics.Metrics;
 
-class Program
+class ProgramBuild
 {
     public static async Task Main(string[] args)
     {
