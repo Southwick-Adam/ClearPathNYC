@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import SplashScreen from './components/SplashScreen/SplashScreen.js';
 import MapComponent from './components/MapComponent/MapComponent.js';
 import Sidebar from './components/Sidebar/Sidebar.js';
 import SmogAlert from './components/SmogAlert/SmogAlert.js';
@@ -67,6 +68,7 @@ function App() {
   }
   return (
     <div className="App">
+      <SplashScreen />
       <SmogAlert />
       <Sidebar onFormSubmit={handleFormSubmit}/>
       <MapComponent route={route}/>
