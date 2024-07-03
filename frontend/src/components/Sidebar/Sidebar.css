@@ -53,3 +53,8 @@
 .ptp_wrapper, .loop_wrapper {
   border-bottom: 1px solid black;
 }
+
+/* After MVP: Remove this id styling once the loop functionality is ready */
+#loop_toggle_title_row{
+  display:none;
+}

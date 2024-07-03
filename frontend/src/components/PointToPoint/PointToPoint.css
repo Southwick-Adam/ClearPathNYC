@@ -18,3 +18,13 @@
     font-weight: bold;
     padding-right: 5%;
   }
+
+  /* This is here because altering the style in waypoint.css didn't work */
+  .waypoint{
+    display: flex;
+  }
+
+  .upDownWrapper{
+    flex-direction: column;
+    display: flex;
+  }
