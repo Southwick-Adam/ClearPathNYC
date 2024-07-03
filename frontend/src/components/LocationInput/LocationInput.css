@@ -20,5 +20,5 @@
 
 /* Overriding default z-index in mapbox geocoder styling */
 .mapboxgl-ctrl-geocoder {
-    z-index: unset;
+    z-index: 500;
 }
