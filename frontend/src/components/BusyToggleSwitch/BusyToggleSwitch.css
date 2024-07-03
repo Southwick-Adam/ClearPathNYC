@@ -33,6 +33,7 @@
     border-radius: 20px;
     background-color: #ff5c5c; /* Default red color for busy state */
     transition: background-color 0.3s ease-in;
+    
   }
   
   .toggle-switch-label:before {
