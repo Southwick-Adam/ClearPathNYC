@@ -25,12 +25,16 @@ class Program
         string csvPathMetro = "DataFiles\\Subway_Data_Final.csv";
         string csvPedTypePath = "DataFiles\\Pedestrian.csv";
         string csvParksPath = "DataFiles\\Manhattan_Parks_cleaned.csv";
+        string csvThreeOneOne = "DataFiles\\high_and_veryhigh_311.csv";
         
         // used in testing to initialise each zone
         TaxiZones taxiZones = new TaxiZones(jsonTaxi);
         MetroStops metroStops = new MetroStops(csvPathMetro);
         PedestrianData pedestrianData = new PedestrianData(csvPedTypePath);
         Parks parks = new Parks(csvParksPath);
+        ThreeOneOne threeOneOne = new ThreeOneOne(csvThreeOneOne);
+
+
 
         // testing for each object 
         Console.WriteLine($"PARK: {parks.ParkTrueFalse(40.7667251354748, -73.98021023496408)}");

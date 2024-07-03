@@ -13,3 +13,4 @@ obj/
 .nuget
 .env
 backend/aspBuild/new-york-latest.osm.pbf
+.fake
