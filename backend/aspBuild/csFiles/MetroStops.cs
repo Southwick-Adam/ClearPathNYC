@@ -1,9 +1,15 @@
+using System.Diagnostics;
 using NetTopologySuite;
 using NetTopologySuite.Geometries;
+using TinyCsvParser.TypeConverter;
 
 public class MetroStops 
 {
+    // uses circles for the geometry
     public Dictionary<string, Geometry> MetroDict = new Dictionary<string, Geometry>();
+    // uses points for the geometry
+    public Dictionary<string, Point> closestMetroDict = new Dictionary<string, Point>();
+
     public MetroStops(string csvMetro)
     {
         MetroDict = CreateMetroCircles(csvMetro);
@@ -25,16 +31,24 @@ public class MetroStops
                 {
                     Console.WriteLine(ex.ToString());
                 }
+                var tempPoint = new Point(Double.Parse(values[1]), Double.Parse(values[2]));
                 var tempCircle = CreateCircleAndCheckPoints(Double.Parse(values[2]), Double.Parse(values[1]));
+                closestMetroDict.Add(values[0],tempPoint);
                 MetroDict.Add(values[0], tempCircle);
             }
         }
         return MetroDict;
     }
 
-    public List<string> PointInCircle(double longitude, double lat)
+    /// <summary>
+    /// Checks if a given point is within the circle 
+    /// </summary>
+    /// <param name="longitude"></param>
+    /// <param name="lat"></param>
+    /// <returns>List of stationIDs</returns>
+    public List<string> PointInCircle(double latitude, double longitude)
     {
-        Point point = new(lat, longitude);
+        Point point = new(longitude, latitude);
         List<string> inCircles = [];
         foreach (string key in MetroDict.Keys)
         {   
@@ -45,6 +59,34 @@ public class MetroStops
         }
         
         return inCircles;
+    }
+
+    /// <summary>
+    /// Calculates the nearest stop using the Haversine Formula
+    /// </summary>
+    /// <param name="latitude"></param>
+    /// <param name="longitude"></param>
+    /// <returns>string: stationID</returns> 
+    public string NearestMetroStop(double latitude, double longitude)
+    {        
+        string closestStation = "-1";
+        double closestStationDistance = double.MaxValue;
+
+        foreach (var key in closestMetroDict.Keys)
+        {
+            var lat1 = closestMetroDict[key].X;
+            var lon1 = closestMetroDict[key].Y;
+
+            var distance = HaversineCalculator.CalculateDistance(latitude, longitude, lat1, lon1);
+            if (distance < closestStationDistance)
+            {
+                closestStationDistance = distance;
+                closestStation = key;
+            }
+        }
+
+        if (closestStationDistance < 0.400) return closestStation;
+        return "-1";
     }
 
 
