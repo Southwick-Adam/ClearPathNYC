@@ -3,6 +3,11 @@ using aspRun.ApiCalls;
 
 var builder = WebApplication.CreateBuilder(args);
 
+//builder.WebHost.ConfigureKestrel(options =>
+//{
+  //  options.ListenAnyIP(80);
+//});
+
 builder.Services.AddControllers();
 builder.Services.AddHttpClient();
 builder.Services.AddHttpClient<WeatherAPI>();
@@ -22,6 +27,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 app.MapControllers();
 app.Run();
