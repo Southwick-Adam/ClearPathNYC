@@ -5,11 +5,11 @@ const Waypoint = forwardRef(({ id, coordinates, onRemove, onMoveUp, onMoveDown, 
   return (
     <div className="waypoint" ref={ref}>
       <div className="upDownWrapper">
-        <button type="button" className="btn btn-outline-primary btn-sm" onClick={onMoveUp}>▲</button>
-        <button type="button" className="btn btn-outline-primary btn-sm" onClick={onMoveDown}>▼</button>
+        <button type="button" className="btn btn-outline-primary btn-sm upbtn" onClick={onMoveUp}>▲</button>
+        <button type="button" className="btn btn-outline-primary btn-sm downbtn" onClick={onMoveDown}>▼</button>
       </div>
       <LocationFinder setCoordinates={setWaypointCoordinates} geocoderRef={geocoderRef} />
-      <button type="button" className="btn btn-outline-danger btn-sm" onClick={onRemove}>X</button>
+      <button type="button" className="btn btn-outline-danger btn-sm removebtn" onClick={onRemove}>X</button>
     </div>
   );
 });
