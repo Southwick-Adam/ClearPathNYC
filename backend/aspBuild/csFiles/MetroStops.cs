@@ -130,14 +130,6 @@ public class MetroStops
         var geometryFactory = NtsGeometryServices.Instance.CreateGeometryFactory(4326); // WGS84
         var circle = new Polygon(new LinearRing(coordinates.ToArray()), geometryFactory);
         
-        
-        string currentDirectory = Directory.GetCurrentDirectory();
-        string relativeFilePath = Path.Combine(currentDirectory, "MetroStops.txt");
-        using (StreamWriter writer = new StreamWriter(relativeFilePath, append:true))
-            {
-               writer.WriteLine($"{centerLat} {centerLon} {circle.Boundary}");
-               writer.WriteLine("");
-            }
 
         return circle;
     }
