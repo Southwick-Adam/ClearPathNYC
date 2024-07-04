@@ -8,10 +8,9 @@ builder.Services.AddCors(options =>
     options.AddPolicy("ReactPolicy",
     builder =>
     {
-        builder.WithOrigins("https://clearpath.info.gf", "http://localhost:3000", "http://react-app")
+        builder.WithOrigins("https://clearpath.info.gf")
             .AllowAnyHeader()
-            .AllowAnyMethod()
-            .AllowAnyOrigin();
+            .AllowAnyMethod();
     });
 });
 
@@ -38,8 +37,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseRouting();
-
 app.UseCors("ReactPolicy");
+app.UseAuthorization();
 
 app.MapControllers();
 app.Run();
