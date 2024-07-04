@@ -9,16 +9,10 @@ namespace aspRun.Controllers
 {
     [Route("api")]
     [ApiController]
-    public class RouteController : Controller
+    public class RouteController(Neo4jService neo4jService, WeatherAPI weatherAPI) : Controller
     {
-        private readonly Neo4jService _neo4jService;
-        private readonly WeatherAPI _weatherAPI;
-
-        public RouteController(Neo4jService neo4jService, WeatherAPI weatherAPI)
-        {
-            _neo4jService = neo4jService;
-            _weatherAPI = weatherAPI;
-        }
+        private readonly Neo4jService _neo4jService = neo4jService;
+        private readonly WeatherAPI _weatherAPI = weatherAPI;
 
         [HttpGet]
         [Route("{PointArr}/{Quiet}")]
@@ -50,10 +44,10 @@ namespace aspRun.Controllers
         }
 
         [HttpGet("weather")]
-        public async Task<IActionResult> GetWeather()
+        public Task<IActionResult> WeatherResult()
         {
-            var weather = await _weatherAPI.GetWeatherAsync();
-            return Ok(weather);
+            var weather = _weatherAPI.WeatherResult();
+            return Task.FromResult<IActionResult>(Ok(weather));
         }
     }
 }
