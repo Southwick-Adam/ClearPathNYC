@@ -28,5 +28,3 @@ coverage/
 # Ignore git files if not already in the .gitignore
 .git/
 .gitignore
-
-.env
