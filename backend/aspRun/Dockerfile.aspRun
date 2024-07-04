@@ -15,8 +15,6 @@ WORKDIR /app
 
 COPY --from=build /app/out .
 
-COPY .env .env
-
 EXPOSE 8080
 
 ENTRYPOINT ["dotnet", "aspRun.dll"]
