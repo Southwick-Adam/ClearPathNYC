@@ -3,9 +3,22 @@ using aspRun.ApiCalls;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("ReactPolicy",
+    builder =>
+    {
+        builder.WithOrigins("http://localhost:3000")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
+
 builder.Services.AddControllers();
 builder.Services.AddHttpClient();
-builder.Services.AddHttpClient<WeatherAPI>();
+
+builder.Services.AddSingleton<WeatherAPI>();
+builder.Services.AddHostedService<WeatherStartup>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -23,5 +36,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseCors("ReactPolicy");
 app.MapControllers();
 app.Run();

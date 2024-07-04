@@ -143,8 +143,9 @@ function App() {
   }
 
   async function fetchWeatherData() {
+    const apiUrl = 'http://localhost:5000/api/weather';
     try {
-      const response = await fetch('////'); // replace with our own endpoint
+      const response = await fetch(apiUrl);
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
