@@ -7,7 +7,7 @@ services:
     ports:
       - "5000:8080"
     env_file: 
-      - .env
+      - asp.env
     networks:
       - clear_path_net
 
@@ -17,7 +17,7 @@ services:
     ports:
       - "3000:80"
     env_file: 
-      - .env
+      - react.env
     depends_on:
       - asp-run
     networks:
