@@ -70,8 +70,6 @@ class TaxiZones
     /// <param name="lat"></param>
     /// <param name="longitude"></param>
     /// <returns>boolean</returns>
-    // TODO: Change return type to string - try to condense with PointInCircle
-    // to create general point in function
     public string PointInTaxiZone(double longitude, double lat)
     {
         Point point = new(lat, longitude);

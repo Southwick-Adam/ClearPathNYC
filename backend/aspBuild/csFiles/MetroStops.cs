@@ -32,7 +32,7 @@ public class MetroStops
                     Console.WriteLine(ex.ToString());
                 }
                 var tempPoint = new Point(Double.Parse(values[1]), Double.Parse(values[2]));
-                var tempCircle = CreateCircleAndCheckPoints(Double.Parse(values[2]), Double.Parse(values[1]));
+                var tempCircle = CreateCircleAndCheckPoints(Double.Parse(values[1]), Double.Parse(values[2]), 400);
                 closestMetroDict.Add(values[0],tempPoint);
                 MetroDict.Add(values[0], tempCircle);
             }
@@ -92,18 +92,18 @@ public class MetroStops
 
 
 
-    public static Geometry CreateCircleAndCheckPoints(double longitude, double lat)
+    public static Geometry CreateCircleAndCheckPoints(double latitude, double longitude, int circleSize)
     //https://stackoverflow.com/questions/70149472/how-to-make-a-circle-type-buffer-around-nettopologysuite-point-with-radius-in-n
     {
         // Define the Precision Coordinate
         var geometryFactory = NtsGeometryServices.Instance.CreateGeometryFactory(4326); // WGS84
 
         // Circle center coordinate
-        var circleCenterCoordinate = new Coordinate(longitude, lat); // long, lat
+        var circleCenterCoordinate = new Coordinate(latitude, longitude); // long, lat
         var circleCenterPoint = geometryFactory.CreatePoint(circleCenterCoordinate);
         
         //Plot circle
-        var circle = PlotCircle(circleCenterCoordinate.Y, circleCenterCoordinate.X, 800);      
+        var circle = PlotCircle(circleCenterCoordinate.Y, circleCenterCoordinate.X, circleSize);      
         return circle;  
     }
 

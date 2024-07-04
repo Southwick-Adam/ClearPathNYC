@@ -14,6 +14,7 @@ public class MapNode
     public string TaxiZone {get; set;}
     public int RoadRank {get; set;}
     public string MetroZones {get; set;}
+    public bool ThreeOneOne {get; set;}
     public List<long> vertices = [];
     public Hashtable verticesInfo = new Hashtable();
 

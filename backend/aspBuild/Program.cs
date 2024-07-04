@@ -22,14 +22,14 @@ string jsonTaxi = File.ReadAllText(jsonPathTaxi);
 string csvPathMetro = "DataFiles\\Subway_Data_Final.csv";
 string csvPedTypePath = "DataFiles\\Pedestrian.csv";
 string csvParksPath = "DataFiles\\Manhattan_Parks_cleaned.csv";
-        string csvThreeOneOne = "DataFiles\\high_and_veryhigh_311.csv";
+string csvThreeOneOne = "DataFiles\\high_veryhigh_data.csv";
 
 // used in testing to initialise each zone
 TaxiZones taxiZones = new TaxiZones(jsonTaxi);
 MetroStops metroStops = new MetroStops(csvPathMetro);
 PedestrianData pedestrianData = new PedestrianData(csvPedTypePath);
 Parks parks = new Parks(csvParksPath);
-        ThreeOneOne threeOneOne = new ThreeOneOne(csvThreeOneOne);
+ThreeOneOne threeOneOne = new ThreeOneOne(csvThreeOneOne);
 
 
 
@@ -46,7 +46,9 @@ Console.WriteLine(metroStops.NearestMetroStop(40.86068142335661, -73.92249790389
 
 Console.WriteLine($"Taxi: {taxiZones.PointInTaxiZone(40.7667251354748, -73.98021023496408)}");
 
-CreateDatabase createDatabase = new CreateDatabase(jsonTaxi, csvPathMetro, csvPedTypePath, csvParksPath);
+Console.WriteLine($"ThreeOneOne: {threeOneOne.PointInCircle(40.936664988649915, -73.94333105285334)}");
+
+CreateDatabase createDatabase = new CreateDatabase(jsonTaxi, csvPathMetro, csvPedTypePath, csvParksPath, csvThreeOneOne);
 
 // small segment of NYC used to test the metrics on a sample area
 List<double> NYCSegment = new List<double>{-73.9861, 40.7722, -73.9679, 40.7603}; // left, top, right, bottom

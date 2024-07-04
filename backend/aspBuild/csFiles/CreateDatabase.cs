@@ -10,12 +10,14 @@ class CreateDatabase
     private MetroStops metroStops;
     private PedestrianData pedestrianData;
     private Parks parks;
-    public CreateDatabase(string taxiData, string metroData, string pedestrianCsv, string csvParks)
+    private ThreeOneOne threeOneOne;
+    public CreateDatabase(string taxiData, string metroData, string pedestrianCsv, string csvParks, string csvThreeOneOne)
     {
         taxiZones = new TaxiZones(taxiData);
         metroStops = new MetroStops(metroData);
         pedestrianData = new PedestrianData(pedestrianCsv);
         parks = new Parks(csvParks);
+        threeOneOne = new ThreeOneOne(csvThreeOneOne);
     }
     
     /// <summary>
@@ -102,11 +104,13 @@ class CreateDatabase
                     string tempMetroNearby = metroStops.NearestMetroStop(node.Latitude.Value, node.Longitude.Value);
                     int tempRoadRank = pedestrianData.ClosestRoadRank(node.Latitude.Value, node.Longitude.Value);
                     bool ParkTrueFalse = parks.ParkTrueFalse(node.Latitude.Value, node.Longitude.Value);
+                    bool ThreeOneOneTrueFalse = threeOneOne.PointInCircle(node.Latitude.Value, node.Longitude.Value);
 
                     tempNode.TaxiZone = tempTaxiZone;
                     tempNode.MetroZones = tempMetroNearby;
                     tempNode.RoadRank = tempRoadRank;
                     tempNode.Park = ParkTrueFalse;
+                    tempNode.ThreeOneOne = ThreeOneOneTrueFalse;
                     nodeTable[node.Id.Value] = tempNode;
                     await neo4JImplementation.AddNodeToDB(tempNode);
                 }
