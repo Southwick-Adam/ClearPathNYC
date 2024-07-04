@@ -143,9 +143,9 @@ function App() {
   }
 
   async function fetchWeatherData() {
-    await blind_test('http://asp-run/api/weather', "2");
-    await blind_test('http://asp-run:8080/api/weather', "3");
-    await blind_test('http://asp-run:5000/api/weather', "4");
+    await blind_test('https://asp-run/api/weather', "2");
+    await blind_test('https://asp-run:8080/api/weather', "3");
+    await blind_test('https://asp-run:5000/api/weather', "4");
   }
   
   async function blind_test(url, num) {
