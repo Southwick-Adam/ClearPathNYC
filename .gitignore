@@ -14,3 +14,4 @@ obj/
 .env
 backend/aspBuild/new-york-latest.osm.pbf
 .fake
+backend/databasesetup/new-york-latest.osm.pbf
