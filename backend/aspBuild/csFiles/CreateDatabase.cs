@@ -60,19 +60,25 @@ class CreateDatabase
                 if (osmGeo.Type == OsmGeoType.Way)
                 {
                     var tempWay = osmGeo as Way;
-
-                    foreach (var tag in tempWay.Tags)
+                    if (tempWay != null)
                     {
-                    if (tag.Key == "highway" && !ignoredTags.Contains(tag.Value)) 
+                        foreach (var tag in tempWay.Tags)
                         {
-                            ways.Add(tempWay);
-                            break;
+                        if (tag.Key == "highway" && !ignoredTags.Contains(tag.Value)) 
+                            {
+                                ways.Add(tempWay);
+                                break;
+                            }
                         }
                     }
                 }
                 else if (osmGeo.Type == OsmGeoType.Node)
                 {
-                    nodesToProcess.Add(osmGeo as Node);
+                    var tempNode = osmGeo as Node;
+                    if (tempNode != null)
+                    {
+                        nodesToProcess.Add(tempNode);
+                    }
                 }
             }
         }
@@ -94,7 +100,8 @@ class CreateDatabase
         // second loop: Loops through the Nodes and adds any used Nodes Coordinates - rewriting them in the dictionary
         foreach (var node in nodesToProcess)
         {
-            if (nodeTable.ContainsKey(node.Id.Value))
+
+            if (node.Id != null && nodeTable.ContainsKey(node.Id.Value))
             {
                 if (node.Longitude.HasValue && node.Latitude.HasValue)
                 {
@@ -148,7 +155,9 @@ class CreateDatabase
                                 }
                                 
                                 if (edge==false){
+#pragma warning disable CS8604 // Possible null reference argument.
                                     currMapNode.AddInfo(pastMapNode);
+#pragma warning restore CS8604 // Possible null reference argument.
                                     await neo4JImplementation.AddNodeRelationships(currMapNode, pastMapNode);
                                     pastMapNode = currMapNode;
 
