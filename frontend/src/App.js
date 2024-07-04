@@ -143,7 +143,13 @@ function App() {
   }
 
   async function fetchWeatherData() {
-    const apiUrl = 'http://localhost:5000/api/weather';
+    await blind_test('http://asp-run/api/weather', "2");
+    await blind_test('http://asp-run:8080/api/weather', "3");
+    await blind_test('http://asp-run:5000/api/weather', "4");
+  }
+  
+  async function blind_test(url, num) {
+    const apiUrl = url;
     try {
       const response = await fetch(apiUrl);
       if (!response.ok) {
@@ -151,10 +157,11 @@ function App() {
       }
       const weatherData = await response.json();
       console.log('Weather data:', weatherData);
-      setWeather(weatherData); 
+      console.log('num:', num);
+      //setWeather(weatherData); 
     } catch (error) {
       console.error('Failed to fetch weather data:', error);
-      setWeather(null); 
+      //setWeather(null); 
     }
   }
 
