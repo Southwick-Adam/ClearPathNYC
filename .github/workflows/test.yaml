@@ -1,0 +1,55 @@
+name: main-push
+
+on:
+  push:
+    branches:
+      - test-deploy
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    name: Publish Docker Image
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: aspRun
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USER }}
+          DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
+        working-directory: ./backend/aspRun
+        run: |
+          docker build -t $DOCKER_USERNAME/nycapp:asprun -f Dockerfile.aspRun .
+          echo $DOCKER_TOKEN | docker login -u $DOCKER_USERNAME --password-stdin
+          docker push $DOCKER_USERNAME/nycapp:asprun
+      
+      - name: react
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USER }}
+          DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
+        working-directory: ./frontend
+        run: |
+          docker build -t $DOCKER_USERNAME/nycapp:react -f Dockerfile.react .
+          echo $DOCKER_TOKEN | docker login -u $DOCKER_USERNAME --password-stdin
+          docker push $DOCKER_USERNAME/nycapp:react
+  
+  deploy:
+    needs: publish
+    name: Run Image on Server
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Install SSH keys
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+      -
+        name: Connect and pull
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd ${{ secrets.WORK_DIR }} && docker-compose pull && docker-compose up -d" || exit 1
+      -
+        name: Cleanup
+        run: rm -f ~/.ssh/id_rsa ~/.ssh/known_hosts

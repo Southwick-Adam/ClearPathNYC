@@ -143,18 +143,18 @@ function App() {
   }
 
   async function fetchWeatherData() {
-    const apiUrl = 'http://localhost:5000/api/weather';
+    const apiUrl = '/weather';
     try {
-      const response = await fetch(apiUrl);
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      const weatherData = await response.json();
-      console.log('Weather data:', weatherData);
-      setWeather(weatherData); 
+      const response = await fetch(apiUrl, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      const data = await response.json();
+      console.log(data);
     } catch (error) {
-      console.error('Failed to fetch weather data:', error);
-      setWeather(null); 
+      console.error('Error fetching weather data:', error);
     }
   }
 
