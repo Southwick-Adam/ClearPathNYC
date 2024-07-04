@@ -33,16 +33,6 @@ jobs:
           docker build -t $DOCKER_USERNAME/nycapp:react -f Dockerfile.react .
           echo $DOCKER_TOKEN | docker login -u $DOCKER_USERNAME --password-stdin
           docker push $DOCKER_USERNAME/nycapp:react
-        
-      - name: nginx
-        env:
-          DOCKER_USERNAME: ${{ secrets.DOCKER_USER }}
-          DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
-        working-directory: ./reverse-proxy
-        run: |
-          docker build -t $DOCKER_USERNAME/nycapp:nginx -f Dockerfile.nginx .
-          echo $DOCKER_TOKEN | docker login -u $DOCKER_USERNAME --password-stdin
-          docker push $DOCKER_USERNAME/nycapp:nginx
   
   deploy:
     needs: publish
