@@ -151,7 +151,6 @@ function App() {
       }
       const weatherData = await response.json();
       console.log('Weather data:', weatherData);
-      console.log('num:', num);
       setWeather(weatherData); 
     } catch (error) {
       console.error('Failed to fetch weather data:', error);
