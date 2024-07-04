@@ -17,31 +17,31 @@ jobs:
       - name: aspRun
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USER }}
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_TOKEN }}
+          DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
         working-directory: ./backend/aspRun
         run: |
           docker build -t $DOCKER_USERNAME/nycapp:asprun -f Dockerfile.aspRun .
-          docker login -u $DOCKER_USERNAME -p DOCKER_PASSWORD
+          echo $DOCKER_TOKEN | docker login -u $DOCKER_USERNAME --password-stdin
           docker push $DOCKER_USERNAME/nycapp:asprun
       
       - name: react
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USER }}
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_TOKEN }}
+          DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
         working-directory: ./frontend
         run: |
           docker build -t $DOCKER_USERNAME/nycapp:react -f Dockerfile.react .
-          docker login -u $DOCKER_USERNAME -p DOCKER_PASSWORD
+          echo $DOCKER_TOKEN | docker login -u $DOCKER_USERNAME --password-stdin
           docker push $DOCKER_USERNAME/nycapp:react
         
       - name: nginx
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USER }}
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_TOKEN }}
+          DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
         working-directory: ./reverse-proxy
         run: |
           docker build -t $DOCKER_USERNAME/nycapp:nginx -f Dockerfile.nginx .
-          docker login -u $DOCKER_USERNAME -p DOCKER_PASSWORD
+          echo $DOCKER_TOKEN | docker login -u $DOCKER_USERNAME --password-stdin
           docker push $DOCKER_USERNAME/nycapp:nginx
   
   deploy:
