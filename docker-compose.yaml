@@ -36,3 +36,4 @@ services:
 
 networks:
   clear_path_net:
+    driver: bridge
