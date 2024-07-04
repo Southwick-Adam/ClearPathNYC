@@ -1,4 +1,5 @@
 using Neo4j.Driver;
+using System.IO;
 
 
 public class Neo4jImplementation : IDisposable
@@ -383,12 +384,22 @@ public class Neo4jImplementation : IDisposable
 
     }
 
-    // public async Task<string> CreateJSON(string query, string fileName)
-    // {
-    //     var result = await this.RunQuery(query, []);
-    //     Console.WriteLine(result);
-    //     return "";
-    // }
+    public async Task CreateJSON(string query, string fileName)
+    {
+        var result = await this.RunQuery(query, []);
+        List<int> outputList = new List<int>();
+
+        using(StreamWriter writetext = new StreamWriter(fileName, false))
+        {
+            foreach (var record in result)
+            {
+                writetext.WriteLine(record["n.nodeid"]);
+                // outputList.Add(record["n.nodeid"]);
+            }
+
+        }
+
+    }
 
     public void Dispose()
     {

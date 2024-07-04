@@ -129,8 +129,8 @@ using System.Diagnostics.Metrics;
     string password = "password";
     Neo4jImplementation driver = new Neo4jImplementation(uri, user, password);
 
-    string query = "MATCH (n:nodes) WHERE n.park = true RETURN n;";
-    driver.CreateJSON(query);
+    string query = "MATCH (n:nodes) WHERE n.park = true RETURN n.nodeid;";
+    await driver.CreateJSON(query, "ParkNodes");
 
 
     // MapNode demoNode = new MapNode(123, 21, 22);

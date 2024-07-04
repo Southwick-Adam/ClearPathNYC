@@ -39,7 +39,7 @@ namespace aspBuild.Data
         {
             try
             {
-                await using var session = _driver.AsyncSession(o => o.WithDatabase(Database));
+                await using var session = _driver.AsyncSession(o => o.WithDatabase(_database));
                 var result = await session.ExecuteReadAsync(
                     async tx =>
                 {
