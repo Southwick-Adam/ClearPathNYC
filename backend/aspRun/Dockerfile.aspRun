@@ -13,9 +13,9 @@ RUN dotnet publish -c Release -o /app/out
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
 
-ENV WEATHER_KEY=your_actual_api_key
-
 COPY --from=build /app/out .
+
+COPY .env .env
 
 EXPOSE 8080
 
