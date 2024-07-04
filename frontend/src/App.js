@@ -143,7 +143,7 @@ function App() {
   }
 
   async function fetchWeatherData() {
-    const apiUrl = '/api/weather';
+    const apiUrl = 'https://clearpath.info.gf/api/weather';
     try {
       const response = await fetch(apiUrl, {
         method: 'GET',
