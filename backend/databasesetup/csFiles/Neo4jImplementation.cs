@@ -383,6 +383,13 @@ public class Neo4jImplementation : IDisposable
 
     }
 
+    // public async Task<string> CreateJSON(string query, string fileName)
+    // {
+    //     var result = await this.RunQuery(query, []);
+    //     Console.WriteLine(result);
+    //     return "";
+    // }
+
     public void Dispose()
     {
         _driver?.Dispose();

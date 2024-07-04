@@ -7,6 +7,7 @@ namespace aspBuild.Data
     public class Neo4jService
     {
         private readonly IDriver _driver;
+        private readonly string _database = "testdatabase";
 
         public Neo4jService(IOptions<Neo4jOptions> options)
         {
@@ -14,24 +15,47 @@ namespace aspBuild.Data
             _driver = GraphDatabase.Driver(neo4jOptions.Uri, AuthTokens.Basic(neo4jOptions.Username, neo4jOptions.Password));
         }
 
-        public async Task<T> ReadAsync<T>(Func<IAsyncQueryRunner, Task<T>> func)
-        //handles session logic for reading info from DB
+        public async Task UpdateNodeRelationship(int NodeIDA, int NodeIDB, int quietscore)
         {
-            var session = _driver.AsyncSession(o => o.WithDefaultAccessMode(AccessMode.Read));
+            string query = @"MATCH (a:nodes{nodeid:$nodeida})-[r:PATH] -> (b:nodes{nodeid:$nodeidb}) set r.quietscore = $quietscore";
+
+            var parameters = new Dictionary<string, object>
+            {
+                {"nodeida", NodeIDA},
+                {"nodeidb", NodeIDB},
+                {"quietscore", quietscore}
+            };
+
+            await using var session = _driver.AsyncSession(o => o.WithDatabase(_database));
+
+            await session.ExecuteWriteAsync(
+                async tx =>
+            {
+                await tx.RunAsync(query, parameters);
+            });
+        }
+
+        public async Task<List<IRecord>> RunQuery(string Query, Dictionary<string, object> Params)
+        {
             try
             {
-                return await session.ExecuteReadAsync(func);
+                await using var session = _driver.AsyncSession(o => o.WithDatabase(Database));
+                var result = await session.ExecuteReadAsync(
+                    async tx =>
+                {
+                    var cursor = await tx.RunAsync(Query, Params);
+                    return await cursor.ToListAsync();
+                });
+                return result;
+
             }
-            finally
+            catch (Exception ex)
             {
-                await session.CloseAsync();
+                Console.WriteLine(ex.ToString());
+                return new List<IRecord>();
             }
         }
 
-        public async Task DisposeAsync()
-        //Disposes of session
-        {
-            await _driver.DisposeAsync();
-        }
+
     }
 }

@@ -124,10 +124,15 @@ using System.Diagnostics.Metrics;
 
 
     // Code used to test various pieces of the MapNode
-    // string uri = "bolt://localhost:7687";
-    // string user = "neo4j";
-    // string password = "password";
-    // Neo4jImplementation driver = new Neo4jImplementation(uri, user, password);
+    string uri = "bolt://localhost:7687";
+    string user = "neo4j";
+    string password = "password";
+    Neo4jImplementation driver = new Neo4jImplementation(uri, user, password);
+
+    string query = "MATCH (n:nodes) WHERE n.park = true RETURN n;";
+    driver.CreateJSON(query);
+
+
     // MapNode demoNode = new MapNode(123, 21, 22);
     // MapNode demoNode2 = new MapNode(124, 3, 5);
     // Console.WriteLine(string.Join(",",demoNode2.MetroZones));
