@@ -89,8 +89,9 @@ function WeatherPanel() {
                 US EPA Index: {epa_index}
             </div>
             <div className='wind'>
-                Wind blowing {wind_direction} at {current.wind_mph} mph
-                </div>
+                Wind speed: {current.wind_mph} m/ph <br />
+                Condition: {condition.text}
+            </div>
         </div>
     );
 }

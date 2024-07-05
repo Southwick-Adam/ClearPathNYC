@@ -5,13 +5,13 @@
         "icon wind"
         "icon epa";
     grid-template-columns: auto 1fr;
-    gap: 10px;
+    gap: 5px;
     align-items: center;
     background-image: linear-gradient(to bottom, #4a90e2, #2962a8);
     color: white;
     border-radius: 10px;
     padding: 5px;
-    width: 250px;
+    width: 275px;
     height: 150px;
     position: fixed;
     bottom: 20px;
