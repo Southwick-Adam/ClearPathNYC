@@ -4,18 +4,20 @@ using Neo4j.Driver;
 
 namespace aspBuild.Data
 {
-    public class Neo4jService
+    public class Neo4jService : IDisposable
     {
         private readonly IDriver _driver;
         private readonly string _database = "testdatabase";
+        private string uri = "bolt://localhost:7687";
+        private string user = "neo4j";
+        private string password = "password";
 
-        public Neo4jService(IOptions<Neo4jOptions> options)
+        public Neo4jService()
         {
-            var neo4jOptions = options.Value;
-            _driver = GraphDatabase.Driver(neo4jOptions.Uri, AuthTokens.Basic(neo4jOptions.Username, neo4jOptions.Password));
+            _driver = GraphDatabase.Driver(uri, AuthTokens.Basic(user, password));
         }
 
-        public async Task UpdateNodeRelationship(int NodeIDA, int NodeIDB, int quietscore)
+        public async Task UpdateNodeRelationship(long NodeIDA, long NodeIDB, double quietscore)
         {
             string query = @"MATCH (a:nodes{nodeid:$nodeida})-[r:PATH] -> (b:nodes{nodeid:$nodeidb}) set r.quietscore = $quietscore";
 
@@ -56,7 +58,7 @@ namespace aspBuild.Data
             }
         }
 
-        public async Task<List<NodeToNode>> GetNodeInfoForUpdate(int taxizone)
+        public async Task<List<NodeToNode>> GetNodeInfoForUpdate(string taxizone)
         {
             List<NodeToNode> returnList = new List<NodeToNode>();
 
@@ -73,15 +75,27 @@ namespace aspBuild.Data
             var parameters = new Dictionary<string, object>
             {
                 {"taxizone", taxizone}
-            }; 
+            };
 
-            var mapper = new NodeToNodeMapper();
-            var result = await RunQuery(query, parameters);
-            foreach (var item in result)
+            try
             {
-                returnList.Add(mapper.Map(item));
+                var mapper = new NodeToNodeMapper();
+                var result = await RunQuery(query, parameters);
+                foreach (var item in result)
+                {
+                    returnList.Add(mapper.Map(item));
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
             }
             return returnList;
+        }
+
+        public void Dispose()
+        {
+            _driver?.Dispose();
         }
     }
 }

@@ -1,5 +1,7 @@
 ﻿using System.Diagnostics;
 using aspBuild.Data;
+using Neo4j.Driver;
+
 
 string parkFilePath = "DataFiles\\ParkNodes.txt";
 ParkNodes parkNodes= new ParkNodes(parkFilePath);
@@ -9,15 +11,15 @@ var jsonDataTaxi = GetJSONs.getJSON(jsonTaxiPath);
 
 string jsonSubwayPath = "DataFiles\\subway_data_final.json";
 var jsonDataSubway = GetJSONs.getJSON(jsonSubwayPath);
-Neo4jOptions neo4JOptions = new Neo4jOptions();
 
-Neo4jService neo4JService = new Neo4jService(neo4JOptions);
-await neo4JService.GetNodeInfoForUpdate(43);
+Stopwatch stopwatch = Stopwatch.StartNew();
+var updateDatabase = new UpdateDatabase();
+await updateDatabase.UpdateTheDatabase();
+stopwatch.Stop();
+Console.WriteLine("Elapsed Time: {0} milliseconds", stopwatch.ElapsedMilliseconds);
 
 
-
-
-
+Console.WriteLine("Completed.");
 
 
 

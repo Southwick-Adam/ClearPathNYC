@@ -110,7 +110,7 @@ using System.Diagnostics.Metrics;
     };
 
     // Used to create the sample database
-    // await createDatabase.AddMapArea(filePath, NYCSegment);
+    await createDatabase.AddMapArea(filePath, NYCSegment);
 
     // For creating the full database: Feeds the segments one at a time to the AddMapArea, which will add them to the database
     // int count = 0;
