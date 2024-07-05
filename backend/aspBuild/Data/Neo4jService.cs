@@ -56,6 +56,32 @@ namespace aspBuild.Data
             }
         }
 
+        public async Task<List<NodeToNode>> GetNodeInfoForUpdate(int taxizone)
+        {
+            List<NodeToNode> returnList = new List<NodeToNode>();
 
+            string query = $@"
+                MATCH (n:nodes)-[r]->(relatedNode)
+                WHERE n.taxizone = $taxizone
+                RETURN n.nodeid, n.roadrank, n.metrozone, n.threeoneone, 
+                    type(r) AS relationshipType, r.distance, r.direction, 
+                    relatedNode.nodeid AS relatedNodeId, relatedNode.roadrank AS relatedNodeRoadrank, 
+                    relatedNode.metrozone AS relatedNodeMetrozone, relatedNode.threeoneone AS relatedNodeThreeoneone,
+                    relatedNode.park as relatedNodePark
+            ";
+
+            var parameters = new Dictionary<string, object>
+            {
+                {"taxizone", taxizone}
+            }; 
+
+            var mapper = new NodeToNodeMapper();
+            var result = await RunQuery(query, parameters);
+            foreach (var item in result)
+            {
+                returnList.Add(mapper.Map(item));
+            }
+            return returnList;
+        }
     }
 }

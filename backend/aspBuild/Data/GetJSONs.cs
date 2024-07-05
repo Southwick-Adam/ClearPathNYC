@@ -1,13 +1,29 @@
+using Newtonsoft.Json;
+
 namespace aspBuild.Data 
 {
     public class GetJSONs
     {
-        public static Dictionary<int, string> getJSON(string jsonPath)
+        public static Dictionary<string, int> getJSON(string jsonPath)
         {
-            Dictionary<int, string> dict = new Dictionary<int, string>();
+            Dictionary<string, int> dict = new Dictionary<string, int>();
 
-            return [];
+            string json = File.ReadAllText(jsonPath);
 
+            var ListJSONValues = JsonConvert.DeserializeObject<List<JSONObject>>(json);
+            
+            foreach (var item in ListJSONValues)
+            {
+                dict.Add(item.LocationID, item.busyness_rank);
+            }
+            
+            return dict;
         }
+    }
+
+    public class JSONObject 
+    {
+        public string LocationID { get; set; }
+        public int busyness_rank { get; set; }
     }
 }

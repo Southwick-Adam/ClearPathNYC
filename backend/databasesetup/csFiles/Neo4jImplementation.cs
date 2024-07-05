@@ -367,7 +367,7 @@ public class Neo4jImplementation : IDisposable
     {
         string query = @"MATCH (a:nodes{nodeid:$nodeida})-[r:PATH] -> (b:nodes{nodeid:$nodeidb}) set r.quietscore = $quietscore";
 
-         var parameters = new Dictionary<string, object>
+        var parameters = new Dictionary<string, object>
         {
             {"nodeida", NodeIDA},
             {"nodeidb", NodeIDB},
