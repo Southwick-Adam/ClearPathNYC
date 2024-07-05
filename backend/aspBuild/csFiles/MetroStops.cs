@@ -1,9 +1,15 @@
+using System.Diagnostics;
 using NetTopologySuite;
 using NetTopologySuite.Geometries;
+using TinyCsvParser.TypeConverter;
 
 public class MetroStops 
 {
+    // uses circles for the geometry
     public Dictionary<string, Geometry> MetroDict = new Dictionary<string, Geometry>();
+    // uses points for the geometry
+    public Dictionary<string, Point> closestMetroDict = new Dictionary<string, Point>();
+
     public MetroStops(string csvMetro)
     {
         MetroDict = CreateMetroCircles(csvMetro);
@@ -25,16 +31,24 @@ public class MetroStops
                 {
                     Console.WriteLine(ex.ToString());
                 }
-                var tempCircle = CreateCircleAndCheckPoints(Double.Parse(values[2]), Double.Parse(values[1]));
+                var tempPoint = new Point(Double.Parse(values[1]), Double.Parse(values[2]));
+                var tempCircle = CreateCircleAndCheckPoints(Double.Parse(values[1]), Double.Parse(values[2]), 400);
+                closestMetroDict.Add(values[0],tempPoint);
                 MetroDict.Add(values[0], tempCircle);
             }
         }
         return MetroDict;
     }
 
-    public List<string> PointInCircle(double longitude, double lat)
+    /// <summary>
+    /// Checks if a given point is within the circle 
+    /// </summary>
+    /// <param name="longitude"></param>
+    /// <param name="lat"></param>
+    /// <returns>List of stationIDs</returns>
+    public List<string> PointInCircle(double latitude, double longitude)
     {
-        Point point = new(lat, longitude);
+        Point point = new(longitude, latitude);
         List<string> inCircles = [];
         foreach (string key in MetroDict.Keys)
         {   
@@ -47,21 +61,49 @@ public class MetroStops
         return inCircles;
     }
 
+    /// <summary>
+    /// Calculates the nearest stop using the Haversine Formula
+    /// </summary>
+    /// <param name="latitude"></param>
+    /// <param name="longitude"></param>
+    /// <returns>string: stationID</returns> 
+    public string NearestMetroStop(double latitude, double longitude)
+    {        
+        string closestStation = "-1";
+        double closestStationDistance = double.MaxValue;
+
+        foreach (var key in closestMetroDict.Keys)
+        {
+            var lat1 = closestMetroDict[key].X;
+            var lon1 = closestMetroDict[key].Y;
+
+            var distance = HaversineCalculator.CalculateDistance(latitude, longitude, lat1, lon1);
+            if (distance < closestStationDistance)
+            {
+                closestStationDistance = distance;
+                closestStation = key;
+            }
+        }
+
+        if (closestStationDistance < 0.400) return closestStation;
+        return "-1";
+    }
 
 
 
-    public static Geometry CreateCircleAndCheckPoints(double longitude, double lat)
+
+    public static Geometry CreateCircleAndCheckPoints(double latitude, double longitude, int circleSize)
     //https://stackoverflow.com/questions/70149472/how-to-make-a-circle-type-buffer-around-nettopologysuite-point-with-radius-in-n
     {
         // Define the Precision Coordinate
         var geometryFactory = NtsGeometryServices.Instance.CreateGeometryFactory(4326); // WGS84
 
         // Circle center coordinate
-        var circleCenterCoordinate = new Coordinate(longitude, lat); // long, lat
+        var circleCenterCoordinate = new Coordinate(latitude, longitude); // long, lat
         var circleCenterPoint = geometryFactory.CreatePoint(circleCenterCoordinate);
         
         //Plot circle
-        var circle = PlotCircle(circleCenterCoordinate.Y, circleCenterCoordinate.X, 800);      
+        var circle = PlotCircle(circleCenterCoordinate.Y, circleCenterCoordinate.X, circleSize);      
         return circle;  
     }
 
@@ -88,14 +130,6 @@ public class MetroStops
         var geometryFactory = NtsGeometryServices.Instance.CreateGeometryFactory(4326); // WGS84
         var circle = new Polygon(new LinearRing(coordinates.ToArray()), geometryFactory);
         
-        
-        string currentDirectory = Directory.GetCurrentDirectory();
-        string relativeFilePath = Path.Combine(currentDirectory, "MetroStops.txt");
-        using (StreamWriter writer = new StreamWriter(relativeFilePath, append:true))
-            {
-               writer.WriteLine($"{centerLat} {centerLon} {circle.Boundary}");
-               writer.WriteLine("");
-            }
 
         return circle;
     }

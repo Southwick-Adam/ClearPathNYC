@@ -10,12 +10,14 @@ class CreateDatabase
     private MetroStops metroStops;
     private PedestrianData pedestrianData;
     private Parks parks;
-    public CreateDatabase(string taxiData, string metroData, string pedestrianCsv, string csvParks)
+    private ThreeOneOne threeOneOne;
+    public CreateDatabase(string taxiData, string metroData, string pedestrianCsv, string csvParks, string csvThreeOneOne)
     {
         taxiZones = new TaxiZones(taxiData);
         metroStops = new MetroStops(metroData);
         pedestrianData = new PedestrianData(pedestrianCsv);
         parks = new Parks(csvParks);
+        threeOneOne = new ThreeOneOne(csvThreeOneOne);
     }
     
     /// <summary>
@@ -58,19 +60,25 @@ class CreateDatabase
                 if (osmGeo.Type == OsmGeoType.Way)
                 {
                     var tempWay = osmGeo as Way;
-
-                    foreach (var tag in tempWay.Tags)
+                    if (tempWay != null)
                     {
-                    if (tag.Key == "highway" && !ignoredTags.Contains(tag.Value)) 
+                        foreach (var tag in tempWay.Tags)
                         {
-                            ways.Add(tempWay);
-                            break;
+                        if (tag.Key == "highway" && !ignoredTags.Contains(tag.Value)) 
+                            {
+                                ways.Add(tempWay);
+                                break;
+                            }
                         }
                     }
                 }
                 else if (osmGeo.Type == OsmGeoType.Node)
                 {
-                    nodesToProcess.Add(osmGeo as Node);
+                    var tempNode = osmGeo as Node;
+                    if (tempNode != null)
+                    {
+                        nodesToProcess.Add(tempNode);
+                    }
                 }
             }
         }
@@ -92,21 +100,24 @@ class CreateDatabase
         // second loop: Loops through the Nodes and adds any used Nodes Coordinates - rewriting them in the dictionary
         foreach (var node in nodesToProcess)
         {
-            if (nodeTable.ContainsKey(node.Id.Value))
+
+            if (node.Id != null && nodeTable.ContainsKey(node.Id.Value))
             {
                 if (node.Longitude.HasValue && node.Latitude.HasValue)
                 {
                     // populates the Node object and adds it to the database
                     MapNode tempNode = new MapNode(node.Id.Value, node.Longitude.Value, node.Latitude.Value);
                     string tempTaxiZone = taxiZones.PointInTaxiZone(node.Latitude.Value, node.Longitude.Value);
-                    List<string> tempMetroNearby = metroStops.PointInCircle(node.Latitude.Value, node.Longitude.Value);
+                    string tempMetroNearby = metroStops.NearestMetroStop(node.Latitude.Value, node.Longitude.Value);
                     int tempRoadRank = pedestrianData.ClosestRoadRank(node.Latitude.Value, node.Longitude.Value);
                     bool ParkTrueFalse = parks.ParkTrueFalse(node.Latitude.Value, node.Longitude.Value);
+                    bool ThreeOneOneTrueFalse = threeOneOne.PointInCircle(node.Latitude.Value, node.Longitude.Value);
 
                     tempNode.TaxiZone = tempTaxiZone;
                     tempNode.MetroZones = tempMetroNearby;
                     tempNode.RoadRank = tempRoadRank;
                     tempNode.Park = ParkTrueFalse;
+                    tempNode.ThreeOneOne = ThreeOneOneTrueFalse;
                     nodeTable[node.Id.Value] = tempNode;
                     await neo4JImplementation.AddNodeToDB(tempNode);
                 }
@@ -144,7 +155,9 @@ class CreateDatabase
                                 }
                                 
                                 if (edge==false){
+#pragma warning disable CS8604 // Possible null reference argument.
                                     currMapNode.AddInfo(pastMapNode);
+#pragma warning restore CS8604 // Possible null reference argument.
                                     await neo4JImplementation.AddNodeRelationships(currMapNode, pastMapNode);
                                     pastMapNode = currMapNode;
 

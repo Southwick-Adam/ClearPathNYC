@@ -34,7 +34,8 @@ public class Neo4jImplementation : IDisposable
             n.taxizone = $taxizone,
             n.metrozone = $metrozone,
             n.roadrank = $roadrank,
-            n.park = $park
+            n.park = $park,
+            n.threeoneone = $threeoneone
         ON MATCH
             SET 
                 n.longitude = CASE WHEN n.longitude = 0 THEN $longitude ELSE n.longitude END,
@@ -42,8 +43,9 @@ public class Neo4jImplementation : IDisposable
                 n.taxizone = $taxizone,
                 n.metrozone = $metrozone,
                 n.roadrank = $roadrank,
-                n.park = $park
-        RETURN n";
+                n.park = $park,
+                n.threeoneone = $threeoneone
+        RETURN n;";
 
         var nodeIDString = node.ID.ToString();
 
@@ -60,7 +62,8 @@ public class Neo4jImplementation : IDisposable
             {"taxizone", node.TaxiZone},
             {"metrozone", metroInfo},
             {"roadrank", node.RoadRank},
-            {"park", node.Park}
+            {"park", node.Park},
+            {"threeoneone", node.ThreeOneOne}
         };
 
         string currentDirectory = Directory.GetCurrentDirectory();

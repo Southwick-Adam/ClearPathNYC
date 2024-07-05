@@ -1,0 +1,16 @@
+*.config
+.vs/
+.vscode/
+.vscode/*/
+bin/
+obj/
+**/bin/
+**/obj/
+*.user
+*.suo
+*.log
+*.tmp
+.nuget
+.env
+backend/aspBuild/new-york-latest.osm.pbf
+.fake

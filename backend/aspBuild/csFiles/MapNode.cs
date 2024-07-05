@@ -13,7 +13,8 @@ public class MapNode
     public bool Park {get; set;}
     public string TaxiZone {get; set;}
     public int RoadRank {get; set;}
-    public List<string> MetroZones {get; set;} = [];
+    public string MetroZones {get; set;}
+    public bool ThreeOneOne {get; set;}
     public List<long> vertices = [];
     public Hashtable verticesInfo = new Hashtable();
 
