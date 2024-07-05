@@ -15,11 +15,6 @@ WORKDIR /app
 
 COPY --from=build /app/out .
 
-#COPY certs/asp-run.pfx /https/asp-run.pfx
-#ENV ASPNETCORE_URLS="https://+:443;http://+:80"
-#ENV ASPNETCORE_Kestrel__Certificates__Default__Path=/https/asp-run.pfx
-#ENV ASPNETCORE_Kestrel__Certificates__Default__Password=nycpathclear100
-
 EXPOSE 8080
 
 ENTRYPOINT ["dotnet", "aspRun.dll"]

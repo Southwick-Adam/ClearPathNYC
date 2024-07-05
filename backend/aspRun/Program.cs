@@ -5,7 +5,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("ReactPolicy",
+    options.AddPolicy("CorsPolicy",
     builder =>
     {
         builder.WithOrigins("https://clearpath.info.gf")
@@ -37,7 +37,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseRouting();
-app.UseCors("ReactPolicy");
+app.UseCors("CorsPolicy");
 app.UseAuthorization();
 
 app.MapControllers();
