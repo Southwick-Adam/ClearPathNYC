@@ -12,6 +12,7 @@ var jsonDataTaxi = GetJSONs.getJSON(jsonTaxiPath);
 string jsonSubwayPath = "DataFiles\\subway_data_final.json";
 var jsonDataSubway = GetJSONs.getJSON(jsonSubwayPath);
 
+// Updates and times the update function
 Stopwatch stopwatch = Stopwatch.StartNew();
 var updateDatabase = new UpdateDatabase();
 await updateDatabase.UpdateTheDatabase();
@@ -24,7 +25,7 @@ Console.WriteLine("Completed.");
 
 
 
-// Testing efficiency between default List Contains and custom binary search
+// Testing efficiency between default List Contains and binary search
         // Random random = new Random();
         // Stopwatch stopwatch = new Stopwatch();
         // stopwatch.Start();

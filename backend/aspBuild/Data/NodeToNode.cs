@@ -2,6 +2,9 @@ using Neo4j.Driver;
 
 namespace aspBuild.Data
 {
+    /// <summary>
+    /// Contains the information for updating the Neo4j database
+    /// </summary>
     public class NodeToNode
     {
         public long NodeID { get; set; }
@@ -16,6 +19,11 @@ namespace aspBuild.Data
 
     public class NodeToNodeMapper
     {
+        /// <summary>
+        /// Maps an IRecord to NodeToNode object
+        /// </summary>
+        /// <param name="record"></param>
+        /// <returns></returns>
         public NodeToNode Map(IRecord record)
         {
             return new NodeToNode

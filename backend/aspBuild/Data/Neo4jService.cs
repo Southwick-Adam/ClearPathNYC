@@ -17,6 +17,13 @@ namespace aspBuild.Data
             _driver = GraphDatabase.Driver(uri, AuthTokens.Basic(user, password));
         }
 
+        /// <summary>
+        /// Adds the relationship to NodeA on the Path to NodeB
+        /// </summary>
+        /// <param name="NodeIDA"></param>
+        /// <param name="NodeIDB"></param>
+        /// <param name="quietscore"></param>
+        /// <returns>Void</returns>
         public async Task UpdateNodeRelationship(long NodeIDA, long NodeIDB, double quietscore)
         {
             string query = @"MATCH (a:nodes{nodeid:$nodeida})-[r:PATH] -> (b:nodes{nodeid:$nodeidb}) set r.quietscore = $quietscore";
@@ -37,6 +44,12 @@ namespace aspBuild.Data
             });
         }
 
+        /// <summary>
+        /// Runs the input query and parameter. 
+        /// </summary>
+        /// <param name="Query">Required</param>
+        /// <param name="Params">Empty list if null</param>
+        /// <returns>List of IRecords</returns>
         public async Task<List<IRecord>> RunQuery(string Query, Dictionary<string, object> Params)
         {
             try
@@ -58,6 +71,12 @@ namespace aspBuild.Data
             }
         }
 
+
+        /// <summary>
+        /// Queries the Neo4j database
+        /// </summary>
+        /// <param name="taxizone"></param>
+        /// <returns>List of NodeToNode objects</returns>
         public async Task<List<NodeToNode>> GetNodeInfoForUpdate(string taxizone)
         {
             List<NodeToNode> returnList = new List<NodeToNode>();

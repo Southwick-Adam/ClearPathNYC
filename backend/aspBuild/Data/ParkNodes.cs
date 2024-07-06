@@ -6,6 +6,7 @@ namespace aspBuild.Data
     {
         public List<long> ParkNodeList = new List<long>();
 
+        // Imports and sorts the List of parks
         public ParkNodes(string filePath)
         {
             CreateParkNodes(filePath);
