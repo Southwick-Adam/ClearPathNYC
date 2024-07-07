@@ -13,41 +13,33 @@ namespace aspRun.Controllers
         private readonly Neo4jService _neo4jService = neo4jService;
 
         [HttpGet]
-        //[Route("{PointArr}/{Quiet}")]
-        public async Task<IActionResult> GetRoutes()//[FromRoute] float[][] PointArr, bool Quiet)
+        public async Task<IActionResult> TestConnection()
         {
-            var query = "MATCH (p:Person) WHERE p.born < 1932 RETURN p";
+            var query = "RETURN 1";
 
             try
             {
                 var result = await _neo4jService.ReadAsync(async queryRunner =>
                 {
-                    
                     var queryResult = await queryRunner.RunAsync(query);
                     var records = await queryResult.ToListAsync();
-                    var content = string.Join("\n", records.Select(record => FormatNode(record["p"].As<INode>())));
-                    return content;
+                    
+                    return records.Any();
                 });
 
-                if (result != null)
+                if (result)
                 {
-                    return Ok(result);
+                    return Ok("Successfully connected to the Neo4j database.");
                 }
                 else
                 {
                     return StatusCode(500, "Failed to execute test query.");
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return StatusCode(500, "An error occurred while connecting to the Neo4j database.");
+                return StatusCode(500, $"An error occurred while connecting to the Neo4j database: {ex.Message}");
             }
-        }
-
-        private static string FormatNode(INode node)
-        {
-            var properties = string.Join(", ", node.Properties.Select(kvp => $"{kvp.Key}: {kvp.Value}"));
-            return $"Node(id: {node.ElementId}, labels: [{string.Join(", ", node.Labels)}], properties: {{{properties}}})";
         }
     }
 }

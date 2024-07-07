@@ -19,34 +19,11 @@ services:
     image: asouthwick1/nycapp:asprun
     container_name: asp-run
     ports:
-      - "5000:8080"
+      - "80:8080"
     depends_on:
       - neo4j
     env_file: 
       - .env
-    networks:
-      - clear_path_net
-
-  react-app:
-    image: asouthwick1/nycapp:react
-    container_name: react-app
-    ports:
-      - "3000:80"
-    depends_on:
-      - asp-run
-    networks:
-      - clear_path_net
-
-  nginx:
-    image: asouthwick1/nycapp:proxy
-    container_name: nginx
-    ports:
-      - "80:80"
-      - "443:443"
-    depends_on:
-      - react-app
-      - asp-run
-      - neo4j
     networks:
       - clear_path_net
 
