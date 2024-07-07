@@ -166,6 +166,7 @@ function App() {
           throw new Error(`HTTP error! Status: ${response.status}`);
       }
       let data = await response.text();
+      console.log("DB STRING BELOW:")
       console.log(data);
     } catch (error) {
         console.error('Error:', error);
