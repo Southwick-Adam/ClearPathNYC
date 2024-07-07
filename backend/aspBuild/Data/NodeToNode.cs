@@ -5,6 +5,7 @@ namespace aspBuild.Data
     /// <summary>
     /// Contains the information for updating the Neo4j database
     /// </summary>
+    // TODO: Test using Struct vs class in this at a larger scale
     public class NodeToNode
     {
         public long NodeID { get; set; }

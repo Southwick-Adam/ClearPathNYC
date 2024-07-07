@@ -8,6 +8,16 @@ namespace aspBuild.Data
         private string jsonTaxiPath = "DataFiles\\taxi_data_final.json";
         private string jsonSubwayPath = "DataFiles\\subway_data_final.json";
 
+        Dictionary<int,int> scoreMap = new Dictionary<int,int>()
+            {
+                {1,5},
+                {2,4},
+                {3,3},
+                {4,2},
+                {5,1}
+            };
+
+
         // format each dataset will be saved in
         ParkNodes parkNodes;
         Dictionary<string, int> jsonDataTaxi;
@@ -46,7 +56,7 @@ namespace aspBuild.Data
                 foreach (var item in result)
                 {
                     var tempQuietScore = CalculateQuietScore(item.RelatedNodeMetroZone, item.RelatedNodeRoadRank, tempTaxi, item.RelatedNodePark, item.RelatedNodeThreeOneOne, item.Distance);
-                    await neo4JService.UpdateNodeRelationship(item.NodeID, item.RelatedNodeID, tempQuietScore);
+                    await neo4JService.UpdateNodeRelationship(item.NodeID, item.RelatedNodeID, tempQuietScore).ConfigureAwait(false);
                     counter += 1;
                 }
             }
@@ -71,8 +81,9 @@ namespace aspBuild.Data
         private double CalculateQuietScore(string metro, int road, int taxi, bool park, bool threeOneOne, double distance)
         {
             if (threeOneOne) { return 1000; }
-            if (park) { return (jsonDataSubway[metro] + road + taxi - 10)*distance;}
-            return (jsonDataSubway[metro] + road + taxi)*distance;
+
+            if (park) { return (scoreMap[jsonDataSubway[metro]] + scoreMap[road] + scoreMap[taxi] - 10)*distance;}
+            return (scoreMap[jsonDataSubway[metro]] + scoreMap[road] + scoreMap[taxi])*distance;
         }
     }
 }
