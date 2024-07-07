@@ -16,7 +16,7 @@ namespace aspRun.Controllers
         //[Route("{PointArr}/{Quiet}")]
         public async Task<IActionResult> GetRoutes()//[FromRoute] float[][] PointArr, bool Quiet)
         {
-            var query = "MATCH (p:Person) WHERE p.born < 1960 RETURN p";
+            var query = "MATCH (p:Person) WHERE p.born < 1932 RETURN p";
 
             try
             {
