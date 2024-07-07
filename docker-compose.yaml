@@ -45,6 +45,7 @@ services:
     depends_on:
       - react-app
       - asp-run
+      - neo4j
     networks:
       - clear_path_net
 
