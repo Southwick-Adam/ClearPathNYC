@@ -7,7 +7,7 @@ import { MAPBOX_TOKEN } from '../../config';
 
 mapboxgl.accessToken = MAPBOX_TOKEN;
 
-const LocationInput = forwardRef(({ setCoordinates, geocoderRef }, ref) => {
+const LocationInput = forwardRef(({ setCoordinates, setPlaceName, geocoderRef }, ref) => {
   const geocoderContainer = useRef(null);
 
   useEffect(() => {
@@ -23,8 +23,18 @@ const LocationInput = forwardRef(({ setCoordinates, geocoderRef }, ref) => {
     });
 
     geocoder.on('result', (e) => {
-      const { center } = e.result.geometry;
-      setCoordinates(center);
+      const { coordinates } = e.result.geometry;
+      const placeName = e.result.place_name;
+
+      console.log('Geocoding coordinates: ', coordinates);
+      console.log('Geocoding name: ', placeName);
+
+      setCoordinates(coordinates);
+      setPlaceName && setPlaceName(placeName);  // Only call setPlaceName if it's defined
+
+      if (geocoderRef) {
+        geocoderRef.current = geocoder;
+      }
     });
 
     const container = geocoderContainer.current;
@@ -36,7 +46,7 @@ const LocationInput = forwardRef(({ setCoordinates, geocoderRef }, ref) => {
     if (geocoderRef) {
       geocoderRef.current = geocoder;
     }
-  }, [setCoordinates, geocoderRef]);
+  }, [setCoordinates, setPlaceName, geocoderRef]);
 
   return (
     <div className="location_input_container" ref={ref}>
