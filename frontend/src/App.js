@@ -158,8 +158,23 @@ function App() {
     }
   }
 
+  async function fetchNeo4jTest() {
+    const url = '/route';
+    try {
+      let response = await fetch(url);
+      if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      let data = await response.text();
+      console.log(data);
+    } catch (error) {
+        console.error('Error:', error);
+    }
+  }
+
   useEffect(() => {
     fetchWeatherData(); // Fetch weather data when component mounts
+    fetchNeo4jTest(); //test
   }, []);
 
   return (
