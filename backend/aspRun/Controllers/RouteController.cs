@@ -1,21 +1,25 @@
 using System;
 using Microsoft.AspNetCore.Mvc;
-using aspRun.Data;
 using Neo4j.Driver;
-
+using aspRun.Data;
 
 namespace aspRun.Controllers
 {
     [Route("route")]
     [ApiController]
-    public class RouteController(Neo4jService neo4jService) : Controller
+    public class RouteController : ControllerBase
     {
-        private readonly Neo4jService _neo4jService = neo4jService;
+        private readonly Neo4jService _neo4jService;
+
+        public RouteController(Neo4jService neo4jService)
+        {
+            _neo4jService = neo4jService;
+        }
 
         [HttpGet]
-        public async Task<IActionResult> TestConnection()
+        public async Task<IActionResult> GetRoutes()
         {
-            var query = "RETURN 1";
+            var query = "MATCH (n) RETURN count(n) AS nodeCount";
 
             try
             {
@@ -23,13 +27,13 @@ namespace aspRun.Controllers
                 {
                     var queryResult = await queryRunner.RunAsync(query);
                     var records = await queryResult.ToListAsync();
-                    
-                    return records.Any();
+                    var nodeCount = records.FirstOrDefault()?["nodeCount"].As<int>();
+                    return nodeCount;
                 });
 
-                if (result)
+                if (result != null)
                 {
-                    return Ok("Successfully connected to the Neo4j database.");
+                    return Ok(result);
                 }
                 else
                 {
@@ -43,3 +47,4 @@ namespace aspRun.Controllers
         }
     }
 }
+

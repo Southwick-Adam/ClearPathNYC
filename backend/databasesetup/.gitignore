@@ -14,3 +14,4 @@ obj/
 .env
 new-york-latest.osm.pbf
 .fake
+*.txt

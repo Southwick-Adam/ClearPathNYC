@@ -12,7 +12,7 @@ public class Neo4jImplementation : IDisposable
     public int RelSuccess { get; private set; } = 0;
     public int RelFailed { get; private set; } = 0;
 
-    string Database = "testdatabase";
+    string Database = "neo4j";
 
     public Neo4jImplementation(string uri, string user, string password)
     {
