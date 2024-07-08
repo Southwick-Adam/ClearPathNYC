@@ -5,6 +5,7 @@ import SmogAlert from './components/SmogAlert/SmogAlert.js';
 import WeatherPanel from './components/WeatherPanel/WeatherPanel.js';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { samplegeojson } from './smallergeojson.js';
+import SplashScreen from './components/SplashScreen/SplashScreen.js';
 
 function App() {
   const [route, setRoute] = useState(null);
