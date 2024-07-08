@@ -3,14 +3,14 @@ using aspBuild.Data;
 using Neo4j.Driver;
 
 
-string parkFilePath = "DataFiles\\ParkNodes.txt";
-ParkNodes parkNodes= new ParkNodes(parkFilePath);
+// string parkFilePath = "DataFiles\\ParkNodes.txt";
+// ParkNodes parkNodes= new ParkNodes(parkFilePath);
     
-string jsonTaxiPath = "DataFiles\\taxi_data_final.json";
-var jsonDataTaxi = GetJSONs.getJSON(jsonTaxiPath);
+// string jsonTaxiPath = "DataFiles\\taxi_data_final.json";
+// var jsonDataTaxi = GetJSONs.getJSON(jsonTaxiPath);
 
-string jsonSubwayPath = "DataFiles\\subway_data_final.json";
-var jsonDataSubway = GetJSONs.getJSON(jsonSubwayPath);
+// string jsonSubwayPath = "DataFiles\\subway_data_final.json";
+// var jsonDataSubway = GetJSONs.getJSON(jsonSubwayPath);
 
 // Updates and times the update function
 Stopwatch stopwatch = Stopwatch.StartNew();
