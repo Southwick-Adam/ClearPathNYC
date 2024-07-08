@@ -8,53 +8,53 @@ using GeoJSON.Net.Geometry;
 using NetTopologySuite.Index.HPRtree;
 using GeoAPI.IO;
 using NetTopologySuite.Geometries;
-using NetTopologySuite; 
+using NetTopologySuite;
 using System.Diagnostics.Metrics;
 
 
-    Stopwatch stopwatch = new Stopwatch();
-    stopwatch.Start();
+Stopwatch stopwatch = new Stopwatch();
+stopwatch.Start();
 
-    // pathways to each file used
-    string filePath = @"new-york-latest.osm.pbf";
-    string jsonPathTaxi = "DataFiles\\NYC Taxi Zones.geojson";
-    string jsonTaxi = File.ReadAllText(jsonPathTaxi);
-    string csvPathMetro = "DataFiles\\Subway_Data_Final.csv";
-    string csvPedTypePath = "DataFiles\\Pedestrian.csv";
-    string csvParksPath = "DataFiles\\Manhattan_Parks_cleaned.csv";
-    string csvThreeOneOne = "DataFiles\\high_veryhigh_data.csv";
+// pathways to each file used
+string filePath = @"new-york-latest.osm.pbf";
+string jsonPathTaxi = "DataFiles\\NYC Taxi Zones.geojson";
+string jsonTaxi = File.ReadAllText(jsonPathTaxi);
+string csvPathMetro = "DataFiles\\Subway_Data_Final.csv";
+string csvPedTypePath = "DataFiles\\Pedestrian.csv";
+string csvParksPath = "DataFiles\\Manhattan_Parks_cleaned.csv";
+string csvThreeOneOne = "DataFiles\\high_veryhigh_data.csv";
 
-    // used in testing to initialise each zone
-    TaxiZones taxiZones = new TaxiZones(jsonTaxi);
-    MetroStops metroStops = new MetroStops(csvPathMetro);
-    PedestrianData pedestrianData = new PedestrianData(csvPedTypePath);
-    Parks parks = new Parks(csvParksPath);
-    ThreeOneOne threeOneOne = new ThreeOneOne(csvThreeOneOne);
+// used in testing to initialise each zone
+TaxiZones taxiZones = new TaxiZones(jsonTaxi);
+MetroStops metroStops = new MetroStops(csvPathMetro);
+PedestrianData pedestrianData = new PedestrianData(csvPedTypePath);
+Parks parks = new Parks(csvParksPath);
+ThreeOneOne threeOneOne = new ThreeOneOne(csvThreeOneOne);
 
 
 
-    // testing for each object 
-    Console.WriteLine($"PARK: {parks.ParkTrueFalse(40.7667251354748, -73.98021023496408)}");
+// testing for each object 
+Console.WriteLine($"PARK: {parks.ParkTrueFalse(40.7667251354748, -73.98021023496408)}");
 
-    int rank  = pedestrianData.ClosestRoadRank(40.7667251354748, -73.98021023496408);
-    Console.WriteLine($"Pedestrian Rank {rank}");
+int rank = pedestrianData.ClosestRoadRank(40.7667251354748, -73.98021023496408);
+Console.WriteLine($"Pedestrian Rank {rank}");
 
-    var inMetroStops = metroStops.PointInCircle(40.7667251354748, -73.98021023496408);
-    Console.WriteLine("Metro:");
-    foreach (var stop in inMetroStops) Console.WriteLine(stop);
-    Console.WriteLine(metroStops.NearestMetroStop(40.86068142335661, -73.92249790389387));
+var inMetroStops = metroStops.PointInCircle(40.7667251354748, -73.98021023496408);
+Console.WriteLine("Metro:");
+foreach (var stop in inMetroStops) Console.WriteLine(stop);
+Console.WriteLine(metroStops.NearestMetroStop(40.86068142335661, -73.92249790389387));
 
-    Console.WriteLine($"Taxi: {taxiZones.PointInTaxiZone(40.7667251354748, -73.98021023496408)}");
+Console.WriteLine($"Taxi: {taxiZones.PointInTaxiZone(40.7667251354748, -73.98021023496408)}");
 
-    Console.WriteLine($"ThreeOneOne: {threeOneOne.PointInCircle(40.936664988649915, -73.94333105285334)}");
+Console.WriteLine($"ThreeOneOne: {threeOneOne.PointInCircle(40.936664988649915, -73.94333105285334)}");
 
-    CreateDatabase createDatabase = new CreateDatabase(jsonTaxi, csvPathMetro, csvPedTypePath, csvParksPath, csvThreeOneOne);
+CreateDatabase createDatabase = new CreateDatabase(jsonTaxi, csvPathMetro, csvPedTypePath, csvParksPath, csvThreeOneOne);
 
-    // small segment of NYC used to test the metrics on a sample area
-    List<double> NYCSegment = new List<double>{-73.9861, 40.7722, -73.9679, 40.7603}; // left, top, right, bottom
+// small segment of NYC used to test the metrics on a sample area
+List<double> NYCSegment = new List<double> { -73.9861, 40.7722, -73.9679, 40.7603 }; // left, top, right, bottom
 
-    // NYC split into large chunks. Used for creation of the full database.
-    List<List<double>> AllSegments = new List<List<double>>{
+// NYC split into large chunks. Used for creation of the full database.
+List<List<double>> AllSegments = new List<List<double>>{
         new List<double> {-74.0200,40.7493,-74.0014,40.6996}, // 1 on map
         new List<double> {-74.0072,40.7210,-73.9828,40.7064}, // 2
         new List<double> {-73.9891,40.7196,-73.9733,40.7089}, // etc
@@ -109,48 +109,48 @@ using System.Diagnostics.Metrics;
         new List<double> {-73.9381,40.7985,-73.9286,40.7918}
     };
 
-    // Used to create the sample database
-    await createDatabase.AddMapArea(filePath, NYCSegment);
+// Used to create the sample database
+await createDatabase.AddMapArea(filePath, NYCSegment);
 
-    // For creating the full database: Feeds the segments one at a time to the AddMapArea, which will add them to the database
-    // int count = 0;
-    // foreach (var segment in AllSegments)
-    // {
-    //     Console.WriteLine(count);
-    //     await createDatabase.AddMapArea(filePath, segment); // used to add all nodes and relationships
-    //     count += 1;
-    // }
-
-
-
-    // Code used to test various pieces of the MapNode
-    string uri = "bolt://localhost:7687";
-    string user = "neo4j";
-    string password = "password";
-    Neo4jImplementation driver = new Neo4jImplementation(uri, user, password);
-
-    string query = "MATCH (n:nodes) WHERE n.park = true RETURN n.nodeid;";
-    await driver.CreateJSON(query, "ParkNodes");
+// For creating the full database: Feeds the segments one at a time to the AddMapArea, which will add them to the database
+// int count = 0;
+// foreach (var segment in AllSegments)
+// {
+//     Console.WriteLine(count);
+//     await createDatabase.AddMapArea(filePath, segment); // used to add all nodes and relationships
+//     count += 1;
+// }
 
 
-    // MapNode demoNode = new MapNode(123, 21, 22);
-    // MapNode demoNode2 = new MapNode(124, 3, 5);
-    // Console.WriteLine(string.Join(",",demoNode2.MetroZones));
-    // demoNode.AddInfo(demoNode2);
-    // Console.WriteLine(demoNode.verticesInfo[demoNode2.ID]);
-    // await driver.AddNodeToDB(demoNode);
-    // await driver.AddNodeToDB(demoNode2);
-    // await driver.AddNodeRelationships(demoNode, demoNode2);
-    // await driver.UpdateNodeRelationship(123,124,10);
 
-    // Testing Finding closest Node 
-    // var info = await driver.FindNode(-73.984515, 40.7721);
-    // Console.WriteLine(info);
+// Code used to test various pieces of the MapNode
+string uri = "bolt://localhost:7687";
+string user = "neo4j";
+string password = "password";
+Neo4jImplementation driver = new Neo4jImplementation(uri, user, password);
 
-    // Testing for the AStar algorithm
-    // var route = await driver.AStar(-73.9765722702507, 40.760172956128876, -73.97940744715005,40.75360517905028); 
-    // Console.WriteLine($"Output from route: {route}");
+string query = "MATCH (n:nodes) WHERE n.park = true RETURN n.nodeid;";
+await driver.CreateJSON(query, "ParkNodes");
 
-    // used to time the function - fun fact: it takes ages.
-    stopwatch.Stop();
-    Console.WriteLine("Elapsed Time: {0} milliseconds", stopwatch.ElapsedMilliseconds);
+
+// MapNode demoNode = new MapNode(123, 21, 22);
+// MapNode demoNode2 = new MapNode(124, 3, 5);
+// Console.WriteLine(string.Join(",",demoNode2.MetroZones));
+// demoNode.AddInfo(demoNode2);
+// Console.WriteLine(demoNode.verticesInfo[demoNode2.ID]);
+// await driver.AddNodeToDB(demoNode);
+// await driver.AddNodeToDB(demoNode2);
+// await driver.AddNodeRelationships(demoNode, demoNode2);
+// await driver.UpdateNodeRelationship(123,124,10);
+
+// Testing Finding closest Node 
+// var info = await driver.FindNode(-73.984515, 40.7721);
+// Console.WriteLine(info);
+
+// Testing for the AStar algorithm
+// var route = await driver.AStar(-73.9765722702507, 40.760172956128876, -73.97940744715005,40.75360517905028); 
+// Console.WriteLine($"Output from route: {route}");
+
+// used to time the function - fun fact: it takes ages.
+stopwatch.Stop();
+Console.WriteLine("Elapsed Time: {0} milliseconds", stopwatch.ElapsedMilliseconds);
