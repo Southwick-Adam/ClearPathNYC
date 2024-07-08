@@ -1,3 +1,4 @@
+
 import React, { useRef, useEffect } from 'react';
 import './MapComponent.css';
 import { MAPBOX_TOKEN, MAPBOX_STYLE_URL } from '../../config.js';
@@ -9,19 +10,54 @@ import floraImage from '../../assets/images/flora.png';
 import poiImage from '../../assets/images/blue_marker.png'; // Change later to include a blue info icon
 import { convertToGeoJSON } from './MapHelper/geojsonHelpers.js';
 import { addRouteMarkers, addRouteToMap } from './MapHelper/routeHelpers.js';
-import { addMarkers, add311Markers, plotRoutePOI, add311Multiple, addClusteredLayer } from './MapHelper/markerHelpers.js';
+import { addMarkers, add311Markers, plotRoutePOI, add311Multiple } from './MapHelper/markerHelpers.js';
 import fetchNoise311 from '../../assets/geodata/fetchNoise311.js';
 import fetchGarbage311 from '../../assets/geodata/fetchGarbage311.js';
 import fetchOther311 from '../../assets/geodata/fetchOther311.js';
 import poiGeojson from './cleaned_points_of_interest.json';
 import fetchMulti311 from '../../assets/geodata/fetchMulti311.js';
+import useStore from '../../store/store.js'; // Adjust the import path accordingly
 
-function MapComponent({ route }) {
+function MapComponent({ route, startGeocoderRef, endGeocoderRef, geocoderRefs }) {
   const mapContainerRef = useRef(null);
   const mapRef = useRef(null);
   const isMapLoadedRef = useRef(false); // Ref to track if the map is loaded
   const startMarkerRef = useRef(null);
   const endMarkerRef = useRef(null);
+
+  const {
+    setStartCord, setEndCord, setWaypointAndIncrease,
+    waypointCord1, waypointCord2, waypointCord3, waypointCord4, waypointCord5,
+    visibleWaypoints
+  } = useStore();
+
+  const reverseGeocode = async (lng, lat) => {
+    const response = await fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${lng},${lat}.json?access_token=${MAPBOX_TOKEN}`);
+    const data = await response.json();
+    return data.features[0]?.place_name || 'Unknown location';
+  };
+
+  const updateStartInput = async (coordinates) => {
+    if (startGeocoderRef.current) {
+      const placeName = await reverseGeocode(coordinates[0], coordinates[1]);
+      startGeocoderRef.current.setInput(placeName);
+    }
+  };
+
+  const updateEndInput = async (coordinates) => {
+    if (endGeocoderRef.current) {
+      const placeName = await reverseGeocode(coordinates[0], coordinates[1]);
+      endGeocoderRef.current.setInput(placeName);
+    }
+  };
+
+  const updateWaypointInput = async (index, coordinates) => {
+    console.log(`updateWaypointInput called with index: ${index} and coordinates: ${coordinates}`);
+    const placeName = await reverseGeocode(coordinates[0], coordinates[1]);
+    console.log(`Reverse geocoded place name: ${placeName}`);
+    geocoderRefs[index].current.setInput(placeName);
+    console.log(`geocoderRef at index ${index} input set to: ${placeName}`);
+  };
 
   useEffect(() => {
     if (mapRef.current) return; // Initialize map only once
@@ -30,6 +66,8 @@ function MapComponent({ route }) {
       style: MAPBOX_STYLE_URL,
       center: [-73.9712, 40.7831],
       zoom: 13,
+      minZoom: 13, // Set the minimum zoom level
+      maxZoom: 20, // Set the maximum zoom level
       accessToken: MAPBOX_TOKEN
     });
 
@@ -128,7 +166,8 @@ function MapComponent({ route }) {
 
         new mapboxgl.Popup()
           .setLngLat(coordinates)
-          .setHTML(name)
+          .setHTML('')
+          .setDOMContent(createPopupContent(coordinates, name))
           .addTo(mapRef.current);
       });
 
@@ -163,11 +202,6 @@ function MapComponent({ route }) {
           }
         );
       });
-      // If there's an existing route, add it when the map is loaded
-      if (route) {
-        addRouteToMap(mapRef, route);
-        zoomToRoute(route); // Zoom to route once it is added
-      }
     });
   }, []); // Empty dependency array ensures this runs only once
 
@@ -198,7 +232,7 @@ function MapComponent({ route }) {
       return bounds.extend(coord);
     }, new mapboxgl.LngLatBounds(coordinates[0], coordinates[0]));
 
-     // Increase the bounds fordisplaying 311 plotting effect
+     // Increase the bounds for displaying 311 plotting effect
     const expandFactor = 0.003; // Adjust this factor as needed to increase the bounds
     const northEast = bounds.getNorthEast();
     const southWest = bounds.getSouthWest();
@@ -223,11 +257,50 @@ function MapComponent({ route }) {
     add311Multiple(mapRef, multi311);
   };
 
+  const createPopupContent = (coordinates, name) => {
+    const container = document.createElement('div');
+    const title = document.createElement('div');
+    title.innerText = name;
+    const setStartButton = document.createElement('button');
+    setStartButton.innerText = 'Set Start';
+    setStartButton.onclick = async () => {
+      setStartCord(coordinates);
+      await updateStartInput(coordinates);
+    };
+
+    const setEndButton = document.createElement('button');
+    setEndButton.innerText = 'Set End';
+    setEndButton.onclick = async () => {
+      setEndCord(coordinates);
+      await updateEndInput(coordinates);
+    };
+
+    const setWaypointButton = document.createElement('button');
+    setWaypointButton.innerText = 'Set Waypoint';
+    setWaypointButton.onclick = async () => {
+      const index = setWaypointAndIncrease(coordinates);
+      console.log(`New waypoint index: ${index}`);
+      if (index !== -1 && index < 5) {
+        await updateWaypointInput(index, coordinates);
+      }
+    };
+
+    container.appendChild(title);
+    container.appendChild(setStartButton);
+    container.appendChild(setEndButton);
+    container.appendChild(setWaypointButton);
+
+    return container;
+  };
+
   return <div ref={mapContainerRef} className='map' />;
 }
 
 MapComponent.propTypes = {
   route: PropTypes.object,
+  startGeocoderRef: PropTypes.object,
+  endGeocoderRef: PropTypes.object,
+  geocoderRefs: PropTypes.array
 };
 
 export default MapComponent;

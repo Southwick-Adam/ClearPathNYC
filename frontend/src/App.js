@@ -1,14 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import MapComponent from './components/MapComponent/MapComponent.js';
 import Sidebar from './components/Sidebar/Sidebar.js';
 import SmogAlert from './components/SmogAlert/SmogAlert.js';
 import WeatherPanel from './components/WeatherPanel/WeatherPanel.js';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import { samplegeojson, smamplegeojson } from './smallergeojson.js';
+import { samplegeojson } from './smallergeojson.js';
 
 function App() {
   const [route, setRoute] = useState(null);
   const [weather, setWeather] = useState(null); // State to hold weather data
+
+  const startGeocoderRef = useRef(null);
+  const endGeocoderRef = useRef(null);
+  const geocoderRefs = [useRef(null), useRef(null), useRef(null), useRef(null), useRef(null)];
 
   // Simulate fetching geoJson data from backend
   function simulateFetchRoute(formType, formData) {
@@ -16,7 +20,7 @@ function App() {
     let routeData;
 
     if (formType === 'loop') {
-      console.log('Generating point to point route data...');
+      console.log('Generating loop route data...');
       routeData = {
         "type": "FeatureCollection",
         "features": [
@@ -33,7 +37,7 @@ function App() {
                 [-73.9690, 40.7822], 
                 [-73.9700, 40.7822], 
                 [-73.9710, 40.7822], 
-                [-73.9712, 40.7831]  
+                [-73.9712, 40.7831]
               ]
             },
             "properties": {
@@ -54,7 +58,7 @@ function App() {
 
   function handleFormSubmit(formType, formData) {
     console.log('handleFormSubmit called with formType:', formType); // Dev log, remove later
-    // Simulate sending the form data to the backend, replace with api calls in future
+    // Simulate sending the form data to the backend, replace with API calls in future
     setTimeout(() => {
       console.log(`Form data for ${formType} sent to backend: `, formData);
 
@@ -87,8 +91,18 @@ function App() {
     <div className="App">
       <SplashScreen />
       <SmogAlert />
-      <Sidebar onFormSubmit={handleFormSubmit} />
-      <MapComponent route={route} />
+      <Sidebar
+        onFormSubmit={handleFormSubmit}
+        startGeocoderRef={startGeocoderRef}
+        endGeocoderRef={endGeocoderRef}
+        geocoderRefs={geocoderRefs}
+      />
+      <MapComponent
+        route={route}
+        startGeocoderRef={startGeocoderRef}
+        endGeocoderRef={endGeocoderRef}
+        geocoderRefs={geocoderRefs}
+      />
       <WeatherPanel weather={weather} /> {/* Pass weather data to WeatherPanel */}
     </div>
   );
