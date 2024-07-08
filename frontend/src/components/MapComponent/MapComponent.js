@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import simulateFetchParks from '../../assets/geodata/parks.js';
 import fetchInitialPOI from '../../assets/geodata/initialPOI.js';
 import floraImage from '../../assets/images/flora.png';
-import poiImage from '../../assets/images/blue_marker.png'; // Change later to include a blue info icon
+import poiImage from '../../assets/images/POI_marker_blue.png'; // Change later to include a blue info icon
 import { convertToGeoJSON } from './MapHelper/geojsonHelpers.js';
 import { addRouteMarkers, addRouteToMap } from './MapHelper/routeHelpers.js';
 import { addMarkers, add311Markers, plotRoutePOI, add311Multiple } from './MapHelper/markerHelpers.js';
