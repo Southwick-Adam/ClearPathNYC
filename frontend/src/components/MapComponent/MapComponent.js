@@ -14,7 +14,7 @@ import { addMarkers, add311Markers, plotRoutePOI, add311Multiple } from './MapHe
 import fetchNoise311 from '../../assets/geodata/fetchNoise311.js';
 import fetchGarbage311 from '../../assets/geodata/fetchGarbage311.js';
 import fetchOther311 from '../../assets/geodata/fetchOther311.js';
-import poiGeojson from './cleaned_points_of_interest.json';
+import poiGeojson from '../../assets/geodata/171_POIs.json';
 import fetchMulti311 from '../../assets/geodata/fetchMulti311.js';
 import useStore from '../../store/store.js'; // Adjust the import path accordingly
 
@@ -233,7 +233,7 @@ function MapComponent({ route, startGeocoderRef, endGeocoderRef, geocoderRefs })
     }, new mapboxgl.LngLatBounds(coordinates[0], coordinates[0]));
 
      // Increase the bounds for displaying 311 plotting effect
-    const expandFactor = 0.003; // Adjust this factor as needed to increase the bounds
+    const expandFactor = 0.001; // Adjust this factor as needed to increase the bounds
     const northEast = bounds.getNorthEast();
     const southWest = bounds.getSouthWest();
     bounds = bounds.extend([northEast.lng + expandFactor, northEast.lat + expandFactor]);
