@@ -106,7 +106,7 @@ class CreateDatabase
                 if (node.Longitude.HasValue && node.Latitude.HasValue)
                 {
                     // populates the Node object and adds it to the database
-                    MapNode tempNode = new MapNode(node.Id.Value, node.Longitude.Value, node.Latitude.Value);
+                    MapNode tempNode = new MapNode(node.Id.Value, node.Latitude.Value, node.Longitude.Value);
                     string tempTaxiZone = taxiZones.PointInTaxiZone(node.Latitude.Value, node.Longitude.Value);
                     string tempMetroNearby = metroStops.NearestMetroStop(node.Latitude.Value, node.Longitude.Value);
                     int tempRoadRank = pedestrianData.ClosestRoadRank(node.Latitude.Value, node.Longitude.Value);

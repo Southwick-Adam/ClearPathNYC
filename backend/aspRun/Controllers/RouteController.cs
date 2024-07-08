@@ -1,45 +1,62 @@
 using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using aspRun.Data;
 using Neo4j.Driver;
-
 
 namespace aspRun.Controllers
 {
     [Route("route")]
     [ApiController]
-    public class RouteController(Neo4jService neo4jService) : Controller
+    public class RouteController : Controller
     {
-        private readonly Neo4jService _neo4jService = neo4jService;
+        private readonly Neo4jService _neo4jService;
+
+        public RouteController(Neo4jService neo4jService)
+        {
+            _neo4jService = neo4jService;
+        }
 
         [HttpGet]
-        public async Task<IActionResult> TestConnection()
+        public async Task<IActionResult> NodeToNode([FromQuery] List<int> coord1, [FromQuery] List<int> coord2)
         {
-            var query = "RETURN 1";
+            if (coord1 == null || coord1.Count < 2 || coord2 == null || coord2.Count < 2)
+            {
+                return BadRequest("Invalid coordinates list. Each list should contain at least two coordinate pairs.");
+            }
+
+            var finalCoordinates = new StringBuilder();
+            var finalCosts = new StringBuilder();
 
             try
             {
-                var result = await _neo4jService.ReadAsync(async queryRunner =>
+                for (var i = 1; i < coord1.Count; i++)
                 {
-                    var queryResult = await queryRunner.RunAsync(query);
-                    var records = await queryResult.ToListAsync();
-                    
-                    return records.Any();
-                });
+                    var result = await _neo4jService.AStar(coord1[i - 1], coord2[i - 1], coord1[i], coord2[i]);
+                    Console.WriteLine(result[0]);
+                    Console.WriteLine(result[1]);
+                    if (finalCoordinates.Length > 0)
+                    {
+                        finalCoordinates.Append(", ");
+                    }
+                    finalCoordinates.Append(result[0]);
 
-                if (result)
-                {
-                    return Ok("Successfully connected to the Neo4j database.");
-                }
-                else
-                {
-                    return StatusCode(500, "Failed to execute test query.");
+                    if (finalCosts.Length > 0)
+                    {
+                        finalCosts.Append(", ");
+                    }
+                    finalCosts.Append(result[1]);
                 }
             }
             catch (Exception ex)
             {
                 return StatusCode(500, $"An error occurred while connecting to the Neo4j database: {ex.Message}");
             }
+
+            var geoJson = _neo4jService.GeoJSON(finalCoordinates.ToString(), "P2P", "false", "[]", finalCosts.ToString());
+            return Ok(geoJson);
         }
     }
 }
