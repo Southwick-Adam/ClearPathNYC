@@ -2,9 +2,9 @@ version: '3.8'
 
 services:
 
-  neo4j:
+  neo4j-1:
     image: neo4j
-    container_name: neo4j-container
+    container_name: neo4j-container-1
     ports:
       - "7474:7474"
       - "7687:7687"
@@ -14,6 +14,19 @@ services:
       - neo4j-data:/data
     networks:
       - clear_path_net
+  
+  neo4j-2:
+    image: neo4j
+    container_name: neo4j-container-2
+    ports:
+      - "7475:7474"
+      - "7688:7687"
+    environment:
+      NEO4J_AUTH: neo4j/password
+    volumes:
+      - neo4j-data-2:/data
+    networks:
+      - clear_path_net
 
   asp-run:
     image: asouthwick1/nycapp:asprun
@@ -21,7 +34,8 @@ services:
     ports:
       - "80:8080"
     depends_on:
-      - neo4j
+      - neo4j-1
+      - neo4j-2
     env_file: 
       - .env
     networks:
@@ -29,6 +43,7 @@ services:
 
 volumes:
   neo4j-data:
+  neo4j-data-2:
 
 networks:
   clear_path_net:
