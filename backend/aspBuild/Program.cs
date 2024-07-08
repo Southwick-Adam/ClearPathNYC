@@ -1,24 +1,14 @@
-using aspRun.Data;
+using System.Diagnostics;
+using aspBuild.Data;
+using Neo4j.Driver;
 
-var builder = WebApplication.CreateBuilder(args);
+// Updates and times the update function
+Stopwatch stopwatch = Stopwatch.StartNew();
+var updateDatabase = new UpdateDatabase();
+await updateDatabase.UpdateTheDatabase();
+stopwatch.Stop();
+Console.WriteLine("Elapsed Time: {0} milliseconds", stopwatch.ElapsedMilliseconds);
 
-builder.Services.AddControllers();
 
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+Console.WriteLine("Completed.");
 
-builder.Services.Configure<Neo4jOptions>(builder.Configuration.GetSection("Neo4j"));
-builder.Services.AddSingleton<Neo4jService>();
-
-var app = builder.Build();
-
-//Test api endpoints with swagger (for dev)
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
-app.UseHttpsRedirection();
-app.MapControllers();
-app.Run();
