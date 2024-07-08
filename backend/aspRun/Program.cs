@@ -20,6 +20,8 @@ builder.Services.AddHttpClient();
 builder.Services.AddSingleton<WeatherAPI>();
 builder.Services.AddHostedService<WeatherStartup>();
 
+builder.Services.AddHostedService<ChangeDbService>();
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 

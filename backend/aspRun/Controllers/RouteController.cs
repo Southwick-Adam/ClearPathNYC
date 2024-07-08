@@ -13,17 +13,18 @@ namespace aspRun.Controllers
         private readonly Neo4jService _neo4jService = neo4jService;
 
         [HttpGet]
-        [Route("{PointArr}/{Quiet}")]
-        public async Task<IActionResult> GetRoutes([FromRoute] float[][] PointArr, bool Quiet)
+        public async Task<IActionResult> TestConnection()
         {
+            var query = "RETURN 1";
+
             try
             {
                 var result = await _neo4jService.ReadAsync(async queryRunner =>
                 {
-                    var query = "";
                     var queryResult = await queryRunner.RunAsync(query);
-                    await queryResult.SingleAsync();//??????
-                    return true;
+                    var records = await queryResult.ToListAsync();
+                    
+                    return records.Any();
                 });
 
                 if (result)
@@ -35,9 +36,9 @@ namespace aspRun.Controllers
                     return StatusCode(500, "Failed to execute test query.");
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return StatusCode(500, "An error occurred while connecting to the Neo4j database.");
+                return StatusCode(500, $"An error occurred while connecting to the Neo4j database: {ex.Message}");
             }
         }
     }
