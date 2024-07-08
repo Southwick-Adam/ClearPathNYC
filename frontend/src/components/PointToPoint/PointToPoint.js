@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import LocationFinder from '../LocationFinder/LocationFinder';
 import GoButton from '../GoButton/GoButton';
 import BusyToggleSwitch from '../BusyToggleSwitch/BusyToggleSwitch';
@@ -6,17 +6,13 @@ import './PointToPoint.css';
 import Waypoint from '../Waypoint/Waypoint';
 import useStore from '../../store/store';
 
-function PointToPoint({ onFormSubmit }) {
+function PointToPoint({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoderRefs }) {
   const {
     startCord, endCord, isQuiet, includeWaypoints, visibleWaypoints,
     waypointCord1, waypointCord2, waypointCord3, waypointCord4, waypointCord5,
     setStartCord, setEndCord, setIsQuiet, setIncludeWaypoints, setVisibleWaypoints,
     setWaypointCord1, setWaypointCord2, setWaypointCord3, setWaypointCord4, setWaypointCord5, resetWaypointCord
   } = useStore();
-
-  const startGeocoderRef = useRef(null);
-  const endGeocoderRef = useRef(null);
-  const geocoderRefs = [useRef(null), useRef(null), useRef(null), useRef(null), useRef(null)];
 
   const waypointStates = [
     { id: 1, coordinates: waypointCord1, setCoordinates: setWaypointCord1, geocoderRef: geocoderRefs[0] },

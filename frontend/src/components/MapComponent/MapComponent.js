@@ -1,4 +1,3 @@
-
 import React, { useRef, useEffect } from 'react';
 import './MapComponent.css';
 import { MAPBOX_TOKEN, MAPBOX_STYLE_URL } from '../../config.js';
@@ -18,7 +17,7 @@ import poiGeojson from './cleaned_points_of_interest.json';
 import fetchMulti311 from '../../assets/geodata/fetchMulti311.js';
 import useStore from '../../store/store.js'; // Adjust the import path accordingly
 
-function MapComponent({ route }) {
+function MapComponent({ route, startGeocoderRef, endGeocoderRef, geocoderRefs }) {
   const mapContainerRef = useRef(null);
   const mapRef = useRef(null);
   const isMapLoadedRef = useRef(false); // Ref to track if the map is loaded
@@ -31,28 +30,46 @@ function MapComponent({ route }) {
     visibleWaypoints
   } = useStore();
 
-  const startGeocoderRef = useRef(null);
-  const endGeocoderRef = useRef(null);
-  const geocoderRefs = [useRef(null), useRef(null), useRef(null), useRef(null), useRef(null)];
+  const reverseGeocode = async (lng, lat) => {
+    const response = await fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${lng},${lat}.json?access_token=${MAPBOX_TOKEN}`);
+    const data = await response.json();
+    return data.features[0]?.place_name || `${lat}, ${lng}`;
+  };
 
-  const updateStartInput = (coordinates) => {
+  const updateStartInput = async (coordinates) => {
     if (startGeocoderRef.current) {
-      startGeocoderRef.current.setInput(coordinates.join(', '));
+      const placeName = await reverseGeocode(coordinates[0], coordinates[1]);
+      startGeocoderRef.current.setInput(placeName);
     }
   };
 
-  const updateEndInput = (coordinates) => {
+  const updateEndInput = async (coordinates) => {
     if (endGeocoderRef.current) {
-      endGeocoderRef.current.setInput(coordinates.join(', '));
+      const placeName = await reverseGeocode(coordinates[0], coordinates[1]);
+      endGeocoderRef.current.setInput(placeName);
     }
   };
 
-  const updateWaypointInput = (index, coordinates) => {
-    if (geocoderRefs[index].current) {
-      geocoderRefs[index].current.setInput(coordinates.join(', '));
+  const updateWaypointInput = async (index, coordinates) => {
+    console.log(`updateWaypointInput called with index: ${index} and coordinates: ${coordinates}`);
+      const placeName = await reverseGeocode(coordinates[0], coordinates[1]);
+      console.log(`Reverse geocoded place name: ${placeName}`);
+      geocoderRefs[index].current.setInput(placeName);
+      console.log(`geocoderRef at index ${index} input set to: ${placeName}`);
+
+  };
+
+  const handleAddWaypoint = (coordinates) => {
+    const newWaypointIndex = setWaypointAndIncrease(coordinates);
+    console.log(`New waypoint index: ${newWaypointIndex}`);
+    if (newWaypointIndex !== -1) {
+      updateWaypointInput(newWaypointIndex, coordinates);
     }
   };
 
+  useEffect(() => {
+    console.log('MapComponent geocoderRefs:', geocoderRefs);
+  }, [geocoderRefs]);
   useEffect(() => {
     if (mapRef.current) return; // Initialize map only once
     mapRef.current = new mapboxgl.Map({
@@ -196,7 +213,6 @@ function MapComponent({ route }) {
           }
         );
       });
-      
     });
   }, []); // Empty dependency array ensures this runs only once
 
@@ -256,28 +272,22 @@ function MapComponent({ route }) {
     const container = document.createElement('div');
     const setStartButton = document.createElement('button');
     setStartButton.innerText = 'Set Start';
-    setStartButton.onclick = () => {
+    setStartButton.onclick = async () => {
       setStartCord(coordinates);
-      updateStartInput(coordinates);
+      await updateStartInput(coordinates);
     };
 
     const setEndButton = document.createElement('button');
     setEndButton.innerText = 'Set End';
-    setEndButton.onclick = () => {
+    setEndButton.onclick = async () => {
       setEndCord(coordinates);
-      updateEndInput(coordinates);
+      await updateEndInput(coordinates);
     };
 
     const setWaypointButton = document.createElement('button');
     setWaypointButton.innerText = 'Set Waypoint';
-    setWaypointButton.onclick = () => {
-      setWaypointAndIncrease(coordinates);
-      const index = [waypointCord1, waypointCord2, waypointCord3, waypointCord4, waypointCord5].findIndex(
-        (cord) => cord === coordinates
-      );
-      if (index !== -1) {
-        updateWaypointInput(index, coordinates);
-      }
+    setWaypointButton.onclick = async () => {
+      handleAddWaypoint(coordinates);
     };
 
     container.appendChild(setStartButton);
@@ -292,6 +302,9 @@ function MapComponent({ route }) {
 
 MapComponent.propTypes = {
   route: PropTypes.object,
+  startGeocoderRef: PropTypes.object.isRequired,
+  endGeocoderRef: PropTypes.object.isRequired,
+  geocoderRefs: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
 export default MapComponent;

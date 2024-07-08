@@ -1,7 +1,7 @@
 
-import create from 'zustand';
+import { create } from 'zustand';
 
-const useStore = create((set) => ({
+const useStore = create((set, get) => ({
   startCord: null,
   endCord: null,
   isQuiet: true,
@@ -26,25 +26,27 @@ const useStore = create((set) => ({
     const waypointKey = `waypointCord${index}`;
     return { [waypointKey]: null };
   }),
-  setWaypointAndIncrease: (cord) => set((state) => {
-    let waypointSet = false;
+setWaypointAndIncrease: (cord) => {
+    let waypointIndex = -1;
+    const state = get();
     const updatedState = {};
 
     for (let i = 1; i <= 5; i++) {
       const waypointKey = `waypointCord${i}`;
       if (!state[waypointKey]) {
         updatedState[waypointKey] = cord;
-        waypointSet = true;
+        waypointIndex = i - 1; // Set the index to i - 1 for 0-based indexing
         break;
       }
     }
 
-    if (waypointSet && state.visibleWaypoints < 5) {
+    if (waypointIndex !== -1 && state.visibleWaypoints < 5) {
       updatedState.visibleWaypoints = state.visibleWaypoints + 1;
     }
 
-    return updatedState;
-  }),
+    set(updatedState);
+    return waypointIndex;
+  },
 }));
 
 export default useStore;
