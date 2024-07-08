@@ -1,4 +1,5 @@
 using Neo4j.Driver;
+using System.IO;
 
 
 public class Neo4jImplementation : IDisposable
@@ -366,7 +367,7 @@ public class Neo4jImplementation : IDisposable
     {
         string query = @"MATCH (a:nodes{nodeid:$nodeida})-[r:PATH] -> (b:nodes{nodeid:$nodeidb}) set r.quietscore = $quietscore";
 
-         var parameters = new Dictionary<string, object>
+        var parameters = new Dictionary<string, object>
         {
             {"nodeida", NodeIDA},
             {"nodeidb", NodeIDB},
@@ -380,6 +381,23 @@ public class Neo4jImplementation : IDisposable
             {
                 await tx.RunAsync(query, parameters);
             });
+
+    }
+
+    public async Task CreateJSON(string query, string fileName)
+    {
+        var result = await this.RunQuery(query, []);
+        List<int> outputList = new List<int>();
+
+        using(StreamWriter writetext = new StreamWriter(fileName, false))
+        {
+            foreach (var record in result)
+            {
+                writetext.WriteLine(record["n.nodeid"]);
+                // outputList.Add(record["n.nodeid"]);
+            }
+
+        }
 
     }
 
