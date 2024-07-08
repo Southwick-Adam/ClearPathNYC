@@ -17,12 +17,12 @@ stopwatch.Start();
 
 // pathways to each file used
 string filePath = @"new-york-latest.osm.pbf";
-string jsonPathTaxi = "DataFiles\\NYC Taxi Zones.geojson";
+string jsonPathTaxi = "DataFiles/NYC_Taxi_Zones.geojson";
 string jsonTaxi = File.ReadAllText(jsonPathTaxi);
-string csvPathMetro = "DataFiles\\Subway_Data_Final.csv";
-string csvPedTypePath = "DataFiles\\Pedestrian.csv";
-string csvParksPath = "DataFiles\\Manhattan_Parks_cleaned.csv";
-string csvThreeOneOne = "DataFiles\\high_veryhigh_data.csv";
+string csvPathMetro = "DataFiles/Subway_Data_Final.csv";
+string csvPedTypePath = "DataFiles/Pedestrian.csv";
+string csvParksPath = "DataFiles/Manhattan_Parks_cleaned.csv";
+string csvThreeOneOne = "DataFiles/high_veryhigh_data.csv";
 
 // used in testing to initialise each zone
 TaxiZones taxiZones = new TaxiZones(jsonTaxi);

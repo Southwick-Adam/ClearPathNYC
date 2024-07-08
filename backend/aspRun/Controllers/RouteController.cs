@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using aspRun.Data;
 using Neo4j.Driver;
+using aspRun.Data;
 
 namespace aspRun.Controllers
 {
     [Route("route")]
     [ApiController]
+    
     public class RouteController : Controller
     {
         private readonly Neo4jService _neo4jService;
@@ -60,3 +61,4 @@ namespace aspRun.Controllers
         }
     }
 }
+
