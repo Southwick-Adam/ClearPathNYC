@@ -1,3 +1,4 @@
+
 import React, { useRef, useEffect } from 'react';
 import './MapComponent.css';
 import { MAPBOX_TOKEN, MAPBOX_STYLE_URL } from '../../config.js';
@@ -33,7 +34,7 @@ function MapComponent({ route, startGeocoderRef, endGeocoderRef, geocoderRefs })
   const reverseGeocode = async (lng, lat) => {
     const response = await fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${lng},${lat}.json?access_token=${MAPBOX_TOKEN}`);
     const data = await response.json();
-    return data.features[0]?.place_name || `${lat}, ${lng}`;
+    return data.features[0]?.place_name || 'Unknown location';
   };
 
   const updateStartInput = async (coordinates) => {
@@ -52,24 +53,12 @@ function MapComponent({ route, startGeocoderRef, endGeocoderRef, geocoderRefs })
 
   const updateWaypointInput = async (index, coordinates) => {
     console.log(`updateWaypointInput called with index: ${index} and coordinates: ${coordinates}`);
-      const placeName = await reverseGeocode(coordinates[0], coordinates[1]);
-      console.log(`Reverse geocoded place name: ${placeName}`);
-      geocoderRefs[index].current.setInput(placeName);
-      console.log(`geocoderRef at index ${index} input set to: ${placeName}`);
-
+    const placeName = await reverseGeocode(coordinates[0], coordinates[1]);
+    console.log(`Reverse geocoded place name: ${placeName}`);
+    geocoderRefs[index].current.setInput(placeName);
+    console.log(`geocoderRef at index ${index} input set to: ${placeName}`);
   };
 
-  const handleAddWaypoint = (coordinates) => {
-    const newWaypointIndex = setWaypointAndIncrease(coordinates);
-    console.log(`New waypoint index: ${newWaypointIndex}`);
-    if (newWaypointIndex !== -1) {
-      updateWaypointInput(newWaypointIndex, coordinates);
-    }
-  };
-
-  useEffect(() => {
-    console.log('MapComponent geocoderRefs:', geocoderRefs);
-  }, [geocoderRefs]);
   useEffect(() => {
     if (mapRef.current) return; // Initialize map only once
     mapRef.current = new mapboxgl.Map({
@@ -177,8 +166,8 @@ function MapComponent({ route, startGeocoderRef, endGeocoderRef, geocoderRefs })
 
         new mapboxgl.Popup()
           .setLngLat(coordinates)
-          .setHTML(name)
-          .setDOMContent(createPopupContent(coordinates))
+          .setHTML('')
+          .setDOMContent(createPopupContent(coordinates, name))
           .addTo(mapRef.current);
       });
 
@@ -268,8 +257,10 @@ function MapComponent({ route, startGeocoderRef, endGeocoderRef, geocoderRefs })
     add311Multiple(mapRef, multi311);
   };
 
-  const createPopupContent = (coordinates) => {
+  const createPopupContent = (coordinates, name) => {
     const container = document.createElement('div');
+    const title = document.createElement('div');
+    title.innerText = name;
     const setStartButton = document.createElement('button');
     setStartButton.innerText = 'Set Start';
     setStartButton.onclick = async () => {
@@ -287,9 +278,14 @@ function MapComponent({ route, startGeocoderRef, endGeocoderRef, geocoderRefs })
     const setWaypointButton = document.createElement('button');
     setWaypointButton.innerText = 'Set Waypoint';
     setWaypointButton.onclick = async () => {
-      handleAddWaypoint(coordinates);
+      const index = setWaypointAndIncrease(coordinates);
+      console.log(`New waypoint index: ${index}`);
+      if (index !== -1 && index < 5) {
+        await updateWaypointInput(index, coordinates);
+      }
     };
 
+    container.appendChild(title);
     container.appendChild(setStartButton);
     container.appendChild(setEndButton);
     container.appendChild(setWaypointButton);
@@ -302,9 +298,9 @@ function MapComponent({ route, startGeocoderRef, endGeocoderRef, geocoderRefs })
 
 MapComponent.propTypes = {
   route: PropTypes.object,
-  startGeocoderRef: PropTypes.object.isRequired,
-  endGeocoderRef: PropTypes.object.isRequired,
-  geocoderRefs: PropTypes.arrayOf(PropTypes.object).isRequired,
+  startGeocoderRef: PropTypes.object,
+  endGeocoderRef: PropTypes.object,
+  geocoderRefs: PropTypes.array
 };
 
 export default MapComponent;
