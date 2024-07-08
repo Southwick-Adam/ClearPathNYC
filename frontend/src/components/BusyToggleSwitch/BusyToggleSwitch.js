@@ -1,8 +1,7 @@
 import React, { useRef, useId } from 'react';
 import './BusyToggleSwitch.css';
 
-const BusyToggleSwitch = ({ mode, handleToggleChange }) => {
-
+const BusyToggleSwitch = ({ isQuiet, handleToggleChange }) => {
   const inputRef = useRef(null);
   const uniqueId = useId();
 
@@ -15,8 +14,8 @@ const BusyToggleSwitch = ({ mode, handleToggleChange }) => {
           id={uniqueId}
           ref={inputRef}
           className="toggle-switch-checkbox"
-          checked={mode === 'quiet'}
-          onChange={() => handleToggleChange(mode === 'quiet' ? 'busy' : 'quiet')}
+          checked={isQuiet}
+          onChange={handleToggleChange}
         />
         <label className="toggle-switch-label" htmlFor={uniqueId}>
           <span className="toggle-switch-switch"></span>

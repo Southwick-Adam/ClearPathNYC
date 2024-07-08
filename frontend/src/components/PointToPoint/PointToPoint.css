@@ -18,3 +18,39 @@
     font-weight: bold;
     padding-right: 5%;
   }
+
+  /* This is here because altering the style in waypoint.css didn't work */
+  .waypoint{
+    display: flex;
+  }
+
+  .upDownWrapper{
+    flex-direction: column;
+    display: flex;
+  }
+
+  .addbtn{
+    width: 332px;
+    margin: 10px 20px 10px 20px;
+
+  }
+
+  .upbtn{
+    height: 17px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .downbtn{
+  height: 17px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+  .removebtn{
+    height: 30px;
+  }
+
+  .waypoints_container{
+    margin-top: 20px;
+  }
