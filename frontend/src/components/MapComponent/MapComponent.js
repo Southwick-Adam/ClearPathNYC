@@ -60,6 +60,8 @@ function MapComponent({ route }) {
       style: MAPBOX_STYLE_URL,
       center: [-73.9712, 40.7831],
       zoom: 13,
+      minZoom: 13, // Set the minimum zoom level
+      maxZoom: 20, // Set the maximum zoom level
       accessToken: MAPBOX_TOKEN
     });
 
