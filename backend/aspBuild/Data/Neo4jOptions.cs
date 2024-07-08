@@ -1,6 +1,7 @@
 using System;
 
 namespace aspBuild.Data
+
 {
     public class Neo4jOptions
     {

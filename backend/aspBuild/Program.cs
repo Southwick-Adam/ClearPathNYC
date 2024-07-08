@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using aspBuild.Data;
 using Neo4j.Driver;
 

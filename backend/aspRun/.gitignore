@@ -1,8 +1,7 @@
 *.config
 .vs/
 .vscode/
-.vscode/*/
-
+.vscode/**/*
 bin/
 obj/
 **/bin/
@@ -13,6 +12,3 @@ obj/
 *.tmp
 .nuget
 .env
-new-york-latest.osm.pbf
-.fake
-

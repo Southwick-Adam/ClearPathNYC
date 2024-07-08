@@ -4,6 +4,9 @@
 
 # git folder
 .git/
+.gitignore
 
 # .vs folder
 **/.vs/
+
+.env

@@ -1,43 +1,45 @@
 using System;
 using Microsoft.AspNetCore.Mvc;
 using aspRun.Data;
+using Neo4j.Driver;
+
 
 namespace aspRun.Controllers
 {
-    [Route("api")]
+    [Route("route")]
     [ApiController]
-    public class RouteController : Controller
+    public class RouteController(Neo4jService neo4jService) : Controller
     {
-        private readonly Neo4jService _neo4jService;
+        private readonly Neo4jService _neo4jService = neo4jService;
 
-        public RouteController(Neo4jService neo4jService)
+        [HttpGet]
+        public async Task<IActionResult> TestConnection()
         {
-            _neo4jService = neo4jService;
-        }
+            var query = "RETURN 1";
 
-
-    [HttpGet]
-    public async Task<IActionResult> GetRoute()
-    {
-        var people = await _neo4jService.ReadAsync(async queryRunner =>
-        {
-            var query = "MATCH (p:Person) RETURN p";
-            var result = await queryRunner.RunAsync(query);
-            var peopleList = new List<Person>();
-
-            await result.ForEachAsync(record =>
+            try
             {
-                peopleList.Add(new Person
+                var result = await _neo4jService.ReadAsync(async queryRunner =>
                 {
-                    Name = record["Name"].As<string>(),
-                    Age = record["Age"].As<int>()
+                    var queryResult = await queryRunner.RunAsync(query);
+                    var records = await queryResult.ToListAsync();
+                    
+                    return records.Any();
                 });
-            });
 
-            return peopleList;
-        });
-
-        return Ok(people);
-    }
+                if (result)
+                {
+                    return Ok("Successfully connected to the Neo4j database.");
+                }
+                else
+                {
+                    return StatusCode(500, "Failed to execute test query.");
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred while connecting to the Neo4j database: {ex.Message}");
+            }
+        }
     }
 }
