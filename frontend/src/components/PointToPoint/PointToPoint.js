@@ -6,7 +6,7 @@ import './PointToPoint.css';
 import Waypoint from '../Waypoint/Waypoint';
 import useStore from '../../store/store';
 
-function PointToPoint({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoderRefs }) {
+function PointToPoint({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoderRefs, hideSidebar }) {  // Add hideSidebar prop
   const {
     startCord, endCord, isQuiet, includeWaypoints, visibleWaypoints,
     waypointCord1, waypointCord2, waypointCord3, waypointCord4, waypointCord5,
@@ -57,6 +57,7 @@ function PointToPoint({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoder
 
     console.log('Form data for pointToPoint sent to backend:', formData);
     onFormSubmit('pointToPoint', formData);
+    hideSidebar();  // Hide the sidebar after form submission
   }
 
   function handleAddWaypoint() {
@@ -112,16 +113,16 @@ function PointToPoint({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoder
 
       if (geocoderRefs[index].current && geocoderRefs[index + 1].current) {
         const currentInput = geocoderRefs[index].current._inputEl.value;
-        const nextInput = geocoderRefs[index + 1].current._inputEl.value;
+        const nextInput = geocoderRefs[index + 1]._inputEl.value;
 
         geocoderRefs[index].current.setInput(nextInput);
-        geocoderRefs[index + 1].current.setInput(currentInput);
+        geocoderRefs[index + 1].setInput(currentInput);
 
         if (!currentInput.trim()) {
-          hideSuggestions(geocoderRefs[index + 1].current);
+          hideSuggestions(geocoderRefs[index + 1]);
         }
         if (!nextInput.trim()) {
-          hideSuggestions(geocoderRefs[index].current);
+          hideSuggestions(geocoderRefs[index]);
         }
       }
     }
@@ -157,7 +158,7 @@ function PointToPoint({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoder
             checked={includeWaypoints}
             onChange={() => setIncludeWaypoints(!includeWaypoints)}
           />
-            .  Include Waypoints
+          Include Waypoints
         </label>
       </div>
       <div className='waypoints_container' style={{ display: includeWaypoints ? 'block' : 'none' }}>
@@ -172,6 +173,7 @@ function PointToPoint({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoder
             setWaypointCoordinates={waypoint.setCoordinates}
             ref={waypoint.ref}
             geocoderRef={waypoint.geocoderRef}
+            className={index < visibleWaypoints ? 'open' : ''}
           />
         ))}
         {visibleWaypoints < 5 && (
