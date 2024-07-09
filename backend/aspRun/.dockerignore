@@ -1,9 +1,0 @@
-# Build folders
-**/bin/
-**/obj/
-
-# git folder
-.git/
-
-# .vs folder
-**/.vs/
