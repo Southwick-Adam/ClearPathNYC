@@ -15,7 +15,7 @@ function Sidebar({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoderRefs 
 
     const ptPTimer = setTimeout(() => {
       setPtPOpen(true);
-    }, 4000); // Adjust the delay as needed to open PtP after sidebar opens
+    }, 4500); // Adjust the delay as needed to open PtP after sidebar opens
 
     return () => {
       clearTimeout(sidebarTimer);
@@ -33,6 +33,10 @@ function Sidebar({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoderRefs 
   function togglePtP() {
     setPtPOpen(!isPtPOpen);
     setLoopOpen(false);
+  }
+
+  function hideSidebar() {
+    setIsOpen(false);
   }
 
   return (
@@ -66,6 +70,7 @@ function Sidebar({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoderRefs 
               startGeocoderRef={startGeocoderRef}
               endGeocoderRef={endGeocoderRef}
               geocoderRefs={geocoderRefs}
+              hideSidebar={hideSidebar}  // Pass hideSidebar function to PointToPoint
             />
           </div>
         </div>
