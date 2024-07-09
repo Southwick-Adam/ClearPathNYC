@@ -38,3 +38,36 @@
     background-image: url('../../assets/images/POI_marker.png');
 }
 
+.park_marker{
+  background-image: url('../../assets/images/flora.png');
+}
+
+/* Styling for marker types in single-complaint-type markers */
+.noise_high_marker {
+  background-image: url('../../assets/images/orange_volume.png');
+}
+
+.noise_very_high_marker {
+  background-image: url('../../assets/images/high_volume.png');
+}
+
+.garbage_high_marker {
+  background-image: url('../../assets/images/rubbish_orange.png');
+}
+
+/* Replace  with streets condition marker*/
+.other_high_marker {
+  background-image: url('../../assets/images/construction_orange.png');
+}
+.garbage_very_high_marker {
+  background-image: url('../../assets/images/rubbish.png');
+}
+
+
+.multi_high_marker {
+  background-image: url('../../assets/images/orange_warning.png'); 
+}
+
+.multi_very_high_marker {
+  background-image: url('../../assets/images/red_warning.png'); 
+}

@@ -1,0 +1,16 @@
+.waypoint_container {
+    transition: transform 0.3s ease;
+  }
+  
+  .waypoint_move_up {
+    transform: translateY(-100%);
+  }
+  
+  .waypoint_move_down {
+    transform: translateY(100%);
+  }
+  
+  .waypointbox{
+    display:flex;
+  }
+
