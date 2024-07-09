@@ -14,7 +14,7 @@ namespace aspRun.Data
         public void generateCoordinatesString()
         {
             var coordinates = NodeLongs.Zip(NodeLats, (lat, lng) => new[] { lat, lng });
-            CoordinatesString = string.Join(",\n ", coordinates.Select(coord => $"[{coord[0]}, {coord[1]}]"));
+            CoordinatesString = string.Join(",\n ", coordinates.Select(coord => $"[{coord[1]}, {coord[0]}]"));
         }
 
         public void generateQuietScoresString()
