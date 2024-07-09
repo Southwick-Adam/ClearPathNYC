@@ -157,7 +157,7 @@ function PointToPoint({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoder
             checked={includeWaypoints}
             onChange={() => setIncludeWaypoints(!includeWaypoints)}
           />
-          Include Waypoints
+            .  Include Waypoints
         </label>
       </div>
       <div className='waypoints_container' style={{ display: includeWaypoints ? 'block' : 'none' }}>
