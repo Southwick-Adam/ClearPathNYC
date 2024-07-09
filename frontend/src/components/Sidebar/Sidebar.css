@@ -4,10 +4,12 @@
     left: -350px; /* Start hidden off-screen */
     width: 350px;
     height: 100%;
-    background-color: #f8f9fa;
+    background-color: #f9faf3;
     box-shadow: 2px 0 5px rgba(0,0,0,0.5);
     transition: left 0.3s ease;
     z-index: 1000;
+    border-radius: 0 40px 40px 0;
+
   }
   
   .sidebar.open {
@@ -16,13 +18,26 @@
   
   .toggle-btn {
     position: absolute;
+    background-color: #f9faf3;
     top: calc(50vh - 100px);
-    right: -38px;
+    right: -40px;
     transform-origin: top right;
     height: 200px;
     border-radius: 0 40px 40px 0;
+    border-color:  #f9faf3;
+    box-shadow: 0 5px rgba(0,0,0,0.5);
   }
   
+  .toggle-btn.hovered {
+    background-color: #f9faf3;
+    border-color:  #f9faf3;
+  }
+
+  .toggle-btn:hover {
+    background-color: #e7e4e4;
+    border-color:  #f9faf3;
+  }
+
   .sidebar-content {
     padding: 20px;
   }
