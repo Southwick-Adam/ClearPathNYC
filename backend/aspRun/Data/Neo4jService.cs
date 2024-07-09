@@ -200,35 +200,14 @@ namespace aspRun.Data
                 await this.RunQuery(StartGraph, []);
                 routeResult = await this.RunQuery(Query, Params);
             }
-
+            Console.WriteLine(routeResult);
             var result = routeResult.First();
-            var nodeNamesObjList = result["nodeNames"] as List<object>;
-            var nodeLatsObjList = result["nodeLat"] as List<object>;
-            var nodeLongObjList = result["nodeLong"] as List<object>;
-            var nodeCostsObjList = result["costs"] as List<object>;
 
-            List<long> nodeNames = [];
-            List<double> nodeLat = [];
-            List<double> nodeLong = [];
-            List<double> nodeCosts = [];
+            var route = RouteMapper.Map(result);
+            route.generateCoordinatesString();
+            route.generateQuietScoresString();
 
-            if (nodeNamesObjList != null)
-            {
-                nodeNames = nodeNamesObjList.OfType<long>().ToList();
-                nodeLat = nodeLatsObjList.OfType<double>().ToList();
-                nodeLong = nodeLongObjList.OfType<double>().ToList();
-                nodeCosts = nodeCostsObjList.OfType<double>().ToList();
-            }
-            else
-            {
-                Console.WriteLine("The List conversion in AStar Neo4jServices was unsuccessful.");
-            }
-
-            var coordinates = nodeLong.Zip(nodeLat, (lat, lng) => new[] { lat, lng });
-            string coordinatesJson = string.Join(",\n ", coordinates.Select(coord => $"[{coord[0]}, {coord[1]}]"));
-            string quietScores = string.Join(", ", nodeCosts);
-
-            return [coordinatesJson, quietScores];
+            return [route.CoordinatesString, route.CostsString];
         }
 
 

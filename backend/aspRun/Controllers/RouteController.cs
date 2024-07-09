@@ -36,8 +36,7 @@ namespace aspRun.Controllers
                 for (var i = 1; i < coord1.Count; i++)
                 {
                     var result = await _neo4jService.AStar(coord1[i - 1], coord2[i - 1], coord1[i], coord2[i]);
-                    Console.WriteLine(result[0]);
-                    Console.WriteLine(result[1]);
+
                     if (finalCoordinates.Length > 0)
                     {
                         finalCoordinates.Append(", ");

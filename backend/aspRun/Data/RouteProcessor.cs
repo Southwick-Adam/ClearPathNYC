@@ -23,17 +23,21 @@ namespace aspRun.Data
         }
     }
 
-    public class RouteMapper 
+    public class RouteMapper
     {
-        public Route Map(IRecord record)
+        public static Route Map(IRecord record)
         {
+            var nodeNamesObjList = record["nodeNames"] as List<object>;
+            var nodeLatsObjList = record["nodeLat"] as List<object>;
+            var nodeLongObjList = record["nodeLong"] as List<object>;
+            var nodeCostsObjList = record["costs"] as List<object>;
+
             return new Route
             {
-                NodeNames = record["nodeNames"] as List<long>,
-                NodeLats = record["nodeLat"] as List<double>,
-                NodeLongs = record["nodeLong"] as List<double>,
-                Costs = record["costs"] as List<double>
-
+                NodeNames = nodeNamesObjList?.OfType<long>().ToList() ?? new List<long>(),
+                NodeLats = nodeLatsObjList?.OfType<double>().ToList() ?? new List<double>(),
+                NodeLongs = nodeLongObjList?.OfType<double>().ToList() ?? new List<double>(),
+                Costs = nodeCostsObjList?.OfType<double>().ToList() ?? new List<double>()
             };
         }
     }
