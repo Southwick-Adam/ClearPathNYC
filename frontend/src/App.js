@@ -57,19 +57,46 @@ function App() {
     setRoute(routeData);
   }
 
-  function handleFormSubmit(formType, formData) {
-    console.log('handleFormSubmit called with formType:', formType); // Dev log, remove later
-    // Simulate sending the form data to the backend, replace with API calls in future
-    setTimeout(() => {
-      console.log(`Form data for ${formType} sent to backend: `, formData);
+  async function handleFormSubmit(formType, formData) {
+    console.log('handleFormSubmit called with formType:', formType);
+    console.log(`Form data for ${formType} sent to backend: `, formData);
 
-      // Simulate fetching the route data after form submission
-      simulateFetchRoute(formType, formData);
-    }, 1000); // Simulate network delay of 1 second, remove in future
+    // Fetch the route data from the backend
+    const routeData = await fetchRoute(formData);
+
+    if (routeData) {
+      console.log('Fetched route data:', routeData);
+      setRoute(routeData);
+    }
+  }
+
+  async function fetchRoute(formData) {
+    const { coordinates } = formData;
+  
+    // Create query parameters from coordinates
+    const params = new URLSearchParams();
+    coordinates.forEach((coord) => {
+      params.append('coord1', parseFloat(coord[1])); // Latitude as double
+      params.append('coord2', parseFloat(coord[0])); // Longitude as double
+    });
+  
+    const requestUrl = `http://localhost:5056/route?${params.toString()}`;
+    console.log('Request URL:', requestUrl);
+  
+    try {
+      const response = await fetch(requestUrl);
+      const responseText = await response.text();
+      console.log('Response Text:', responseText);
+      const data = JSON.parse(responseText);
+      return data;
+    } catch (error) {
+      console.error('Error fetching route:', error);
+      return null;
+    }
   }
 
   async function fetchWeatherData() {
-    const apiUrl = '/weather';
+    const apiUrl = 'http://localhost:5056/weather';
     try {
       const response = await fetch(apiUrl, {
         method: 'GET',
