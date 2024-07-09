@@ -123,14 +123,14 @@ foreach (var segment in AllSegments)
 
 
 
-// Code used to test various pieces of the MapNode
-string uri = "bolt://localhost:7687";
-string user = "neo4j";
-string password = "password";
-Neo4jImplementation driver = new Neo4jImplementation(uri, user, password);
+// // Code used to test various pieces of the MapNode
+// string uri = "bolt://localhost:7687";
+// string user = "neo4j";
+// string password = "password";
+// Neo4jImplementation driver = new Neo4jImplementation(uri, user, password);
 
-string query = "MATCH (n:nodes) WHERE n.park = true RETURN n.nodeid;";
-await driver.CreateJSON(query, "ParkNodes");
+// string query = "MATCH (n:nodes) WHERE n.park = true RETURN n.nodeid;";
+// await driver.CreateJSON(query, "ParkNodes.txt");
 
 
 // MapNode demoNode = new MapNode(123, 21, 22);
