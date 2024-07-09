@@ -1,9 +1,26 @@
 using aspRun.Data;
-
+using aspRun.ApiCalls;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("CorsPolicy",
+    builder =>
+    {
+        builder.WithOrigins("https://clearpath.info.gf")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
+
 builder.Services.AddControllers();
+builder.Services.AddHttpClient();
+
+builder.Services.AddSingleton<WeatherAPI>();
+builder.Services.AddHostedService<WeatherStartup>();
+
+builder.Services.AddHostedService<ChangeDbService>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -20,5 +37,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
+app.UseRouting();
+app.UseCors("CorsPolicy");
+app.UseAuthorization();
+
+app.MapControllers();
 app.Run();

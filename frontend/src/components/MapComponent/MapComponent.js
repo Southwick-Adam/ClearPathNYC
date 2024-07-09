@@ -1,19 +1,63 @@
-import React, {useRef, useEffect}from 'react';
+
+import React, { useRef, useEffect } from 'react';
 import './MapComponent.css';
-import { MAPBOX_TOKEN, MAPBOX_STYLE_URL} from '../../config.js';
+import { MAPBOX_TOKEN, MAPBOX_STYLE_URL } from '../../config.js';
 import mapboxgl from 'mapbox-gl';
 import PropTypes from 'prop-types';
-import $ from 'jquery';
+import simulateFetchParks from '../../assets/geodata/parks.js';
+import fetchInitialPOI from '../../assets/geodata/initialPOI.js';
+import floraImage from '../../assets/images/flora.png';
+import poiImage from '../../assets/images/POI_marker_blue.png'; // Change later to include a blue info icon
+import { convertToGeoJSON } from './MapHelper/geojsonHelpers.js';
+import { addRouteMarkers, addRouteToMap } from './MapHelper/routeHelpers.js';
+import { addMarkers, add311Markers, plotRoutePOI, add311Multiple } from './MapHelper/markerHelpers.js';
+import fetchNoise311 from '../../assets/geodata/fetchNoise311.js';
+import fetchGarbage311 from '../../assets/geodata/fetchGarbage311.js';
+import fetchOther311 from '../../assets/geodata/fetchOther311.js';
+import poiGeojson from '../../assets/geodata/171_POIs.json';
+import fetchMulti311 from '../../assets/geodata/fetchMulti311.js';
+import useStore from '../../store/store.js'; // Adjust the import path accordingly
 
-
-
-function MapComponent({route}){
+function MapComponent({ route, startGeocoderRef, endGeocoderRef, geocoderRefs }) {
   const mapContainerRef = useRef(null);
   const mapRef = useRef(null);
   const isMapLoadedRef = useRef(false); // Ref to track if the map is loaded
   const startMarkerRef = useRef(null);
   const endMarkerRef = useRef(null);
 
+  const {
+    setStartCord, setEndCord, setWaypointAndIncrease,
+    waypointCord1, waypointCord2, waypointCord3, waypointCord4, waypointCord5,
+    visibleWaypoints
+  } = useStore();
+
+  const reverseGeocode = async (lng, lat) => {
+    const response = await fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${lng},${lat}.json?access_token=${MAPBOX_TOKEN}`);
+    const data = await response.json();
+    return data.features[0]?.place_name || 'Unknown location';
+  };
+
+  const updateStartInput = async (coordinates) => {
+    if (startGeocoderRef.current) {
+      const placeName = await reverseGeocode(coordinates[0], coordinates[1]);
+      startGeocoderRef.current.setInput(placeName);
+    }
+  };
+
+  const updateEndInput = async (coordinates) => {
+    if (endGeocoderRef.current) {
+      const placeName = await reverseGeocode(coordinates[0], coordinates[1]);
+      endGeocoderRef.current.setInput(placeName);
+    }
+  };
+
+  const updateWaypointInput = async (index, coordinates) => {
+    console.log(`updateWaypointInput called with index: ${index} and coordinates: ${coordinates}`);
+    const placeName = await reverseGeocode(coordinates[0], coordinates[1]);
+    console.log(`Reverse geocoded place name: ${placeName}`);
+    geocoderRefs[index].current.setInput(placeName);
+    console.log(`geocoderRef at index ${index} input set to: ${placeName}`);
+  };
 
   useEffect(() => {
     if (mapRef.current) return; // Initialize map only once
@@ -22,6 +66,8 @@ function MapComponent({route}){
       style: MAPBOX_STYLE_URL,
       center: [-73.9712, 40.7831],
       zoom: 13,
+      minZoom: 13, // Set the minimum zoom level
+      maxZoom: 20, // Set the maximum zoom level
       accessToken: MAPBOX_TOKEN
     });
 
@@ -29,174 +75,232 @@ function MapComponent({route}){
 
     mapRef.current.on('load', () => {
       isMapLoadedRef.current = true; // Set the map as loaded
-      
-      // Simulate fetching POI data from backend
-      const poiData = simulateFetchPOI();
-      addPOIMarkers(poiData);
 
-      // If there's an existing route, add it when the map is loaded
-      if (route) {
-        addRouteToMap(route);
-      }
+      // Fetch the initial API data for map display
+      const initialPOI = fetchInitialPOI();
+      // Fetch the park data for map display
+      const parkData = simulateFetchParks();
+      addMarkers(mapRef, initialPOI, 'poi');
+      const parkGeoJson = convertToGeoJSON(parkData);
+
+      // Load markers for clustering: Parks
+      mapRef.current.loadImage(floraImage, (error, image) => {
+        if (error) throw error;
+        mapRef.current.addImage('flora-marker', image);
+      });
+
+      // Load markers for clustering: POIs near route
+      mapRef.current.loadImage(poiImage, (error, image) => {
+        if (error) throw error;
+        mapRef.current.addImage('poi-marker', image);
+      });
+
+      // Not using clustering helper function as it causes bug with flora icon display
+      mapRef.current.addSource('parks', {
+        type: 'geojson',
+        data: parkGeoJson,
+        cluster: true,
+        clusterMaxZoom: 14,
+        clusterRadius: 50
+      });
+
+      // Clusters of park are displayed using green circles
+      mapRef.current.addLayer({
+        id: 'clusters',
+        type: 'circle',
+        source: 'parks',
+        filter: ['has', 'point_count'],
+        paint: {
+          'circle-color': [
+            'step',
+            ['get', 'point_count'],
+            '#4CAF50',
+            100,
+            '#388E3C',
+            750,
+            '#2E7D32'
+          ],
+          'circle-radius': [
+            'step',
+            ['get', 'point_count'],
+            20,
+            100,
+            30,
+            750,
+            40
+          ]
+        }
+      });
+
+      mapRef.current.addLayer({
+        id: 'cluster-count',
+        type: 'symbol',
+        source: 'parks',
+        filter: ['has', 'point_count'],
+        layout: {
+          'text-field': '{point_count_abbreviated}',
+          'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
+          'text-size': 12
+        },
+        paint: {
+          'text-color': '#FFFFFF'
+        }
+      });
+
+      // Individual parks are displayed using the floral marker
+      mapRef.current.addLayer({
+        id: 'unclustered-point',
+        type: 'symbol',
+        source: 'parks',
+        filter: ['!', ['has', 'point_count']],
+        layout: {
+          'icon-image': 'flora-marker',
+          'icon-size': 0.5,
+          'icon-offset': [0, -0]
+        }
+      });
+
+      mapRef.current.on('click', 'unclustered-point', e => {
+        const coordinates = e.features[0].geometry.coordinates.slice();
+        const { name } = e.features[0].properties;
+
+        new mapboxgl.Popup()
+          .setLngLat(coordinates)
+          .setHTML('')
+          .setDOMContent(createPopupContent(coordinates, name))
+          .addTo(mapRef.current);
+      });
+
+      mapRef.current.on('mouseenter', 'clusters', () => {
+        mapRef.current.getCanvas().style.cursor = 'pointer';
+      });
+      mapRef.current.on('mouseleave', 'clusters', () => {
+        mapRef.current.getCanvas().style.cursor = '';
+      });
+
+      mapRef.current.on('mouseenter', 'unclustered-point', () => {
+        mapRef.current.getCanvas().style.cursor = 'pointer';
+      });
+      mapRef.current.on('mouseleave', 'unclustered-point', () => {
+        mapRef.current.getCanvas().style.cursor = '';
+      });
+
+      mapRef.current.on('click', 'clusters', e => {
+        const features = mapRef.current.queryRenderedFeatures(e.point, {
+          layers: ['clusters']
+        });
+        const clusterId = features[0].properties.cluster_id;
+        mapRef.current.getSource('parks').getClusterExpansionZoom(
+          clusterId,
+          (err, zoom) => {
+            if (err) return;
+
+            mapRef.current.easeTo({
+              center: features[0].geometry.coordinates,
+              zoom: zoom
+            });
+          }
+        );
+      });
     });
   }, []); // Empty dependency array ensures this runs only once
-
 
   useEffect(() => {
     if (!route || !mapRef.current || !isMapLoadedRef.current) return;
 
-      if (mapRef.current.getSource('route')){
-        mapRef.current.getSource('route').setData(route);
-      } else{
-        console.log('Drawing route...');
-        addRouteToMap(route);
-        addRouteMarkers(route);
-      }
-      addRouteMarkers(route); // Ensure markers are added whenever the route changes
-    },[route]);
-  
-  function addRouteToMap(routeData){
-    mapRef.current.addSource('route', {
-      type: 'geojson',
-      data: routeData,
-      lineMetrics: true,
+    if (mapRef.current.getSource('route')) {
+      mapRef.current.getSource('route').setData(route);
+    } else {
+      console.log('Drawing route...');
+      addRouteToMap(mapRef, route);
+      addRouteMarkers(mapRef, route, startMarkerRef, endMarkerRef);
+    }
+    addRouteMarkers(mapRef, route, startMarkerRef, endMarkerRef); // Ensure markers are added whenever the route changes
+
+    // Zoom to the route whenever it changes
+    zoomToRoute(route);
+  }, [route]);
+
+  const zoomToRoute = (route) => {
+    if (!route.features || !Array.isArray(route.features) || route.features.length === 0) {
+      console.error('Invalid route data');
+      return;
+    }
+
+    const coordinates = route.features[0].geometry.coordinates;
+    let bounds = coordinates.reduce((bounds, coord) => {
+      return bounds.extend(coord);
+    }, new mapboxgl.LngLatBounds(coordinates[0], coordinates[0]));
+
+     // Increase the bounds for displaying 311 plotting effect
+    const expandFactor = 0.001; // Adjust this factor as needed to increase the bounds
+    const northEast = bounds.getNorthEast();
+    const southWest = bounds.getSouthWest();
+    bounds = bounds.extend([northEast.lng + expandFactor, northEast.lat + expandFactor]);
+    bounds = bounds.extend([southWest.lng - expandFactor, southWest.lat - expandFactor]);
+
+    mapRef.current.fitBounds(bounds, {
+      padding: 100
     });
 
-    mapRef.current.addLayer({
-      // For now draw the routes using gradient color. If later we decide to have solid blocks of colors it can be adjsuted
-      id: 'route',
-      type: 'line',
-      source: 'route',
-      layout: {
-        'line-join': 'round',
-        'line-cap': 'round',
-      },
-      paint: {
-        'line-width': 10,
-        'line-gradient': [
-          'interpolate',
-          ['linear'],
-          ['line-progress'],
-          0, '#ff0000',
-          0.33, '#ffff00',
-          0.66, '#00ff00',
-          1, '#00ff00'
-        ],
-      },
-    });
-    
+    plotRoutePOI(mapRef, poiGeojson, bounds);
+
+    // Filter and plot the POIs within the bounds
+    const noise311 = fetchNoise311().filter(location => bounds.contains(location.coordinates));
+    const garbage311 = fetchGarbage311().filter(location => bounds.contains(location.coordinates));
+    const other311 = fetchOther311().filter(location => bounds.contains(location.coordinates));
+    const multi311 = fetchMulti311().filter(location => bounds.contains(location.coordinates));
+
+    add311Markers(mapRef, noise311, 'Noise');
+    add311Markers(mapRef, garbage311, 'Garbage');
+    add311Markers(mapRef, other311, 'Other');
+    add311Multiple(mapRef, multi311);
   };
 
-  
+  const createPopupContent = (coordinates, name) => {
+    const container = document.createElement('div');
+    const title = document.createElement('div');
+    title.innerText = name;
+    const setStartButton = document.createElement('button');
+    setStartButton.innerText = 'Set Start';
+    setStartButton.onclick = async () => {
+      setStartCord(coordinates);
+      await updateStartInput(coordinates);
+    };
 
-  function addRouteMarkers(routeData){
-    const startCoord = routeData.features[0].geometry.coordinates[0];
-    const endCoord = routeData.features[0].geometry.coordinates[routeData.features[0].geometry.coordinates.length - 1];
+    const setEndButton = document.createElement('button');
+    setEndButton.innerText = 'Set End';
+    setEndButton.onclick = async () => {
+      setEndCord(coordinates);
+      await updateEndInput(coordinates);
+    };
 
-    // Always remove any existing end marker
-    if (endMarkerRef.current) {
-      endMarkerRef.current.remove();
-      endMarkerRef.current = null;
-    }
-    // Add start marker
-    if (startMarkerRef.current) {
-      startMarkerRef.current.setLngLat(startCoord);
-    } else {
-      const startMarker = document.createElement('div');
-      startMarker.className='marker start_marker';
-
-      startMarkerRef.current = new mapboxgl.Marker({
-        element: startMarker,
-        offset: [0, -15]
-      })
-        .setLngLat(startCoord)
-        .addTo(mapRef.current);
-
-        animateMarker($(startMarker))
-    }
-
-    // Check if the route is a loop
-    const isLoop = routeData.features[0].properties.isLoop;
-
-    // Add end marker if it's not a loop
-    if (!isLoop) {
-      if (endMarkerRef.current) {
-        endMarkerRef.current.setLngLat(endCoord);
-      } else {
-        const endMarker = document.createElement('div');
-        endMarker.className='marker end_marker';
-
-        endMarkerRef.current = new mapboxgl.Marker({
-          element: endMarker,
-          offset: [0, -15]
-        })
-          .setLngLat(endCoord)
-          .addTo(mapRef.current);
-
-          animateMarker($(endMarker));
-
+    const setWaypointButton = document.createElement('button');
+    setWaypointButton.innerText = 'Set Waypoint';
+    setWaypointButton.onclick = async () => {
+      const index = setWaypointAndIncrease(coordinates);
+      console.log(`New waypoint index: ${index}`);
+      if (index !== -1 && index < 5) {
+        await updateWaypointInput(index, coordinates);
       }
-    }
-  }
+    };
 
-  // Simulate fetching poi data from backend for now
-  function simulateFetchPOI(){
-    return [
-      {
-        name: "Central Park",
-        coordinates: [-73.9654, 40.7829]
-      },
-      {
-        name: "Times Square",
-        coordinates: [-73.9851, 40.7580]
-      },
-      {
-        name: "Empire State Building",
-        coordinates: [-73.9857, 40.7484]
-      },
-      {
-        name: "Statue of Liberty",
-        coordinates: [-74.0445, 40.6892]
-      },
-      {
-        name: "Brooklyn Bridge",
-        coordinates: [-73.9969, 40.7061]
-      }
-    ];
-  }
+    container.appendChild(title);
+    container.appendChild(setStartButton);
+    container.appendChild(setEndButton);
+    container.appendChild(setWaypointButton);
 
-  function addPOIMarkers(poiData){
-    poiData.forEach(poi=>{
-      const poimarker = document.createElement('div');
-      poimarker.className = 'marker poi_marker';
-
-      new mapboxgl.Marker({
-        element: poimarker,
-        offset: [0, -10]
-      })
-        .setLngLat(poi.coordinates)
-        .setPopup(new mapboxgl.Popup({offset:25}).setText(poi.name))
-        .addTo(mapRef.current);
-
-        animateMarker($(poimarker));
-    });
-  }
-
-  function animateMarker($marker) {
-    $marker.css({
-      top: '-50px',
-      opacity: 0,
-    }).animate({
-      top: '0px',
-      opacity: 1,
-    }, 500);
-  }
+    return container;
+  };
 
   return <div ref={mapContainerRef} className='map' />;
 }
 
 MapComponent.propTypes = {
   route: PropTypes.object,
+  startGeocoderRef: PropTypes.object,
+  endGeocoderRef: PropTypes.object,
+  geocoderRefs: PropTypes.array
 };
 
 export default MapComponent;

@@ -1,9 +1,9 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import './Sidebar.css';
 import Loop from '../Loop/Loop.js';
-import PointToPoint from '../PointToPoint/PointToPoint.js'
+import PointToPoint from '../PointToPoint/PointToPoint.js';
 
-function Sidebar( {onFormSubmit} ) {
+function Sidebar({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoderRefs }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoopOpen, setLoopOpen] = useState(false);
   const [isPtPOpen, setPtPOpen] = useState(false);
@@ -18,7 +18,7 @@ function Sidebar( {onFormSubmit} ) {
   function togglePtP() {
     setPtPOpen(!isPtPOpen);
     setLoopOpen(false);
-  } 
+  }
 
   return (
     <div className={`sidebar ${isOpen ? 'open' : ''}`}>
@@ -26,19 +26,18 @@ function Sidebar( {onFormSubmit} ) {
         {isOpen ? '◀' : '▶'}
       </button>
       <div className="sidebar-content">
-
         <div className='loop_wrapper'>
-          <div className='toggle_title_row'>
+          {/* The id here is used to hide the loop container for MVP*/}
+          <div className='toggle_title_row' id='loop_toggle_title_row'> 
             <button className='btn' onClick={toggleLoop}>
               {isLoopOpen ? '▼' : '▶'}
             </button>
             <div className='container_title'>Loop</div>
           </div>
           <div className={`loop_box ${isLoopOpen ? 'open' : 'closed'}`}>
-            <Loop onFormSubmit={onFormSubmit}/>
+            <Loop onFormSubmit={onFormSubmit} />
+          </div>
         </div>
-        </div>
-
         <div className='ptp_wrapper'>
           <div className='toggle_title_row'>
             <button className='btn' onClick={togglePtP}>
@@ -47,12 +46,17 @@ function Sidebar( {onFormSubmit} ) {
             <div className='container_title'>Point To Point</div>
           </div>
           <div className={`ptp_box ${isPtPOpen ? 'open' : 'closed'}`}>
-            <PointToPoint onFormSubmit={onFormSubmit}/>
+            <PointToPoint
+              onFormSubmit={onFormSubmit}
+              startGeocoderRef={startGeocoderRef}
+              endGeocoderRef={endGeocoderRef}
+              geocoderRefs={geocoderRefs}
+            />
           </div>
         </div>
       </div>
     </div>
   );
-};
+}
 
 export default Sidebar;
