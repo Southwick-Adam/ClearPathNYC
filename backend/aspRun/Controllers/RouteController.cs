@@ -21,7 +21,7 @@ namespace aspRun.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> NodeToNode([FromQuery] List<int> coord1, [FromQuery] List<int> coord2)
+        public async Task<IActionResult> NodeToNode([FromQuery] List<double> coord1, [FromQuery] List<double> coord2)
         {
             if (coord1 == null || coord1.Count < 2 || coord2 == null || coord2.Count < 2)
             {
