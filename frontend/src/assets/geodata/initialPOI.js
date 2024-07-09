@@ -9,10 +9,6 @@ function fetchInitialPOI(){
         coordinates: [-73.9857, 40.7484]
       },
       {
-        name: "Statue of Liberty",
-        coordinates: [-74.0445, 40.6892]
-      },
-      {
         name: "Brooklyn Bridge",
         coordinates: [-73.9969, 40.7061]
       }
