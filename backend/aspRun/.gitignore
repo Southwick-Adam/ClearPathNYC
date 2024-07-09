@@ -12,3 +12,4 @@ obj/
 *.tmp
 .nuget
 .env
+.fake

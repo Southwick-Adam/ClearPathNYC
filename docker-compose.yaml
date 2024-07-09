@@ -1,6 +1,7 @@
 version: '3.8'
 
 services:
+
   asp-run:
     image: asouthwick1/nycapp:asprun
     container_name: asp-run
@@ -29,6 +30,7 @@ services:
       - "443:443"
     depends_on:
       - react-app
+      - asp-run
     networks:
       - clear_path_net
 
