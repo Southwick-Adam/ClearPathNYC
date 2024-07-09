@@ -68,7 +68,9 @@ function MapComponent({ route, startGeocoderRef, endGeocoderRef, geocoderRefs })
       zoom: 13,
       minZoom: 13, // Set the minimum zoom level
       maxZoom: 20, // Set the maximum zoom level
-      accessToken: MAPBOX_TOKEN
+      accessToken: MAPBOX_TOKEN,
+      pitch: 50, // Tilt the map
+      bearing: -2.6 // Rotate the map to a specific angle 
     });
 
     mapRef.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
@@ -128,7 +130,8 @@ function MapComponent({ route, startGeocoderRef, endGeocoderRef, geocoderRefs })
             30,
             750,
             40
-          ]
+          ],
+          'circle-opacity': 0.6 // Set the opacity to 60%
         }
       });
 

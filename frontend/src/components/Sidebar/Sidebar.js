@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './Sidebar.css';
 import Loop from '../Loop/Loop.js';
 import PointToPoint from '../PointToPoint/PointToPoint.js';
@@ -7,6 +7,21 @@ function Sidebar({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoderRefs 
   const [isOpen, setIsOpen] = useState(false);
   const [isLoopOpen, setLoopOpen] = useState(false);
   const [isPtPOpen, setPtPOpen] = useState(false);
+
+  useEffect(() => {
+    const sidebarTimer = setTimeout(() => {
+      setIsOpen(true);
+    }, 3500); // Adjust the delay as needed
+
+    const ptPTimer = setTimeout(() => {
+      setPtPOpen(true);
+    }, 4000); // Adjust the delay as needed to open PtP after sidebar opens
+
+    return () => {
+      clearTimeout(sidebarTimer);
+      clearTimeout(ptPTimer);
+    };
+  }, []);
 
   function toggleSidebar() {
     setIsOpen(!isOpen);
