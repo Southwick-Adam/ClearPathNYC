@@ -123,6 +123,47 @@ namespace aspRun.Data
         }
 
 
+        public async Task StopGraph()
+        {
+            var StopGraph = @"CALL gds.graph.drop('NYC1')";
+            await RunQuery(StopGraph, []);
+            Console.WriteLine($"Graph stopped");
+
+        }
+
+        
+        public async Task StartGraph()
+        {
+            var StartGraph = @"
+            CALL gds.graph.project(
+            'NYC1',
+            {
+                nodes: {
+                label: 'nodes',
+                properties: ['latitude', 'longitude']
+                }
+            },
+            {
+                PATH: {
+                properties: ['distance', 'quietscore']
+                }
+            });";
+            await RunQuery(StartGraph, []);
+            Console.WriteLine($"Graph started");
+        }
+        
+        public async Task CheckGraph()
+        {
+            var CheckGraph = @"
+            CALL gds.graph.exists('NYC1')
+            YIELD exists
+            RETURN exists
+        ";
+        var output = await RunQuery(CheckGraph, []);
+        Console.WriteLine($"CheckGraph: {output.First()["exists"]}");
+        }
+
+
         /// <summary>
         /// Used to find a path from a given Latitude/Longitude to another Latitude/Longitude
         /// </summary>

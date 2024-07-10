@@ -24,16 +24,22 @@ namespace aspRun.Data
         public Task StartAsync(CancellationToken cancellationToken)
         {
             _logger.LogInformation("Starting background service...");
-            _timer = new Timer(ExecuteTask, null, TimeSpan.Zero, TimeSpan.FromHours(2));
+            _timer = new Timer(ExecuteTask, null, TimeSpan.Zero, TimeSpan.FromMinutes(1));
             return Task.CompletedTask;
         }
 
-        private void ExecuteTask(object? state)
+        private async void ExecuteTask(object? state)
         {
             try
             {
+                await _neo4jService.CheckGraph();
+                await _neo4jService.StopGraph();
+                await _neo4jService.CheckGraph();
                 _neo4jService.ChangeDB(_changeToNeo4j1);
                 _changeToNeo4j1 = !_changeToNeo4j1;
+                await _neo4jService.CheckGraph();
+                await _neo4jService.StartGraph();
+                await _neo4jService.CheckGraph();
             }
             catch (Exception ex)
             {

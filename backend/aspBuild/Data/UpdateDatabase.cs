@@ -5,7 +5,7 @@ namespace aspBuild.Data
     {   
         // locations of each file used in the update database
         private string parkFilePath = "DataFiles\\ParkNodes.txt";
-        private string jsonTaxiPath = "DataFiles\\taxi_data_final.json";
+        private string jsonTaxiPath = "DataFiles\\taxi_busyness_ranking.json";
         private string jsonSubwayPath = "DataFiles\\subway_data_final.json";
 
         Dictionary<int,int> scoreMap = new Dictionary<int,int>()
