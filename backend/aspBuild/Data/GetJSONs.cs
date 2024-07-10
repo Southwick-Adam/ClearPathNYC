@@ -10,13 +10,21 @@ namespace aspBuild.Data
 
             string json = File.ReadAllText(jsonPath);
 
-            
+            Dictionary<int,int> scoreMap = new Dictionary<int,int>()
+            {
+                {1,5},
+                {2,4},
+                {3,3},
+                {4,2},
+                {5,1}
+            };
+
             if (string.Equals(type, "taxi"))
             {
                 var ListJSONValues = JsonConvert.DeserializeObject<List<JSONObjectTaxi>>(json);
                 foreach (var item in ListJSONValues)
                 {
-                    dict.Add(item.LocationID, item.busyness_rank);
+                    dict.Add(item.LocationID, scoreMap[item.busyness_rank]);
                 }
             }
             if (string.Equals(type, "metro"))
@@ -24,13 +32,8 @@ namespace aspBuild.Data
                 var ListJSONValues = JsonConvert.DeserializeObject<List<JSONObjectMetro>>(json);
                 foreach (var item in ListJSONValues)
                 {
-                    dict.Add(item.station_complex_id, item.busyness_rank);
+                    dict.Add(item.station_complex_id, scoreMap[item.busyness_rank]);
                 }
-            }
-            Console.WriteLine(type);
-            foreach (var item in dict.Keys)
-            {
-                Console.WriteLine(item);
             }
             
             return dict;
