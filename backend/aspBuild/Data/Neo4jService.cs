@@ -7,7 +7,7 @@ namespace aspBuild.Data
     public class Neo4jService : IDisposable
     {
         private readonly IDriver _driver;
-        private readonly string _database = "testdatabase";
+        private readonly string _database = "neo4j";
         private string uri = "bolt://localhost:7687";
         private string user = "neo4j";
         private string password = "password";

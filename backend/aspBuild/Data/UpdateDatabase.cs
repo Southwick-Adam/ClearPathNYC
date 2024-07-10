@@ -6,10 +6,12 @@ namespace aspBuild.Data
         // locations of each file used in the update database
         private string parkFilePath = "DataFiles\\ParkNodes.txt";
         private string jsonTaxiPath = "DataFiles\\taxi_busyness_ranking.json";
-        private string jsonSubwayPath = "DataFiles\\subway_data_final.json";
+        private string jsonSubwayPath = "DataFiles\\subway_busyness_ranking.json";
 
         Dictionary<int,int> scoreMap = new Dictionary<int,int>()
             {
+                // { 0, 0 },
+                // {-1, 0 },
                 {1,5},
                 {2,4},
                 {3,3},
@@ -27,8 +29,8 @@ namespace aspBuild.Data
         public UpdateDatabase()
         {
             parkNodes = new ParkNodes(parkFilePath);
-            jsonDataTaxi = GetJSONs.getJSON(jsonTaxiPath);
-            jsonDataSubway = GetJSONs.getJSON(jsonSubwayPath);
+            jsonDataTaxi = GetJSONs.getJSON(jsonTaxiPath, "taxi");
+            jsonDataSubway = GetJSONs.getJSON(jsonSubwayPath, "metro");
         }
 
 
@@ -46,7 +48,7 @@ namespace aspBuild.Data
             // loops through the taxi keys - starting a loop by the zone its in
             foreach (var key in jsonDataTaxi.Keys)
             {
-
+                Console.WriteLine($"Current Taxi Zone: {key}");
                 int tempTaxi = jsonDataTaxi[key];
 
                 // calls all the data from the Taxi zone - checking each node and relationship for that zone
@@ -80,10 +82,22 @@ namespace aspBuild.Data
         /// <returns>double</returns>
         private double CalculateQuietScore(string metro, int road, int taxi, bool park, bool threeOneOne, double distance)
         {
-            if (threeOneOne) { return 1000; }
-
-            if (park) { return (scoreMap[jsonDataSubway[metro]] + scoreMap[road] + scoreMap[taxi] - 10)*distance;}
-            return (scoreMap[jsonDataSubway[metro]] + scoreMap[road] + scoreMap[taxi])*distance;
+            try
+            {
+                if (threeOneOne) { return 1000; }
+                if (park && string.Equals(metro, "-1")){return (scoreMap[road] + scoreMap[taxi] - 10)*distance;}
+                if (park) { return (scoreMap[jsonDataSubway[metro]] + scoreMap[road] + scoreMap[taxi] - 10)*distance;}
+                if (string.Equals(metro, "-1")) { return (scoreMap[road] + scoreMap[taxi])*distance;}
+                return (scoreMap[jsonDataSubway[metro]] + scoreMap[road] + scoreMap[taxi])*distance;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                Console.WriteLine($"metro: {metro}, road: {road}, taxi: {taxi}, park {park}, threeOneOne: {threeOneOne}, distance: {distance}");
+                
+            }
+            return (scoreMap[jsonDataSubway[metro]] + scoreMap[road] + scoreMap[taxi]) * distance;
+            
         }
     }
 }
