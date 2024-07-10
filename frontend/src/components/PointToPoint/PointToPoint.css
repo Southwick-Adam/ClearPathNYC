@@ -24,6 +24,10 @@
     display: flex;
   }
 
+  .checkbox{
+    background-color: #198754;
+  }
+
   .upDownWrapper{
     flex-direction: column;
     display: flex;
