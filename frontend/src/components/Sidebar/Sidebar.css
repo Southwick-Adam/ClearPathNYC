@@ -4,10 +4,11 @@
   left: -350px; /* Start hidden off-screen */
   width: 350px;
   height: 100%;
-  background-color: #f8f9fa;
+  background-color: #f9faf3;
   box-shadow: 2px 0 5px rgba(0,0,0,0.5);
   transition: left 1s ease; /* Slower transition duration */
   z-index: 1000;
+  border-radius: 0 40px 40px 0;
 }
 
 .sidebar.open {
@@ -17,10 +18,12 @@
 .toggle-btn {
   position: absolute;
   top: calc(50vh - 100px);
-  right: -38px;
+  right: -40px;
   transform-origin: top right;
   height: 200px;
   border-radius: 0 40px 40px 0;
+  background-color: #f9faf3;
+  box-shadow: 0 5px rgba(0,0,0,0.5);
 }
 
 .sidebar-content {
@@ -42,6 +45,12 @@
 .toggle_title_row {
   display: flex;
 }
+
+.toggle-btn:hover {
+  background-color: #e7e4e4;
+  border-color: #f9faf3;
+}
+
 
 .ptp_box, .loop_box {
   max-height: 0;
