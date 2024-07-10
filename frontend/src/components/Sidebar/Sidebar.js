@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './Sidebar.css';
 import Loop from '../Loop/Loop.js';
 import PointToPoint from '../PointToPoint/PointToPoint.js';
@@ -7,6 +7,21 @@ function Sidebar({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoderRefs 
   const [isOpen, setIsOpen] = useState(false);
   const [isLoopOpen, setLoopOpen] = useState(false);
   const [isPtPOpen, setPtPOpen] = useState(false);
+
+  useEffect(() => {
+    const sidebarTimer = setTimeout(() => {
+      setIsOpen(true);
+    }, 3500); // Adjust the delay as needed
+
+    const ptPTimer = setTimeout(() => {
+      setPtPOpen(true);
+    }, 4500); // Adjust the delay as needed to open PtP after sidebar opens
+
+    return () => {
+      clearTimeout(sidebarTimer);
+      clearTimeout(ptPTimer);
+    };
+  }, []);
 
   function toggleSidebar() {
     setIsOpen(!isOpen);
@@ -18,6 +33,10 @@ function Sidebar({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoderRefs 
   function togglePtP() {
     setPtPOpen(!isPtPOpen);
     setLoopOpen(false);
+  }
+
+  function hideSidebar() {
+    setIsOpen(false);
   }
 
   return (
@@ -43,7 +62,7 @@ function Sidebar({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoderRefs 
             <button className='btn' onClick={togglePtP}>
               {isPtPOpen ? '▼' : '▶'}
             </button>
-            <div className='container_title'>Point To Point</div>
+            <div className='container_title'>Point to Point</div>
           </div>
           <div className={`ptp_box ${isPtPOpen ? 'open' : 'closed'}`}>
             <PointToPoint
@@ -51,6 +70,7 @@ function Sidebar({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoderRefs 
               startGeocoderRef={startGeocoderRef}
               endGeocoderRef={endGeocoderRef}
               geocoderRefs={geocoderRefs}
+              hideSidebar={hideSidebar}  // Pass hideSidebar function to PointToPoint
             />
           </div>
         </div>
