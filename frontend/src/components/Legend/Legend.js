@@ -28,7 +28,6 @@ function Legend({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoderRefs }
         {isOpen ? '◀' : '▶'}
       </button>
       <div className="legend-content">
-        <h2>MAP LEGEND</h2>
         <ul>
           <li><img src={require('../../assets/images/PTP_A_flat.png')} alt="Point to Point starting location" />Point to Point starting location</li>
           <li><img src={require('../../assets/images/PTP_B_flat.png')} alt="Point to Point end location" />Point to Point end location</li>
