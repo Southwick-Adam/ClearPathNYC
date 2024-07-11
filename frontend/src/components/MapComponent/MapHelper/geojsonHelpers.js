@@ -1,3 +1,5 @@
+import togpx from 'togpx';
+
 export function convertToGeoJSON(data) {
     return {
       type: "FeatureCollection",
@@ -12,5 +14,11 @@ export function convertToGeoJSON(data) {
         }
       }))
     };
+  }
+
+
+  export function geojsonToGpx(geojson) {
+    const gpx = togpx(geojson);
+    return gpx;
   }
   

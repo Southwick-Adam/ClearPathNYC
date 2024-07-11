@@ -2,35 +2,47 @@ import mapboxgl from 'mapbox-gl';
 import $ from 'jquery';
 import { animateMarkers, addClusteredLayer } from './markerHelpers';
 import { convertToGeoJSON } from './geojsonHelpers.js';
+import useStore from '../../../store/store.js';
 
-export function addRouteToMap(mapRef, routeData) {
-  mapRef.current.addSource('route', {
-    type: 'geojson',
-    data: routeData,
-    lineMetrics: true,
-  });
+export function addRouteToMap(mapRef) {
+  const route = useStore.getState().route;
 
-  mapRef.current.addLayer({
-    id: 'route',
-    type: 'line',
-    source: 'route',
-    layout: {
-      'line-join': 'round',
-      'line-cap': 'round',
-    },
-    paint: {
-      'line-width': 10,
-      'line-gradient': [
-        'interpolate',
-        ['linear'],
-        ['line-progress'],
-        0, '#ff0000',
-        0.33, '#ffff00',
-        0.66, '#00ff00',
-        1, '#00ff00'
-      ],
-    },
-  });
+  if (!route) {
+    console.error('No route found in store.');
+    return;
+  }
+
+  if (mapRef.current.getSource('route')) {
+    mapRef.current.getSource('route').setData(route);
+  } else {
+    mapRef.current.addSource('route', {
+      type: 'geojson',
+      data: route,
+      lineMetrics: true,
+    });
+
+    mapRef.current.addLayer({
+      id: 'route',
+      type: 'line',
+      source: 'route',
+      layout: {
+        'line-join': 'round',
+        'line-cap': 'round',
+      },
+      paint: {
+        'line-width': 10,
+        'line-gradient': [
+          'interpolate',
+          ['linear'],
+          ['line-progress'],
+          0, '#ff0000',
+          0.33, '#ffff00',
+          0.66, '#00ff00',
+          1, '#00ff00'
+        ],
+      },
+    });
+  }
 }
 
 export function addRouteMarkers(mapRef, routeData, startMarkerRef, endMarkerRef) {
