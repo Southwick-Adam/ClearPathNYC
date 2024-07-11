@@ -8,7 +8,7 @@ export function convertToGeoJSON(data) {
           coordinates: location.coordinates
         },
         properties: {
-          name: location.name
+          name: (location.name === undefined) ? location.Complaint_Type_collection : location.name
         }
       }))
     };
