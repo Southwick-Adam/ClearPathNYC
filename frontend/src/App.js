@@ -6,6 +6,7 @@ import WeatherPanel from './components/WeatherPanel/WeatherPanel.js';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { samplegeojson } from './smallergeojson.js';
 import SplashScreen from './components/SplashScreen/SplashScreen.js';
+import Legend from './components/Legend/Legend.js';
 
 function App() {
   const [route, setRoute] = useState(null);
@@ -93,6 +94,7 @@ function App() {
         geocoderRefs={geocoderRefs}
       />
       <WeatherPanel weather={weather} /> {/* Pass weather data to WeatherPanel */}
+      <Legend />
     </div>
   );
 }

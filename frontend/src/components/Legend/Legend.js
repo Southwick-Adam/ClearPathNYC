@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import './Sidebar.css';
+import './Legend.css';
 
-function Sidebar({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoderRefs }) {
+function Legend({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoderRefs }) {
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
@@ -23,43 +23,34 @@ function Sidebar({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoderRefs 
   }
 
   return (
-    <div className={`sidebar ${isOpen ? 'open' : ''}`}>
-      <button className="btn btn-primary toggle-btn" onClick={toggleLegend}>
+    <div className={`legend ${isOpen ? 'open' : ''}`}>
+      <button className="btn btn-primary toggle-btn-legend" onClick={toggleLegend}>
         {isOpen ? '◀' : '▶'}
       </button>
-      <div className="sidebar-content">
-        <div className='loop_wrapper'>
-          {/* The id here is used to hide the loop container for MVP*/}
-          <div className='toggle_title_row' id='loop_toggle_title_row'> 
-            <button className='btn' onClick={toggleLoop}>
-              {isLoopOpen ? '▼' : '▶'}
-            </button>
-            <div className='container_title'>Loop</div>
-          </div>
-          <div className={`loop_box ${isLoopOpen ? 'open' : 'closed'}`}>
-            <Loop onFormSubmit={onFormSubmit} />
-          </div>
-        </div>
-        <div className='ptp_wrapper'>
-          <div className='toggle_title_row'>
-            <button className='btn' onClick={togglePtP}>
-              {isPtPOpen ? '▼' : '▶'}
-            </button>
-            <div className='container_title'>Point to Point</div>
-          </div>
-          <div className={`ptp_box ${isPtPOpen ? 'open' : 'closed'}`}>
-            <PointToPoint
-              onFormSubmit={onFormSubmit}
-              startGeocoderRef={startGeocoderRef}
-              endGeocoderRef={endGeocoderRef}
-              geocoderRefs={geocoderRefs}
-              hideLegend={hideLegend}
-            />
-          </div>
-        </div>
+      <div className="legend-content">
+        <h2>MAP LEGEND</h2>
+        <ul>
+          <li><img src={require('../../assets/images/PTP_A_flat.png')} alt="Point to Point starting location" />Point to Point starting location</li>
+          <li><img src={require('../../assets/images/PTP_B_flat.png')} alt="Point to Point end location" />Point to Point end location</li>
+          <li><img src={require('../../assets/images/Waypoint_flat.png')} alt="Waypoint Marker" />Waypoint Marker</li>
+          <li><img src={require('../../assets/images/Park_flat.png')} alt="Park" />Park</li>
+          <li><img src={require('../../assets/images/PoI_flat.png')} alt="Point of Interest" />Point of Interest</li>
+          <li><img src={require('../../assets/images/Noise_flat.png')} alt="Noise Warning" />Noise Warning</li>
+          <li><img src={require('../../assets/images/Bin_flat.png')} alt="Trash Warning" />Trash Warning</li>
+          <li><img src={require('../../assets/images/Warning_flat.png')} alt="Multiple Warnings" />Multiple Warnings</li>
+          <li>
+            <img src={require('../../assets/images/pin_blue.png')} alt="Blue Pin" />
+            <img src={require('../../assets/images/pin_green.png')} alt="Green Pin" />
+            <img src={require('../../assets/images/pin_yellow.png')} alt="Yellow Pin" />
+            <img src={require('../../assets/images/pin_orange.png')} alt="Orange Pin" />
+            <img src={require('../../assets/images/pin_red.png')} alt="Red Pin" />
+          </li>
+          <li>Pin colour indicates level of colume, with red being the greatest.</li>
+          <li>Blue and Green pins represent items of interest to the user.</li>
+        </ul>
       </div>
     </div>
   );
 }
 
-export default Sidebar;
+export default Legend;
