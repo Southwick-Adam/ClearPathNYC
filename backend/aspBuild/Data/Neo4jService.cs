@@ -24,15 +24,18 @@ namespace aspBuild.Data
         /// <param name="NodeIDB"></param>
         /// <param name="quietscore"></param>
         /// <returns>Void</returns>
-        public async Task UpdateNodeRelationship(long NodeIDA, long NodeIDB, double quietscore)
+        public async Task UpdateNodeRelationship(long NodeIDA, long NodeIDB, double quietscore, string taxiZone)
         {
-            string query = @"MATCH (a:nodes{nodeid:$nodeida})-[r:PATH] -> (b:nodes{nodeid:$nodeidb}) set r.quietscore = $quietscore";
+            string query = @"
+            MATCH (a:nodes {nodeid: $nodeida, taxizone: $taxizonea})-[r:PATH]->(b:nodes {nodeid:$nodeidb})
+            SET r.quietscore = $quietscore";
 
             var parameters = new Dictionary<string, object>
             {
                 {"nodeida", NodeIDA},
                 {"nodeidb", NodeIDB},
-                {"quietscore", quietscore}
+                {"quietscore", quietscore},
+                {"taxizonea", taxiZone}
             };
 
             await using var session = _driver.AsyncSession(o => o.WithDatabase(_database));
