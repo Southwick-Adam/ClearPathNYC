@@ -22,6 +22,7 @@ namespace aspBuild.Data
             if (string.Equals(type, "taxi"))
             {
                 var ListJSONValues = JsonConvert.DeserializeObject<List<JSONObjectTaxi>>(json);
+                dict.Add("-1", 3);
                 foreach (var item in ListJSONValues)
                 {
                     dict.Add(item.LocationID, scoreMap[item.busyness_rank]);
