@@ -1,3 +1,5 @@
+using System.Diagnostics;
+
 namespace aspBuild.Data
 {
 
@@ -25,7 +27,6 @@ namespace aspBuild.Data
         /// <returns>Void</returns>
         public async Task UpdateTheDatabase()
         {
-            int counter = 0;
             
             Neo4jService neo4JService = new Neo4jService();
             Console.WriteLine("In function");
@@ -33,24 +34,27 @@ namespace aspBuild.Data
             // loops through the taxi keys - starting a loop by the zone its in
             foreach (var key in jsonDataTaxi.Keys)
             {
+                Stopwatch stopwatch = new Stopwatch();
+                stopwatch.Start();
+                
                 Console.WriteLine($"Current Taxi Zone: {key}");
                 int tempTaxi = jsonDataTaxi[key];
 
                 // calls all the data from the Taxi zone - checking each node and relationship for that zone
                 var result = await neo4JService.GetNodeInfoForUpdate(key);
+                Console.WriteLine(result.Count);
 
                 // loops through the result, calculating and updating the quietscore on each loop
                 foreach (var item in result)
                 {
                     var tempQuietScore = CalculateQuietScore(item.RelatedNodeMetroZone, item.RelatedNodeRoadRank, tempTaxi, item.RelatedNodePark, item.RelatedNodeThreeOneOne, item.Distance);
                     await neo4JService.UpdateNodeRelationship(item.NodeID, item.RelatedNodeID, tempQuietScore).ConfigureAwait(false);
-                    counter += 1;
                 }
-                Console.WriteLine($"Counter: {counter}");
+                stopwatch.Stop();
+                Console.WriteLine("Elapsed Time: {0} milliseconds", stopwatch.ElapsedMilliseconds);
             }
 
             neo4JService.Dispose();
-            Console.WriteLine($"Counter: {counter}");
             Console.WriteLine("out function");
 
         }
@@ -72,7 +76,7 @@ namespace aspBuild.Data
             if (park && string.Equals(metro, "-1")) { return ((road + taxi) / 2) * distance; }
             if (park) { return ((jsonDataSubway[metro] + road + taxi) / 3) * distance; }
             if (string.Equals(metro, "-1")) { return ((road + taxi) / 2) * distance; }
-            return (((jsonDataSubway[metro] + road + taxi) / 3) * distance;) 
+            return (((jsonDataSubway[metro] + road + taxi) / 3) * distance); 
         }
     }
 }
