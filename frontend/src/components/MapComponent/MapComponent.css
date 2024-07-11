@@ -71,3 +71,27 @@
 .multi_very_high_marker {
   background-image: url('../../assets/images/red_warning.png'); 
 }
+
+.map-container {
+  position: relative;
+  height: 100vh;
+  width: 100%;
+}
+
+.map {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  z-index: 0; /* Ensure the map is beneath the video */
+}
+
+.mapUnfoldVid {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  z-index: 1; /* Ensures the video is on top of the map */
+}

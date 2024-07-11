@@ -114,14 +114,6 @@ function fetchNoise311() {
   },
   {
     "coordinates": [
-      -73.92099719649754,
-      40.7942212081307
-    ],
-    "category": "Very High",
-    "Complaint_Type_collection": "Noise - Commercial, Noise - Street/Sidewalk, Noise - Vehicle"
-  },
-  {
-    "coordinates": [
       -73.98787850273274,
       40.721001394303194
     ],
@@ -1503,14 +1495,6 @@ function fetchNoise311() {
     ],
     "category": "High",
     "Complaint_Type_collection": "Noise - Commercial, Noise - Street/Sidewalk"
-  },
-  {
-    "coordinates": [
-      -73.94375091972218,
-      40.7674953432317
-    ],
-    "category": "High",
-    "Complaint_Type_collection": "Noise - Commercial"
   },
   {
     "coordinates": [
