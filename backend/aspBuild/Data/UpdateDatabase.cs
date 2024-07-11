@@ -69,10 +69,10 @@ namespace aspBuild.Data
         private double CalculateQuietScore(string metro, int road, int taxi, bool park, bool threeOneOne, double distance)
         {
             if (threeOneOne) { return 1000; }
-            if (park && string.Equals(metro, "-1")){return (road + taxi - 10)*distance;}
-            if (park) { return (jsonDataSubway[metro] + road + taxi - 10)*distance;}
-            if (string.Equals(metro, "-1")) { return (road + taxi)*distance;}
-            return (jsonDataSubway[metro] + road + taxi)*distance;
+            if (park && string.Equals(metro, "-1")) { return ((road + taxi) / 2) * distance; }
+            if (park) { return ((jsonDataSubway[metro] + road + taxi) / 3) * distance; }
+            if (string.Equals(metro, "-1")) { return ((road + taxi) / 2) * distance; }
+            return (((jsonDataSubway[metro] + road + taxi) / 3) * distance;) 
         }
     }
 }
