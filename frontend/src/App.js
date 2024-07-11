@@ -5,6 +5,8 @@ import SmogAlert from './components/SmogAlert/SmogAlert.js';
 import WeatherPanel from './components/WeatherPanel/WeatherPanel.js';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import SplashScreen from './components/SplashScreen/SplashScreen.js';
+import useStore from './store/store.js'
+
 
 function App() {
   const [route, setRoute] = useState(null);
@@ -14,6 +16,7 @@ function App() {
   const startGeocoderRef = useRef(null);
   const endGeocoderRef = useRef(null);
   const geocoderRefs = [useRef(null), useRef(null), useRef(null), useRef(null), useRef(null)];
+  const { isNightMode, setNightMode } = useStore();
 
   async function handleFormSubmit(formType, formData) {
     console.log('handleFormSubmit called with formType:', formType);
@@ -29,21 +32,25 @@ function App() {
 
   async function fetchRoute(formData) {
     const { coordinates } = formData;
-
+  
     const params = new URLSearchParams();
     coordinates.forEach((coord) => {
       params.append('coord1', parseFloat(coord[1])); // Latitude as double
       params.append('coord2', parseFloat(coord[0])); // Longitude as double
     });
-
+  
     const requestUrl = `http://localhost:5056/route?${params.toString()}`;
     console.log('Request URL:', requestUrl);
-
+  
     try {
       const response = await fetch(requestUrl);
       const responseText = await response.text();
       console.log('Response Text:', responseText);
       const data = JSON.parse(responseText);
+  
+      // Update the route in the store
+      useStore.getState().setRoute(data);
+  
       return data;
     } catch (error) {
       console.error('Error fetching route:', error);
@@ -71,6 +78,12 @@ function App() {
   useEffect(() => {
     fetchWeatherData();
   }, []);
+
+  useEffect(() => {
+    const hour = new Date().getHours();
+    const isNight = hour >= 18 || hour <= 6; // Night mode between 6 PM and 6 AM
+    setNightMode(isNight);
+  }, [setNightMode]);
 
   const epaIndex = weather ? weather.current.air_quality['us-epa-index'] : null;
 

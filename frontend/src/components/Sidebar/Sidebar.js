@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import './Sidebar.css';
 import Loop from '../Loop/Loop.js';
 import PointToPoint from '../PointToPoint/PointToPoint.js';
+import NightModeButton from '../NightModeButton/NightModeButton.js';
+import ExportButton from '../ExportButton/ExportButton.js';
 
 function Sidebar({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoderRefs }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -73,6 +75,10 @@ function Sidebar({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoderRefs 
               hideSidebar={hideSidebar}  // Pass hideSidebar function to PointToPoint
             />
           </div>
+        </div>
+        <div className='night-export-container'>
+          <NightModeButton />
+          <ExportButton />
         </div>
         <div className="sidebar_logo">
           <img src={require('../../assets/images/ClearPath_logo.png')} alt="ClearPath NYC logo monochrome" />
