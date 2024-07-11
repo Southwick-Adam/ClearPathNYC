@@ -29,6 +29,9 @@ namespace aspBuild.Data
         {
             
             Neo4jService neo4JService = new Neo4jService();
+
+            await neo4JService.PreRunQueries();
+
             Console.WriteLine("In function");
 
             // loops through the taxi keys - starting a loop by the zone its in
