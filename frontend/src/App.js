@@ -4,12 +4,12 @@ import Sidebar from './components/Sidebar/Sidebar.js';
 import SmogAlert from './components/SmogAlert/SmogAlert.js';
 import WeatherPanel from './components/WeatherPanel/WeatherPanel.js';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import { samplegeojson } from './smallergeojson.js';
 import SplashScreen from './components/SplashScreen/SplashScreen.js';
 
 function App() {
   const [route, setRoute] = useState(null);
-  const [weather, setWeather] = useState(null); // State to hold weather data
+  const [weather, setWeather] = useState(null);
+  const [playVideo, setPlayVideo] = useState(false);
 
   const startGeocoderRef = useRef(null);
   const endGeocoderRef = useRef(null);
@@ -19,7 +19,6 @@ function App() {
     console.log('handleFormSubmit called with formType:', formType);
     console.log(`Form data for ${formType} sent to backend: `, formData);
 
-    // Fetch the route data from the backend
     const routeData = await fetchRoute(formData);
 
     if (routeData) {
@@ -31,7 +30,6 @@ function App() {
   async function fetchRoute(formData) {
     const { coordinates } = formData;
 
-    // Create query parameters from coordinates
     const params = new URLSearchParams();
     coordinates.forEach((coord) => {
       params.append('coord1', parseFloat(coord[1])); // Latitude as double
@@ -71,14 +69,14 @@ function App() {
   }
 
   useEffect(() => {
-    fetchWeatherData(); // Fetch weather data when component mounts
+    fetchWeatherData();
   }, []);
 
   const epaIndex = weather ? weather.current.air_quality['us-epa-index'] : null;
 
   return (
     <div className="App">
-      <SplashScreen />
+      <SplashScreen setPlayVideo={setPlayVideo} />
       <SmogAlert epaIndex={epaIndex} />
       <Sidebar
         onFormSubmit={handleFormSubmit}
@@ -91,8 +89,9 @@ function App() {
         startGeocoderRef={startGeocoderRef}
         endGeocoderRef={endGeocoderRef}
         geocoderRefs={geocoderRefs}
+        playVideo={playVideo} // Pass playVideo prop
       />
-      <WeatherPanel weather={weather} /> {/* Pass weather data to WeatherPanel */}
+      <WeatherPanel weather={weather} />
     </div>
   );
 }
