@@ -1310,13 +1310,6 @@ function simulateFetchParks() {
     ]
   },
   {
-    "name": "East River Walk",
-    "coordinates": [
-      -73.93973853317604,
-      40.78420969725958
-    ]
-  },
-  {
     "name": "Collect Pond Park",
     "coordinates": [
       -74.0018269248935,
