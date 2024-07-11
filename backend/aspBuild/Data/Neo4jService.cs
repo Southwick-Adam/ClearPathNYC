@@ -24,15 +24,18 @@ namespace aspBuild.Data
         /// <param name="NodeIDB"></param>
         /// <param name="quietscore"></param>
         /// <returns>Void</returns>
-        public async Task UpdateNodeRelationship(long NodeIDA, long NodeIDB, double quietscore)
+        public async Task UpdateNodeRelationship(long NodeIDA, long NodeIDB, double quietscore, string taxiZone)
         {
-            string query = @"MATCH (a:nodes{nodeid:$nodeida})-[r:PATH] -> (b:nodes{nodeid:$nodeidb}) set r.quietscore = $quietscore";
+            string query = @"
+            MATCH (a:nodes {nodeid: $nodeida, taxizone: $taxizonea})-[r:PATH]->(b:nodes {nodeid:$nodeidb})
+            SET r.quietscore = $quietscore";
 
             var parameters = new Dictionary<string, object>
             {
                 {"nodeida", NodeIDA},
                 {"nodeidb", NodeIDB},
-                {"quietscore", quietscore}
+                {"quietscore", quietscore},
+                {"taxizonea", taxiZone}
             };
 
             await using var session = _driver.AsyncSession(o => o.WithDatabase(_database));
@@ -110,6 +113,32 @@ namespace aspBuild.Data
                 Console.WriteLine(ex.ToString());
             }
             return returnList;
+        }
+
+
+        public async Task PreRunQueries()
+        {
+            List<string> prerunQueries = [];
+            prerunQueries.Add(@"MATCH (n:nodes) WHERE n.metrozone = 'TRAM2' SET n.metrozone = '2' RETURN n;");
+            prerunQueries.Add(@"MATCH (n:nodes) WHERE n.metrozone = 'TRAM1' SET n.metrozone = '1' RETURN n;");
+            prerunQueries.Add(@"CREATE CONSTRAINT nodeid_unique IF NOT EXISTS FOR (n:nodes) REQUIRE n.nodeid IS UNIQUE;");
+            prerunQueries.Add(@"CREATE INDEX nodeid_taxizone_index IF NOT EXISTS FOR (n:nodes) ON (n.nodeid, n.taxizone);");
+
+            using (var session = _driver.AsyncSession())
+            {
+                foreach (var query in prerunQueries)
+                {
+                    try
+                    {
+                        await session.RunAsync(query);
+                        Console.WriteLine($"Query Completed: {query}");
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.ToString());
+                    }
+                }
+            }
         }
 
         public void Dispose()

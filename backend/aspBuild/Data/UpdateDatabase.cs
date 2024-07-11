@@ -29,6 +29,9 @@ namespace aspBuild.Data
         {
             
             Neo4jService neo4JService = new Neo4jService();
+
+            await neo4JService.PreRunQueries();
+
             Console.WriteLine("In function");
 
             // loops through the taxi keys - starting a loop by the zone its in
@@ -48,7 +51,7 @@ namespace aspBuild.Data
                 foreach (var item in result)
                 {
                     var tempQuietScore = CalculateQuietScore(item.RelatedNodeMetroZone, item.RelatedNodeRoadRank, tempTaxi, item.RelatedNodePark, item.RelatedNodeThreeOneOne, item.Distance);
-                    await neo4JService.UpdateNodeRelationship(item.NodeID, item.RelatedNodeID, tempQuietScore).ConfigureAwait(false);
+                    await neo4JService.UpdateNodeRelationship(item.NodeID, item.RelatedNodeID, tempQuietScore, key).ConfigureAwait(false);
                 }
                 stopwatch.Stop();
                 Console.WriteLine("Elapsed Time: {0} milliseconds", stopwatch.ElapsedMilliseconds);
