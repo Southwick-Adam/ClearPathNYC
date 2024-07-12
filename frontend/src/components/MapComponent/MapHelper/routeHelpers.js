@@ -66,34 +66,72 @@ function getColorForQuietness(score) {
   if (score < 200) return 'orange'; // Yellow for medium scores
   return '#FF0000'; // Red for high scores (noisy)
 }
-export function addRouteMarkers(mapRef, routeData, startMarkerRef, endMarkerRef) {
+
+// Function to add markers with animations
+export function addRouteMarkers(mapRef, routeData, startMarkerRef, endMarkerRef, waypointRefs) {
   const startCoord = routeData.features[0].geometry.coordinates[0];
   const endCoord = routeData.features[0].geometry.coordinates[routeData.features[0].geometry.coordinates.length - 1];
 
-  if (endMarkerRef.current) {
-    endMarkerRef.current.remove();
-    endMarkerRef.current = null;
-  }
+  // Clear existing waypoint markers
+  waypointRefs.forEach(ref => {
+    if (ref.current) {
+      ref.current.remove();
+      ref.current = null;
+    }
+  });
 
-  if (startMarkerRef.current) {
-    startMarkerRef.current.setLngLat(startCoord);
-  } else {
-    const startMarker = document.createElement('div');
-    startMarker.className = 'marker start_marker';
+  const { waypointCord1, waypointCord2, waypointCord3, waypointCord4, waypointCord5, visibleWaypoints } = useStore.getState();
 
-    startMarkerRef.current = new mapboxgl.Marker({
-      element: startMarker,
-      offset: [0, -15]
-    })
-      .setLngLat(startCoord)
-      .addTo(mapRef.current);
+  const waypointCoords = [waypointCord1, waypointCord2, waypointCord3, waypointCord4, waypointCord5];
+  const waypointClasses = ['waypoint1_marker', 'waypoint2_marker', 'waypoint3_marker', 'waypoint4_marker', 'waypoint5_marker'];
+
+  // Draw markers in sequence
+  let timeout = 0;
+
+  // Add start marker
+  setTimeout(() => {
+    if (startMarkerRef.current) {
+      startMarkerRef.current.setLngLat(startCoord);
+    } else {
+      const startMarker = document.createElement('div');
+      startMarker.className = 'marker start_marker bounce'; // Add bounce class
+
+      startMarkerRef.current = new mapboxgl.Marker({
+        element: startMarker,
+        offset: [0, -15]
+      })
+        .setLngLat(startCoord)
+        .addTo(mapRef.current);
 
       animateMarkers($(startMarker));
+    }
+  }, timeout);
+
+  timeout += 1000; // Adjust delay as needed
+
+  // Add waypoint markers
+  for (let i = 0; i < visibleWaypoints; i++) {
+    if (waypointCoords[i]) {
+      setTimeout(() => {
+        const waypointMarker = document.createElement('div');
+        waypointMarker.className = `marker ${waypointClasses[i]}`;
+
+        waypointRefs[i].current = new mapboxgl.Marker({
+          element: waypointMarker,
+          offset: [0, -15]
+        })
+          .setLngLat(waypointCoords[i])
+          .addTo(mapRef.current);
+
+        animateMarkers($(waypointMarker));
+      }, timeout);
+
+      timeout += 500; // Adjust delay as needed
+    }
   }
 
-  const isLoop = routeData.features[0].properties.isLoop;
-
-  if (!isLoop) {
+  // Add end marker
+  setTimeout(() => {
     if (endMarkerRef.current) {
       endMarkerRef.current.setLngLat(endCoord);
     } else {
@@ -107,13 +145,14 @@ export function addRouteMarkers(mapRef, routeData, startMarkerRef, endMarkerRef)
         .setLngLat(endCoord)
         .addTo(mapRef.current);
 
-        animateMarkers($(endMarker));
+      animateMarkers($(endMarker));
     }
-  }
+  }, timeout);
 }
 
+
 export function zoomToRoute(mapRef, route, helpers) {
-  const { plotRoutePOI, poiGeojson, fetchNoise311, fetchGarbage311, fetchOther311, fetchMulti311, add311Markers, add311Multiple } = helpers;
+  const { fetchNoise311, fetchGarbage311, fetchOther311, fetchMulti311, add311Markers, add311Multiple } = helpers;
 
   if (!route.features || !Array.isArray(route.features) || route.features.length === 0) {
     console.error('Invalid route data');
@@ -129,9 +168,22 @@ export function zoomToRoute(mapRef, route, helpers) {
   bounds = bounds.extend([northEast.lng + expandFactor, northEast.lat + expandFactor]);
   bounds = bounds.extend([southWest.lng - expandFactor, southWest.lat - expandFactor]);
 
-  mapRef.current.fitBounds(bounds, { padding: 100 });
+  const pitch = 50;
+  const bearing = -2.6;
+  const center = bounds.getCenter();
+  const zoom = mapRef.current.getZoom();
 
-  plotRoutePOI(mapRef, poiGeojson, bounds);
+  setTimeout(() => {
+    mapRef.current.easeTo({
+      center: center,
+      zoom: zoom,
+      pitch: pitch,
+      bearing: bearing,
+      duration: 1000
+    });
+  }, 0);
+
+  mapRef.current.fitBounds(bounds, { padding: 100 });
 
   const noise311 = fetchNoise311().filter(location => bounds.contains(location.coordinates));
   const garbage311 = fetchGarbage311().filter(location => bounds.contains(location.coordinates));

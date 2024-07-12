@@ -18,6 +18,22 @@
       }
   }
 
+/* Add this to your CSS file */
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    top: 0;
+  }
+  40% {
+    top: -30px;
+  }
+  60% {
+    top: -15px;
+  }
+}
+
+.bounce {
+  animation: bounce 2s infinite;
+}
 
 .marker {
     width: 30px;
@@ -28,10 +44,30 @@
 
 .start_marker{
     background-image: url('../../assets/images/PTP_A.png');
+    width: 45px;
+    height: 66.6px;
+}
+
+.waypoint1_marker{
+  background-image: url(../../assets/images/waypoint1.png)
+}
+.waypoint2_marker{
+  background-image: url(../../assets/images/waypoint2.png)
+}
+.waypoint3_marker{
+  background-image: url(../../assets/images/waypoint3.png)
+}
+.waypoint4_marker{
+  background-image: url(../../assets/images/waypoint4.png)
+}
+.waypoint5_marker{
+  background-image: url(../../assets/images/waypoint5.png)
 }
 
 .end_marker{
     background-image: url('../../assets/images/PTP_B.png');
+    width: 45px;
+    height: 66.6px;
 }
 
 .poi_marker{
