@@ -12,14 +12,36 @@ export function addRouteToMap(mapRef) {
     return;
   }
 
+  // Extract coordinates and quietness score from the route data
+  const coordinates = route.features[0].geometry.coordinates;
+  const quietnessScore = route.features[0].properties.quietness_score;
+
+  // Create a GeoJSON line string with properties including quietness score
+  const lineString = {
+    type: 'Feature',
+    properties: {},
+    geometry: {
+      type: 'LineString',
+      coordinates: coordinates
+    }
+  };
+
   if (mapRef.current.getSource('route')) {
-    mapRef.current.getSource('route').setData(route);
+    mapRef.current.getSource('route').setData(lineString);
   } else {
     mapRef.current.addSource('route', {
       type: 'geojson',
-      data: route,
+      data: lineString,
       lineMetrics: true,
     });
+
+    // Prepare the line gradient stops based on quietness score
+    const lineGradient = ['interpolate', ['linear'], ['line-progress']];
+    for (let i = 0; i < quietnessScore.length; i++) {
+      const progress = i / (quietnessScore.length - 1);
+      const color = getColorForQuietness(quietnessScore[i]);
+      lineGradient.push(progress, color);
+    }
 
     mapRef.current.addLayer({
       id: 'route',
@@ -31,20 +53,19 @@ export function addRouteToMap(mapRef) {
       },
       paint: {
         'line-width': 10,
-        'line-gradient': [
-          'interpolate',
-          ['linear'],
-          ['line-progress'],
-          0, '#ff0000',
-          0.33, '#ffff00',
-          0.66, '#00ff00',
-          1, '#00ff00'
-        ],
+        'line-gradient': lineGradient,
       },
     });
   }
 }
 
+// Function to map quietness score to a color
+function getColorForQuietness(score) {
+  // Define a color scale for quietness scores (example: green to red)
+  if (score < 100) return '#00FF00'; // Green for low scores (quiet)
+  if (score < 200) return 'orange'; // Yellow for medium scores
+  return '#FF0000'; // Red for high scores (noisy)
+}
 export function addRouteMarkers(mapRef, routeData, startMarkerRef, endMarkerRef) {
   const startCoord = routeData.features[0].geometry.coordinates[0];
   const endCoord = routeData.features[0].geometry.coordinates[routeData.features[0].geometry.coordinates.length - 1];
