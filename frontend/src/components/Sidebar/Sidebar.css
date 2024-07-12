@@ -1,60 +1,70 @@
 .sidebar {
-    position: fixed;
-    top: 0;
-    left: -350px; /* Start hidden off-screen */
-    width: 350px;
-    height: 100%;
-    background-color: #f8f9fa;
-    box-shadow: 2px 0 5px rgba(0,0,0,0.5);
-    transition: left 0.3s ease;
-    z-index: 1000;
-  }
-  
-  .sidebar.open {
-    left: 0;
-  }
-  
-  .toggle-btn {
-    position: absolute;
-    top: calc(50vh - 100px);
-    right: -38px;
-    transform-origin: top right;
-    height: 200px;
-    border-radius: 0 40px 40px 0;
-  }
-  
-  .sidebar-content {
-    padding: 20px;
-  }
-  
-  .busy_go_row {
-    flex-direction: row;
-    display: flex;
-    align-items: baseline;
-    justify-content: center;
-  }
+  position: fixed;
+  top: 0;
+  left: -350px; /* Start hidden off-screen */
+  width: 350px;
+  height: 100%;
+  background-color: #f8f9fa;
+  box-shadow: 2px 0 5px rgba(0,0,0,0.5);
+  transition: left 1s ease; /* Slower transition duration */
+  z-index: 1000;
+}
 
-  .container_title{
-    font-size: 38px;
-    font-weight: bold;
-  }
+.sidebar.open {
+  left: 0;
+}
 
-  .toggle_title_row{
-    display: flex;
-  }
-  .ptp_box.open, .loop_box.open {
-    display: block;
-  }
-  
-  .ptp_box.closed, .loop_box.closed {
-    display: none;
-  }
+.toggle-btn {
+  position: absolute;
+  top: calc(50vh - 100px);
+  right: -38px;
+  transform-origin: top right;
+  height: 200px;
+  border-radius: 0 40px 40px 0;
+}
+
+.sidebar-content {
+  padding: 20px;
+}
+
+.busy_go_row {
+  flex-direction: row;
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+}
+
+.container_title {
+  font-size: 38px;
+  font-weight: bold;
+}
+
+.toggle_title_row {
+  display: flex;
+}
+
+.ptp_box, .loop_box {
+  max-height: 0;
+  /* overflow: hidden; */
+  transition: max-height 2s ease, opacity 2s ease;
+  opacity: 0;
+}
+
+.ptp_box.open, .loop_box.open {
+  max-height: 500px; /* Adjust based on the content height */
+  opacity: 1;
+}
+
+.ptp_box.closed, .loop_box.closed {
+  max-height: 0;
+  opacity: 0;
+}
 
 .ptp_wrapper, .loop_wrapper {
   border-bottom: 1px solid black;
 }
 
 /* After MVP: Remove this id styling once the loop functionality is ready */
-#loop_toggle_title_row{
-  display:none;
+#loop_toggle_title_row {
+  display: none;
 }

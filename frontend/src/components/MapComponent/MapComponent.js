@@ -1,5 +1,5 @@
-
 import React, { useRef, useEffect } from 'react';
+import ReactDOM from 'react-dom';
 import './MapComponent.css';
 import { MAPBOX_TOKEN, MAPBOX_STYLE_URL } from '../../config.js';
 import mapboxgl from 'mapbox-gl';
@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import simulateFetchParks from '../../assets/geodata/parks.js';
 import fetchInitialPOI from '../../assets/geodata/initialPOI.js';
 import floraImage from '../../assets/images/flora.png';
-import poiImage from '../../assets/images/POI_marker_blue.png'; // Change later to include a blue info icon
+import poiImage from '../../assets/images/POI_marker_blue.png';
 import { convertToGeoJSON } from './MapHelper/geojsonHelpers.js';
 import { addRouteMarkers, addRouteToMap } from './MapHelper/routeHelpers.js';
 import { addMarkers, add311Markers, plotRoutePOI, add311Multiple } from './MapHelper/markerHelpers.js';
@@ -16,12 +16,13 @@ import fetchGarbage311 from '../../assets/geodata/fetchGarbage311.js';
 import fetchOther311 from '../../assets/geodata/fetchOther311.js';
 import poiGeojson from '../../assets/geodata/171_POIs.json';
 import fetchMulti311 from '../../assets/geodata/fetchMulti311.js';
-import useStore from '../../store/store.js'; // Adjust the import path accordingly
+import useStore from '../../store/store.js';
+import PopupContent from '../PopupContent/PopupContent.js';
 
 function MapComponent({ route, startGeocoderRef, endGeocoderRef, geocoderRefs }) {
   const mapContainerRef = useRef(null);
   const mapRef = useRef(null);
-  const isMapLoadedRef = useRef(false); // Ref to track if the map is loaded
+  const isMapLoadedRef = useRef(false);
   const startMarkerRef = useRef(null);
   const endMarkerRef = useRef(null);
 
@@ -60,42 +61,39 @@ function MapComponent({ route, startGeocoderRef, endGeocoderRef, geocoderRefs })
   };
 
   useEffect(() => {
-    if (mapRef.current) return; // Initialize map only once
+    if (mapRef.current) return;
     mapRef.current = new mapboxgl.Map({
       container: mapContainerRef.current,
       style: MAPBOX_STYLE_URL,
       center: [-73.9712, 40.7831],
       zoom: 13,
-      minZoom: 13, // Set the minimum zoom level
-      maxZoom: 20, // Set the maximum zoom level
-      accessToken: MAPBOX_TOKEN
+      minZoom: 13,
+      maxZoom: 20,
+      accessToken: MAPBOX_TOKEN,
+      pitch: 50,
+      bearing: -2.6
     });
 
     mapRef.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
 
     mapRef.current.on('load', () => {
-      isMapLoadedRef.current = true; // Set the map as loaded
+      isMapLoadedRef.current = true;
 
-      // Fetch the initial API data for map display
       const initialPOI = fetchInitialPOI();
-      // Fetch the park data for map display
       const parkData = simulateFetchParks();
       addMarkers(mapRef, initialPOI, 'poi');
       const parkGeoJson = convertToGeoJSON(parkData);
 
-      // Load markers for clustering: Parks
       mapRef.current.loadImage(floraImage, (error, image) => {
         if (error) throw error;
         mapRef.current.addImage('flora-marker', image);
       });
 
-      // Load markers for clustering: POIs near route
       mapRef.current.loadImage(poiImage, (error, image) => {
         if (error) throw error;
         mapRef.current.addImage('poi-marker', image);
       });
 
-      // Not using clustering helper function as it causes bug with flora icon display
       mapRef.current.addSource('parks', {
         type: 'geojson',
         data: parkGeoJson,
@@ -104,7 +102,6 @@ function MapComponent({ route, startGeocoderRef, endGeocoderRef, geocoderRefs })
         clusterRadius: 50
       });
 
-      // Clusters of park are displayed using green circles
       mapRef.current.addLayer({
         id: 'clusters',
         type: 'circle',
@@ -128,7 +125,8 @@ function MapComponent({ route, startGeocoderRef, endGeocoderRef, geocoderRefs })
             30,
             750,
             40
-          ]
+          ],
+          'circle-opacity': 0.6
         }
       });
 
@@ -147,7 +145,6 @@ function MapComponent({ route, startGeocoderRef, endGeocoderRef, geocoderRefs })
         }
       });
 
-      // Individual parks are displayed using the floral marker
       mapRef.current.addLayer({
         id: 'unclustered-point',
         type: 'symbol',
@@ -164,10 +161,25 @@ function MapComponent({ route, startGeocoderRef, endGeocoderRef, geocoderRefs })
         const coordinates = e.features[0].geometry.coordinates.slice();
         const { name } = e.features[0].properties;
 
-        new mapboxgl.Popup()
+        const popupNode = document.createElement('div');
+        ReactDOM.render(
+          <PopupContent
+            coordinates={coordinates}
+            name={name}
+            setStartCord={setStartCord}
+            setEndCord={setEndCord}
+            setWaypointAndIncrease={setWaypointAndIncrease}
+            updateStartInput={updateStartInput}
+            updateEndInput={updateEndInput}
+            updateWaypointInput={updateWaypointInput}
+            geocoderRefs={geocoderRefs}
+          />,
+          popupNode
+        );
+
+        new mapboxgl.Popup({ offset: 25, className: 'custom-popup' })
           .setLngLat(coordinates)
-          .setHTML('')
-          .setDOMContent(createPopupContent(coordinates, name))
+          .setDOMContent(popupNode)
           .addTo(mapRef.current);
       });
 
@@ -203,7 +215,7 @@ function MapComponent({ route, startGeocoderRef, endGeocoderRef, geocoderRefs })
         );
       });
     });
-  }, []); // Empty dependency array ensures this runs only once
+  }, []);
 
   useEffect(() => {
     if (!route || !mapRef.current || !isMapLoadedRef.current) return;
@@ -215,9 +227,8 @@ function MapComponent({ route, startGeocoderRef, endGeocoderRef, geocoderRefs })
       addRouteToMap(mapRef, route);
       addRouteMarkers(mapRef, route, startMarkerRef, endMarkerRef);
     }
-    addRouteMarkers(mapRef, route, startMarkerRef, endMarkerRef); // Ensure markers are added whenever the route changes
+    addRouteMarkers(mapRef, route, startMarkerRef, endMarkerRef);
 
-    // Zoom to the route whenever it changes
     zoomToRoute(route);
   }, [route]);
 
@@ -232,8 +243,7 @@ function MapComponent({ route, startGeocoderRef, endGeocoderRef, geocoderRefs })
       return bounds.extend(coord);
     }, new mapboxgl.LngLatBounds(coordinates[0], coordinates[0]));
 
-     // Increase the bounds for displaying 311 plotting effect
-    const expandFactor = 0.001; // Adjust this factor as needed to increase the bounds
+    const expandFactor = 0.001;
     const northEast = bounds.getNorthEast();
     const southWest = bounds.getSouthWest();
     bounds = bounds.extend([northEast.lng + expandFactor, northEast.lat + expandFactor]);
@@ -245,7 +255,6 @@ function MapComponent({ route, startGeocoderRef, endGeocoderRef, geocoderRefs })
 
     plotRoutePOI(mapRef, poiGeojson, bounds);
 
-    // Filter and plot the POIs within the bounds
     const noise311 = fetchNoise311().filter(location => bounds.contains(location.coordinates));
     const garbage311 = fetchGarbage311().filter(location => bounds.contains(location.coordinates));
     const other311 = fetchOther311().filter(location => bounds.contains(location.coordinates));
@@ -255,42 +264,6 @@ function MapComponent({ route, startGeocoderRef, endGeocoderRef, geocoderRefs })
     add311Markers(mapRef, garbage311, 'Garbage');
     add311Markers(mapRef, other311, 'Other');
     add311Multiple(mapRef, multi311);
-  };
-
-  const createPopupContent = (coordinates, name) => {
-    const container = document.createElement('div');
-    const title = document.createElement('div');
-    title.innerText = name;
-    const setStartButton = document.createElement('button');
-    setStartButton.innerText = 'Set Start';
-    setStartButton.onclick = async () => {
-      setStartCord(coordinates);
-      await updateStartInput(coordinates);
-    };
-
-    const setEndButton = document.createElement('button');
-    setEndButton.innerText = 'Set End';
-    setEndButton.onclick = async () => {
-      setEndCord(coordinates);
-      await updateEndInput(coordinates);
-    };
-
-    const setWaypointButton = document.createElement('button');
-    setWaypointButton.innerText = 'Set Waypoint';
-    setWaypointButton.onclick = async () => {
-      const index = setWaypointAndIncrease(coordinates);
-      console.log(`New waypoint index: ${index}`);
-      if (index !== -1 && index < 5) {
-        await updateWaypointInput(index, coordinates);
-      }
-    };
-
-    container.appendChild(title);
-    container.appendChild(setStartButton);
-    container.appendChild(setEndButton);
-    container.appendChild(setWaypointButton);
-
-    return container;
   };
 
   return <div ref={mapContainerRef} className='map' />;
