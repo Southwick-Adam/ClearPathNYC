@@ -33,6 +33,8 @@ function MapComponent({ route, startGeocoderRef, endGeocoderRef, geocoderRefs, p
   const endMarkerRef = useRef(null);
   const [showMap, setShowMap] = useState(false);
   const [videoEnded, setVideoEnded] = useState(false);
+  const waypointRefs = [useRef(null), useRef(null), useRef(null), useRef(null), useRef(null)];
+
 
   const {
     setStartCord, setEndCord, setWaypointAndIncrease,
@@ -142,7 +144,7 @@ function MapComponent({ route, startGeocoderRef, endGeocoderRef, geocoderRefs, p
     clearMapFeatures(mapRef); // Clear existing POI markers and clusters
 
     addRouteToMap(mapRef, route);
-    addRouteMarkers(mapRef, route, startMarkerRef, endMarkerRef);
+    addRouteMarkers(mapRef, route, startMarkerRef, endMarkerRef,waypointRefs);
 
     zoomToRoute(mapRef, route, {
       plotRoutePOI,

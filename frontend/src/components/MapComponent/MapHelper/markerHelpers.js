@@ -2,6 +2,8 @@ import mapboxgl from 'mapbox-gl';
 import $ from 'jquery';
 import ReactDOM from 'react-dom';
 import PopupContent from '../../PopupContent/PopupContent';
+import poijson from '../../../assets/geodata/171_POIs.json'
+
 
 
 export function addMarkers(mapRef, markerData, markerType) {
@@ -85,25 +87,62 @@ function getMultiMarkerType(severity) {
   return severity === 'Very High' ? 'multi_very_high' : 'multi_high';
 }
 
-
-export function plotRoutePOI(mapRef, geojsonData, bounds) {
-  const isWithinBounds = (lngLat, bounds) => {
-    const [lng, lat] = lngLat;
-    return lng >= bounds.getWest() && lng <= bounds.getEast() && lat >= bounds.getSouth() && lat <= bounds.getNorth();
+export function plotRoutePOI(mapRef, geojsonData, helpers) {
+  // No filtering by bounds, just use all features
+  const allFeaturesGeojsonData = {
+    type: 'FeatureCollection',
+    features: geojsonData.features
   };
 
-  const filteredFeatures = geojsonData.features.filter(feature => {
-    const { coordinates } = feature.geometry;
-    return isWithinBounds(coordinates, bounds);
+  // Add all POIs as a clustered source
+  addClusteredLayer(mapRef, allFeaturesGeojsonData, 'route-pois', 'poi-marker', '#00cffa');
+
+  // Add custom popup content for unclustered points
+  mapRef.current.on('click', 'route-pois-unclustered-point', e => {
+    const coordinates = e.features[0].geometry.coordinates.slice();
+    const { name } = e.features[0].properties;
+
+    // Remove any existing popups
+    const existingPopups = document.getElementsByClassName('mapboxgl-popup');
+    while (existingPopups.length > 0) {
+      existingPopups[0].remove();
+    }
+
+    const popupNode = document.createElement('div');
+    ReactDOM.render(
+      <PopupContent
+        coordinates={coordinates}
+        name={name}
+        setStartCord={helpers.setStartCord}
+        setEndCord={helpers.setEndCord}
+        setWaypointAndIncrease={helpers.setWaypointAndIncrease}
+        updateStartInput={helpers.updateStartInput}
+        updateEndInput={helpers.updateEndInput}
+        updateWaypointInput={helpers.updateWaypointInput}
+        geocoderRefs={helpers.geocoderRefs}
+      />,
+      popupNode
+    );
+
+    new mapboxgl.Popup({ offset: 25, className: 'custom-popup' })
+      .setLngLat(coordinates)
+      .setDOMContent(popupNode)
+      .addTo(mapRef.current);
   });
 
-  const filteredGeojsonData = {
-    type: 'FeatureCollection',
-    features: filteredFeatures
-  };
+  mapRef.current.on('mouseenter', 'route-pois-clusters', () => {
+    mapRef.current.getCanvas().style.cursor = 'pointer';
+  });
+  mapRef.current.on('mouseleave', 'route-pois-clusters', () => {
+    mapRef.current.getCanvas().style.cursor = '';
+  });
 
-  // Add the filtered POIs as a clustered source
-  addClusteredLayer(mapRef, filteredGeojsonData, 'route-pois', 'poi-marker', '#00cffa');
+  mapRef.current.on('mouseenter', 'route-pois-unclustered-point', () => {
+    mapRef.current.getCanvas().style.cursor = 'pointer';
+  });
+  mapRef.current.on('mouseleave', 'route-pois-unclustered-point', () => {
+    mapRef.current.getCanvas().style.cursor = '';
+  });
 }
 
 
@@ -214,7 +253,7 @@ export function addClusteredLayer(mapRef, geoJsonData, sourceId, imageId, cluste
 
 export function clearMapFeatures(mapRef) {
   // Function to ckear features close to the route
-  const sourceIds = ['route-pois','poi-marker','route-noise-h','route-noise-vh','route-garbage-h','route-other-h','route-multi-h','route-multi-vh']; 
+  const sourceIds = ['route-noise-h','route-noise-vh','route-garbage-h','route-other-h','route-multi-h','route-multi-vh']; 
 
   sourceIds.forEach(sourceId => {
     if (mapRef.current.getSource(sourceId)) {
@@ -248,10 +287,10 @@ export function addMapFeatures(mapRef, helpers) {
     geocoderRefs
   } = helpers;
 
-  const initialPOI = fetchInitialPOI();
   const parkData = simulateFetchParks();
-  addMarkers(mapRef, initialPOI, 'poi');
   const parkGeoJson = convertToGeoJSON(parkData);
+  plotRoutePOI(mapRef, poijson, helpers);
+
 
   mapRef.current.loadImage(floraImage, (error, image) => {
     if (error) throw error;
