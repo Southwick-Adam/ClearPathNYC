@@ -4,7 +4,7 @@
   left: -350px; /* Start hidden off-screen */
   width: 350px;
   height: 100%;
-  background-color: #2e323f;
+  background-color: #f9faf3;
   box-shadow: 2px 0 5px rgba(0,0,0,0.5);
   transition: left 1s ease; /* Slower transition duration */
   z-index: 1000;
@@ -22,9 +22,9 @@
   transform-origin: top right;
   height: 200px;
   border-radius: 0 40px 40px 0;
-  background-color: #2e323f;
+  background-color: #f9faf3;
   box-shadow: 0 5px rgba(0,0,0,0.5);
-  border-color: #2e323f;
+  border-color: #f9faf3;
   color: #198754;
 }
 
@@ -49,8 +49,8 @@
 }
 
 .toggle-btn:hover {
-  background-color: #444a5c;
-  border-color: #444a5c;
+  background-color: #e7e4e4;
+  border-color: #e7e4e4;
   color: #31b678;
 }
 
@@ -75,13 +75,6 @@
 .ptp_wrapper, .loop_wrapper {
   border-bottom: 1px solid black;
 }
-.sidebar {
-  color: rgb(224, 221, 221);
-}
-
-.container_title {
-  color: rgb(224, 221, 221);
-}
 
 .sidebar_logo img {
   width: 300px;
@@ -94,10 +87,4 @@
 /* After MVP: Remove this id styling once the loop functionality is ready */
 #loop_toggle_title_row {
   display: none;
-}
-
-.night-export-container{
-  display: flex;
-  justify-content: center;
-  margin-top: 10px;
 }

@@ -5,7 +5,6 @@ import SmogAlert from './components/SmogAlert/SmogAlert.js';
 import WeatherPanel from './components/WeatherPanel/WeatherPanel.js';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import SplashScreen from './components/SplashScreen/SplashScreen.js';
-import useStore from './store/store.js'
 
 
 function App() {
@@ -104,7 +103,7 @@ function App() {
         geocoderRefs={geocoderRefs}
         playVideo={playVideo} // Pass playVideo prop
       />
-      <WeatherPanel weather={weather} />
+
     </div>
   );
 }

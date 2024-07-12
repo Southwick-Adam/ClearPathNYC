@@ -22,3 +22,11 @@
 .mapboxgl-ctrl-geocoder {
     z-index: 500;
 }
+
+.mapboxgl-ctrl-geocoder{
+    background-color: rgb(91, 104, 104);
+}
+
+.mapboxgl-ctrl-geocoder--input {
+    color:rgb(181, 185, 189)
+}

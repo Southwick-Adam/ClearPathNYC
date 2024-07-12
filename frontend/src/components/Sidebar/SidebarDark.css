@@ -95,9 +95,3 @@
 #loop_toggle_title_row {
   display: none;
 }
-
-.night-export-container{
-  display: flex;
-  justify-content: center;
-  margin-top: 10px;
-}
