@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react';
 import './MapComponent.css';
-import { MAPBOX_TOKEN, MAPBOX_STYLE_URL } from '../../config.js';
+import { MAPBOX_TOKEN, MAPBOX_STYLE_URL, MAPBOX_DAY_STYLE_URL, MAPBOX_NIGHT_STYLE_URL } from '../../config.js';
 import mapboxgl from 'mapbox-gl';
 import PropTypes from 'prop-types';
 import { addRouteMarkers, addRouteToMap, zoomToRoute, clearRoute } from './MapHelper/routeHelpers.js';
@@ -25,6 +25,7 @@ import fetchOther311 from '../../assets/geodata/fetchOther311.js';
 import poiGeojson from '../../assets/geodata/171_POIs.json';
 import fetchMulti311 from '../../assets/geodata/fetchMulti311.js';
 
+
 function MapComponent({ route, startGeocoderRef, endGeocoderRef, geocoderRefs, playVideo }) {
   const mapContainerRef = useRef(null);
   const mapRef = useRef(null);
@@ -34,10 +35,11 @@ function MapComponent({ route, startGeocoderRef, endGeocoderRef, geocoderRefs, p
   const [showMap, setShowMap] = useState(false);
   const [videoEnded, setVideoEnded] = useState(false);
 
+
   const {
     setStartCord, setEndCord, setWaypointAndIncrease,
     waypointCord1, waypointCord2, waypointCord3, waypointCord4, waypointCord5,
-    visibleWaypoints
+    visibleWaypoints, isNightMode
   } = useStore();
 
   const reverseGeocode = async (lng, lat) => {
@@ -70,7 +72,8 @@ function MapComponent({ route, startGeocoderRef, endGeocoderRef, geocoderRefs, p
 
     mapRef.current = new mapboxgl.Map({
       container: mapContainerRef.current,
-      style: MAPBOX_STYLE_URL,
+      /*style: MAPBOX_STYLE_URL,*/
+      style: isNightMode ? MAPBOX_NIGHT_STYLE_URL : MAPBOX_DAY_STYLE_URL,
       center: [-73.9712, 40.7831],
       zoom: 13,
       minZoom: 13,
@@ -155,6 +158,12 @@ function MapComponent({ route, startGeocoderRef, endGeocoderRef, geocoderRefs, p
       add311Multiple
     });
   }, [route]);
+
+  useEffect(() => {
+    if (!mapRef.current || !isMapLoadedRef.current) return;
+    const newStyle = isNightMode ? MAPBOX_NIGHT_STYLE_URL : MAPBOX_DAY_STYLE_URL;
+    mapRef.current.setStyle(newStyle);
+  }, [isNightMode]);
 
   const handleVideoEnd = () => {
     setVideoEnded(true);

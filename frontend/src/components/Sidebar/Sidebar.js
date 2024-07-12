@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import useStore from '../../store/store';
 import './Sidebar.css';
 import Loop from '../Loop/Loop.js';
 import PointToPoint from '../PointToPoint/PointToPoint.js';
@@ -9,6 +10,7 @@ function Sidebar({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoderRefs 
   const [isOpen, setIsOpen] = useState(false);
   const [isLoopOpen, setLoopOpen] = useState(false);
   const [isPtPOpen, setPtPOpen] = useState(false);
+  const { isNightMode } = useStore();
 
   useEffect(() => {
     const sidebarTimer = setTimeout(() => {
@@ -42,8 +44,8 @@ function Sidebar({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoderRefs 
   }
 
   return (
-    <div className={`sidebar ${isOpen ? 'open' : ''}`}>
-      <button className="btn btn-primary toggle-btn" onClick={toggleSidebar}>
+    <div className={`sidebar ${isOpen ? 'open' : ''} ${isNightMode ? 'night' : 'day'}`}>
+      <button className={`btn btn-primary toggle-btn ${isNightMode ? 'night' : 'day'}`} onClick={toggleSidebar}>
         {isOpen ? '◀' : '▶'}
       </button>
       <div className="sidebar-content">
@@ -64,7 +66,7 @@ function Sidebar({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoderRefs 
             <button className='btn' onClick={togglePtP}>
               {isPtPOpen ? '▼' : '▶'}
             </button>
-            <div className='container_title'>Point to Point</div>
+            <div className={`container_title ${isNightMode ? 'night' : 'day'}`}>Point to Point</div>
           </div>
           <div className={`ptp_box ${isPtPOpen ? 'open' : 'closed'}`}>
             <PointToPoint

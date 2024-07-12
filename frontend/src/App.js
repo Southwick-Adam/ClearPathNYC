@@ -5,7 +5,8 @@ import SmogAlert from './components/SmogAlert/SmogAlert.js';
 import WeatherPanel from './components/WeatherPanel/WeatherPanel.js';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import SplashScreen from './components/SplashScreen/SplashScreen.js';
-
+import Legend from './components/Legend/Legend.js';
+import useStore from './store/store.js';
 
 function App() {
   const [route, setRoute] = useState(null);
@@ -103,6 +104,8 @@ function App() {
         geocoderRefs={geocoderRefs}
         playVideo={playVideo} // Pass playVideo prop
       />
+      <Legend />
+      <WeatherPanel weather={weather} />
 
     </div>
   );
