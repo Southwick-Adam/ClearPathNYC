@@ -27,6 +27,14 @@ namespace aspRun.Controllers
             {
                 return BadRequest("Invalid coordinates list. Each list should contain at least two coordinate pairs.");
             }
+            foreach (var coord in coord1)
+            {
+                Console.WriteLine(coord);
+            }
+            foreach (var coord in coord2)
+            {
+                Console.WriteLine(coord);
+            }
 
             var finalCoordinates = new StringBuilder();
             var finalCosts = new StringBuilder();

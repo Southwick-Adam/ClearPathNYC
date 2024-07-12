@@ -38,7 +38,7 @@ function App() {
       params.append('coord2', parseFloat(coord[0])); // Longitude as double
     });
 
-    const requestUrl = `http://localhost:5056/route?${params.toString()}`;
+    const requestUrl = `/route?${params.toString()}`;
     console.log('Request URL:', requestUrl);
 
     try {
@@ -54,7 +54,7 @@ function App() {
   }
 
   async function fetchWeatherData() {
-    const apiUrl = 'http://localhost:5056/weather';
+    const apiUrl = '/weather';
     try {
       const response = await fetch(apiUrl, {
         method: 'GET',

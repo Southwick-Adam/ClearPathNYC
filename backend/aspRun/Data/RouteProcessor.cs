@@ -19,7 +19,22 @@ namespace aspRun.Data
 
         public void generateQuietScoresString()
         {
-            CostsString = string.Join(", ", Costs);
+            List<double> distances = new List<double>();
+            List<double> costsLocal = new List<double>();
+            // distances.Add(0);
+            // costsLocal.Add(0);
+            for (var i = 1; i < NodeLats.Count; i++)
+            {
+                distances.Add((HaversineCalculator.CalculateDistance(NodeLats[i-1], NodeLongs[i-1], NodeLats[i], NodeLongs[i])));
+                costsLocal.Add((Costs[i]-Costs[i-1]));
+            }
+            
+            List<double> finalQuietScore = new List<double>();
+            for (var i = 0; i < distances.Count; i++)
+            {
+                finalQuietScore.Add(Math.Round(costsLocal[i] / (distances [i])));
+            }
+            CostsString = string.Join(", ", finalQuietScore);
         }
     }
 
