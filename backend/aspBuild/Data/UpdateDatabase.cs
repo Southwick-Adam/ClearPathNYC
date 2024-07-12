@@ -6,18 +6,20 @@ namespace aspBuild.Data
     public class UpdateDatabase
     {   
         // locations of each file used in the update database
-        private string jsonTaxiPath = "DataFiles\\taxi_busyness_ranking.json";
-        private string jsonSubwayPath = "DataFiles\\subway_busyness_ranking.json";
+        private readonly string jsonTaxiPath = "DataFiles/taxi_busyness_ranking.json";
+        private readonly string jsonSubwayPath = "DataFiles/subway_busyness_ranking.json";
 
         // format each dataset will be saved in
         Dictionary<string, int> jsonDataTaxi;
         Dictionary<string, int> jsonDataSubway;
 
-        // Constructor for UpdateDatabase
-        public UpdateDatabase()
+        private readonly Neo4jService _neo4jService;
+
+        public UpdateDatabase(Neo4jService neo4jService)
         {
-            jsonDataTaxi = GetJSONs.getJSON(jsonTaxiPath, "taxi");
-            jsonDataSubway = GetJSONs.getJSON(jsonSubwayPath, "metro");
+            _neo4jService = neo4jService;
+            jsonDataSubway = [];
+            jsonDataTaxi = [];
         }
 
 
@@ -27,39 +29,33 @@ namespace aspBuild.Data
         /// <returns>Void</returns>
         public async Task UpdateTheDatabase()
         {
-            
-            Neo4jService neo4JService = new Neo4jService();
+            // time it
+            Console.WriteLine("Update started");
+            Stopwatch stopwatch = Stopwatch.StartNew();
 
-            await neo4JService.PreRunQueries();
+            jsonDataTaxi = GetJSONs.GetJSON(jsonTaxiPath, "taxi");
+            jsonDataSubway = GetJSONs.GetJSON(jsonSubwayPath, "metro");
+
+            await _neo4jService.PreRunQueries();
 
             Console.WriteLine("In function");
 
             // loops through the taxi keys - starting a loop by the zone its in
             foreach (var key in jsonDataTaxi.Keys)
             {
-                Stopwatch stopwatch = new Stopwatch();
-                stopwatch.Start();
-                
-                Console.WriteLine($"Current Taxi Zone: {key}");
                 int tempTaxi = jsonDataTaxi[key];
 
                 // calls all the data from the Taxi zone - checking each node and relationship for that zone
-                var result = await neo4JService.GetNodeInfoForUpdate(key);
-                Console.WriteLine(result.Count);
-
+                var result = await _neo4jService.GetNodeInfoForUpdate(key);
                 // loops through the result, calculating and updating the quietscore on each loop
                 foreach (var item in result)
                 {
                     var tempQuietScore = CalculateQuietScore(item.RelatedNodeMetroZone, item.RelatedNodeRoadRank, tempTaxi, item.RelatedNodePark, item.RelatedNodeThreeOneOne, item.Distance);
-                    await neo4JService.UpdateNodeRelationship(item.NodeID, item.RelatedNodeID, tempQuietScore, key).ConfigureAwait(false);
+                    await _neo4jService.UpdateNodeRelationship(item.NodeID, item.RelatedNodeID, tempQuietScore, key).ConfigureAwait(false);
                 }
-                stopwatch.Stop();
-                Console.WriteLine("Elapsed Time: {0} milliseconds", stopwatch.ElapsedMilliseconds);
             }
-
-            neo4JService.Dispose();
-            Console.WriteLine("out function");
-
+            stopwatch.Stop();
+            Console.WriteLine("Elapsed Time: {0} milliseconds", stopwatch.ElapsedMilliseconds);
         }
 
 
