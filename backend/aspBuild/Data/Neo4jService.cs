@@ -4,17 +4,16 @@ using Neo4j.Driver;
 
 namespace aspBuild.Data
 {
-    public class Neo4jService : IDisposable
+    public class Neo4jService
     {
         private readonly IDriver _driver;
         private readonly string _database = "neo4j";
-        private string uri = "bolt://localhost:7687";
-        private string user = "neo4j";
-        private string password = "password";
+        private readonly Neo4jOptions _neo4jOptions;
 
-        public Neo4jService()
+        public Neo4jService(IOptions<Neo4jOptions> options)
         {
-            _driver = GraphDatabase.Driver(uri, AuthTokens.Basic(user, password));
+            _neo4jOptions = options.Value;
+            _driver = GraphDatabase.Driver(_neo4jOptions.Uri, AuthTokens.Basic(_neo4jOptions.Username, _neo4jOptions.Password));
         }
 
         /// <summary>
@@ -139,11 +138,6 @@ namespace aspBuild.Data
                     }
                 }
             }
-        }
-
-        public void Dispose()
-        {
-            _driver?.Dispose();
         }
     }
 

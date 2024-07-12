@@ -6,13 +6,13 @@ namespace aspBuild.Data
 {
     public class UpdateService: IHostedService, IDisposable
     {
-        private readonly UpdateDatabase _update;
+        private readonly UpdateDatabase _updateDatabase;
         private Timer? _timer;
         private readonly ILogger<UpdateService> _logger;
 
-        public UpdateService(ILogger<UpdateService> logger, UpdateDatabase update)
+        public UpdateService(ILogger<UpdateService> logger, UpdateDatabase updateDatabase)
         {
-            _update = update;
+            _updateDatabase = updateDatabase;
             _timer = null;
             _logger = logger;
         }
@@ -21,13 +21,12 @@ namespace aspBuild.Data
         {
             _logger.LogInformation("Starting background service...");
             _timer = new Timer(ExecuteTask, null, TimeSpan.Zero, TimeSpan.FromHours(2));
-
             return Task.CompletedTask;
         }
 
-        private void ExecuteTask(object? state)
+        private async void ExecuteTask(object? state)
         {
-            //update function
+            await _updateDatabase.UpdateTheDatabase();
         }
 
         public Task StopAsync(CancellationToken cancellationToken)
