@@ -52,6 +52,11 @@ const useStore = create((set, get) => ({
     set(updatedState);
     return waypointIndex;
   },
+  isNightMode: false,
+  toggleNightMode: () => set((state) => ({ isNightMode: !state.isNightMode })),
+  setNightMode: (isNight) => set({ isNightMode: isNight }),
+  route: null,
+  setRoute: (route) => set({ route }),
 }));
 
 export default useStore;

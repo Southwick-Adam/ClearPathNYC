@@ -1,30 +1,38 @@
-import React, { useRef, useEffect } from 'react';
-import ReactDOM from 'react-dom';
+import React, { useRef, useEffect, useState } from 'react';
 import './MapComponent.css';
 import { MAPBOX_TOKEN, MAPBOX_STYLE_URL } from '../../config.js';
 import mapboxgl from 'mapbox-gl';
 import PropTypes from 'prop-types';
+import { addRouteMarkers, addRouteToMap, zoomToRoute, clearRoute } from './MapHelper/routeHelpers.js';
+import { addMapFeatures, clearMapFeatures } from './MapHelper/markerHelpers.js';
+import useStore from '../../store/store.js';
+import mapUnfoldVid from '../../assets/videos/mapunfolding.mp4';
 import simulateFetchParks from '../../assets/geodata/parks.js';
 import fetchInitialPOI from '../../assets/geodata/initialPOI.js';
 import floraImage from '../../assets/images/flora.png';
 import poiImage from '../../assets/images/POI_marker_blue.png';
+import noiseHighImage from '../../assets/images/orange_volume.png';
+import noiseVeryHighImage from '../../assets/images/high_volume.png';
+import garbageHighImage from '../../assets/images/rubbish_orange.png';
+import otherHighImage from '../../assets/images/construction_orange.png';
+import multiHighImage from '../../assets/images/orange_warning.png';
+import multiVeryHighImage from '../../assets/images/red_warning.png';
 import { convertToGeoJSON } from './MapHelper/geojsonHelpers.js';
-import { addRouteMarkers, addRouteToMap } from './MapHelper/routeHelpers.js';
-import { addMarkers, add311Markers, plotRoutePOI, add311Multiple } from './MapHelper/markerHelpers.js';
+import { add311Markers, plotRoutePOI,add311Multiple } from './MapHelper/markerHelpers.js';
 import fetchNoise311 from '../../assets/geodata/fetchNoise311.js';
 import fetchGarbage311 from '../../assets/geodata/fetchGarbage311.js';
 import fetchOther311 from '../../assets/geodata/fetchOther311.js';
 import poiGeojson from '../../assets/geodata/171_POIs.json';
 import fetchMulti311 from '../../assets/geodata/fetchMulti311.js';
-import useStore from '../../store/store.js';
-import PopupContent from '../PopupContent/PopupContent.js';
 
-function MapComponent({ route, startGeocoderRef, endGeocoderRef, geocoderRefs }) {
+function MapComponent({ route, startGeocoderRef, endGeocoderRef, geocoderRefs, playVideo }) {
   const mapContainerRef = useRef(null);
   const mapRef = useRef(null);
   const isMapLoadedRef = useRef(false);
   const startMarkerRef = useRef(null);
   const endMarkerRef = useRef(null);
+  const [showMap, setShowMap] = useState(false);
+  const [videoEnded, setVideoEnded] = useState(false);
 
   const {
     setStartCord, setEndCord, setWaypointAndIncrease,
@@ -53,15 +61,13 @@ function MapComponent({ route, startGeocoderRef, endGeocoderRef, geocoderRefs })
   };
 
   const updateWaypointInput = async (index, coordinates) => {
-    console.log(`updateWaypointInput called with index: ${index} and coordinates: ${coordinates}`);
     const placeName = await reverseGeocode(coordinates[0], coordinates[1]);
-    console.log(`Reverse geocoded place name: ${placeName}`);
     geocoderRefs[index].current.setInput(placeName);
-    console.log(`geocoderRef at index ${index} input set to: ${placeName}`);
   };
 
   useEffect(() => {
     if (mapRef.current) return;
+
     mapRef.current = new mapboxgl.Map({
       container: mapContainerRef.current,
       style: MAPBOX_STYLE_URL,
@@ -79,201 +85,101 @@ function MapComponent({ route, startGeocoderRef, endGeocoderRef, geocoderRefs })
     mapRef.current.on('load', () => {
       isMapLoadedRef.current = true;
 
-      const initialPOI = fetchInitialPOI();
-      const parkData = simulateFetchParks();
-      addMarkers(mapRef, initialPOI, 'poi');
-      const parkGeoJson = convertToGeoJSON(parkData);
-
-      mapRef.current.loadImage(floraImage, (error, image) => {
-        if (error) throw error;
-        mapRef.current.addImage('flora-marker', image);
-      });
-
-      mapRef.current.loadImage(poiImage, (error, image) => {
-        if (error) throw error;
-        mapRef.current.addImage('poi-marker', image);
-      });
-
-      mapRef.current.addSource('parks', {
-        type: 'geojson',
-        data: parkGeoJson,
-        cluster: true,
-        clusterMaxZoom: 14,
-        clusterRadius: 50
-      });
-
-      mapRef.current.addLayer({
-        id: 'clusters',
-        type: 'circle',
-        source: 'parks',
-        filter: ['has', 'point_count'],
-        paint: {
-          'circle-color': [
-            'step',
-            ['get', 'point_count'],
-            '#4CAF50',
-            100,
-            '#388E3C',
-            750,
-            '#2E7D32'
-          ],
-          'circle-radius': [
-            'step',
-            ['get', 'point_count'],
-            20,
-            100,
-            30,
-            750,
-            40
-          ],
-          'circle-opacity': 0.6
-        }
-      });
-
-      mapRef.current.addLayer({
-        id: 'cluster-count',
-        type: 'symbol',
-        source: 'parks',
-        filter: ['has', 'point_count'],
-        layout: {
-          'text-field': '{point_count_abbreviated}',
-          'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
-          'text-size': 12
-        },
-        paint: {
-          'text-color': '#FFFFFF'
-        }
-      });
-
-      mapRef.current.addLayer({
-        id: 'unclustered-point',
-        type: 'symbol',
-        source: 'parks',
-        filter: ['!', ['has', 'point_count']],
-        layout: {
-          'icon-image': 'flora-marker',
-          'icon-size': 0.5,
-          'icon-offset': [0, -0]
-        }
-      });
-
-      mapRef.current.on('click', 'unclustered-point', e => {
-        const coordinates = e.features[0].geometry.coordinates.slice();
-        const { name } = e.features[0].properties;
-
-        const popupNode = document.createElement('div');
-        ReactDOM.render(
-          <PopupContent
-            coordinates={coordinates}
-            name={name}
-            setStartCord={setStartCord}
-            setEndCord={setEndCord}
-            setWaypointAndIncrease={setWaypointAndIncrease}
-            updateStartInput={updateStartInput}
-            updateEndInput={updateEndInput}
-            updateWaypointInput={updateWaypointInput}
-            geocoderRefs={geocoderRefs}
-          />,
-          popupNode
-        );
-
-        new mapboxgl.Popup({ offset: 25, className: 'custom-popup' })
-          .setLngLat(coordinates)
-          .setDOMContent(popupNode)
-          .addTo(mapRef.current);
-      });
-
-      mapRef.current.on('mouseenter', 'clusters', () => {
-        mapRef.current.getCanvas().style.cursor = 'pointer';
-      });
-      mapRef.current.on('mouseleave', 'clusters', () => {
-        mapRef.current.getCanvas().style.cursor = '';
-      });
-
-      mapRef.current.on('mouseenter', 'unclustered-point', () => {
-        mapRef.current.getCanvas().style.cursor = 'pointer';
-      });
-      mapRef.current.on('mouseleave', 'unclustered-point', () => {
-        mapRef.current.getCanvas().style.cursor = '';
-      });
-
-      mapRef.current.on('click', 'clusters', e => {
-        const features = mapRef.current.queryRenderedFeatures(e.point, {
-          layers: ['clusters']
+      if (videoEnded) {
+        addMapFeatures(mapRef, {
+          fetchInitialPOI,
+          simulateFetchParks,
+          convertToGeoJSON,
+          floraImage,
+          noiseHighImage,
+          noiseVeryHighImage,
+          garbageHighImage,
+          otherHighImage,
+          multiHighImage,
+          multiVeryHighImage,
+          poiImage,
+          setStartCord,
+          setEndCord,
+          setWaypointAndIncrease,
+          updateStartInput,
+          updateEndInput,
+          updateWaypointInput,
+          geocoderRefs
         });
-        const clusterId = features[0].properties.cluster_id;
-        mapRef.current.getSource('parks').getClusterExpansionZoom(
-          clusterId,
-          (err, zoom) => {
-            if (err) return;
-
-            mapRef.current.easeTo({
-              center: features[0].geometry.coordinates,
-              zoom: zoom
-            });
-          }
-        );
-      });
+      }
     });
   }, []);
 
   useEffect(() => {
+    if (videoEnded && isMapLoadedRef.current) {
+      addMapFeatures(mapRef, {
+        fetchInitialPOI,
+        simulateFetchParks,
+        convertToGeoJSON,
+        floraImage,
+        noiseHighImage,
+        noiseVeryHighImage,
+        garbageHighImage,
+        otherHighImage,
+        multiHighImage,
+        multiVeryHighImage,
+        poiImage,
+        setStartCord,
+        setEndCord,
+        setWaypointAndIncrease,
+        updateStartInput,
+        updateEndInput,
+        updateWaypointInput,
+        geocoderRefs
+      });
+    }
+  }, [videoEnded, isMapLoadedRef.current]);
+
+  useEffect(() => {
     if (!route || !mapRef.current || !isMapLoadedRef.current) return;
 
-    if (mapRef.current.getSource('route')) {
-      mapRef.current.getSource('route').setData(route);
-    } else {
-      console.log('Drawing route...');
-      addRouteToMap(mapRef, route);
-      addRouteMarkers(mapRef, route, startMarkerRef, endMarkerRef);
-    }
+    clearRoute(mapRef); // Clear existing route and markers
+    clearMapFeatures(mapRef); // Clear existing POI markers and clusters
+
+    addRouteToMap(mapRef, route);
     addRouteMarkers(mapRef, route, startMarkerRef, endMarkerRef);
 
-    zoomToRoute(route);
+    zoomToRoute(mapRef, route, {
+      plotRoutePOI,
+      poiGeojson,
+      fetchNoise311,
+      fetchGarbage311,
+      fetchOther311,
+      fetchMulti311,
+      add311Markers,
+      add311Multiple
+    });
   }, [route]);
 
-  const zoomToRoute = (route) => {
-    if (!route.features || !Array.isArray(route.features) || route.features.length === 0) {
-      console.error('Invalid route data');
-      return;
-    }
-
-    const coordinates = route.features[0].geometry.coordinates;
-    let bounds = coordinates.reduce((bounds, coord) => {
-      return bounds.extend(coord);
-    }, new mapboxgl.LngLatBounds(coordinates[0], coordinates[0]));
-
-    const expandFactor = 0.001;
-    const northEast = bounds.getNorthEast();
-    const southWest = bounds.getSouthWest();
-    bounds = bounds.extend([northEast.lng + expandFactor, northEast.lat + expandFactor]);
-    bounds = bounds.extend([southWest.lng - expandFactor, southWest.lat - expandFactor]);
-
-    mapRef.current.fitBounds(bounds, {
-      padding: 100
-    });
-
-    plotRoutePOI(mapRef, poiGeojson, bounds);
-
-    const noise311 = fetchNoise311().filter(location => bounds.contains(location.coordinates));
-    const garbage311 = fetchGarbage311().filter(location => bounds.contains(location.coordinates));
-    const other311 = fetchOther311().filter(location => bounds.contains(location.coordinates));
-    const multi311 = fetchMulti311().filter(location => bounds.contains(location.coordinates));
-
-    add311Markers(mapRef, noise311, 'Noise');
-    add311Markers(mapRef, garbage311, 'Garbage');
-    add311Markers(mapRef, other311, 'Other');
-    add311Multiple(mapRef, multi311);
+  const handleVideoEnd = () => {
+    setVideoEnded(true);
+    setShowMap(true);
   };
 
-  return <div ref={mapContainerRef} className='map' />;
+  return (
+    <div className="map-container">
+      <div className="map" ref={mapContainerRef} />
+      {playVideo && !showMap && (
+        <video autoPlay onEnded={handleVideoEnd} className="mapUnfoldVid">
+          <source src={mapUnfoldVid} type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+      )}
+    </div>
+  );
 }
 
 MapComponent.propTypes = {
   route: PropTypes.object,
   startGeocoderRef: PropTypes.object,
   endGeocoderRef: PropTypes.object,
-  geocoderRefs: PropTypes.array
+  geocoderRefs: PropTypes.array,
+  playVideo: PropTypes.bool.isRequired // Ensure playVideo is a required prop
 };
 
 export default MapComponent;

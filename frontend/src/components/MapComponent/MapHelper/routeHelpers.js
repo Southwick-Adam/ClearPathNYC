@@ -1,38 +1,71 @@
 import mapboxgl from 'mapbox-gl';
 import $ from 'jquery';
-import { animateMarkers } from './markerHelpers';
+import { animateMarkers, addClusteredLayer } from './markerHelpers';
+import { convertToGeoJSON } from './geojsonHelpers.js';
+import useStore from '../../../store/store.js';
 
+export function addRouteToMap(mapRef) {
+  const route = useStore.getState().route;
 
-export function addRouteToMap(mapRef, routeData) {
-  mapRef.current.addSource('route', {
-    type: 'geojson',
-    data: routeData,
-    lineMetrics: true,
-  });
+  if (!route) {
+    console.error('No route found in store.');
+    return;
+  }
 
-  mapRef.current.addLayer({
-    id: 'route',
-    type: 'line',
-    source: 'route',
-    layout: {
-      'line-join': 'round',
-      'line-cap': 'round',
-    },
-    paint: {
-      'line-width': 10,
-      'line-gradient': [
-        'interpolate',
-        ['linear'],
-        ['line-progress'],
-        0, '#ff0000',
-        0.33, '#ffff00',
-        0.66, '#00ff00',
-        1, '#00ff00'
-      ],
-    },
-  });
+  // Extract coordinates and quietness score from the route data
+  const coordinates = route.features[0].geometry.coordinates;
+  const quietnessScore = route.features[0].properties.quietness_score;
+
+  // Create a GeoJSON line string with properties including quietness score
+  const lineString = {
+    type: 'Feature',
+    properties: {},
+    geometry: {
+      type: 'LineString',
+      coordinates: coordinates
+    }
+  };
+
+  if (mapRef.current.getSource('route')) {
+    mapRef.current.getSource('route').setData(lineString);
+  } else {
+    mapRef.current.addSource('route', {
+      type: 'geojson',
+      data: lineString,
+      lineMetrics: true,
+    });
+
+    // Prepare the line gradient stops based on quietness score
+    const lineGradient = ['interpolate', ['linear'], ['line-progress']];
+    for (let i = 0; i < quietnessScore.length; i++) {
+      const progress = i / (quietnessScore.length - 1);
+      const color = getColorForQuietness(quietnessScore[i]);
+      lineGradient.push(progress, color);
+    }
+
+    mapRef.current.addLayer({
+      id: 'route',
+      type: 'line',
+      source: 'route',
+      layout: {
+        'line-join': 'round',
+        'line-cap': 'round',
+      },
+      paint: {
+        'line-width': 10,
+        'line-gradient': lineGradient,
+      },
+    });
+  }
 }
 
+// Function to map quietness score to a color
+function getColorForQuietness(score) {
+  // Define a color scale for quietness scores (example: green to red)
+  if (score < 100) return '#00FF00'; // Green for low scores (quiet)
+  if (score < 200) return 'orange'; // Yellow for medium scores
+  return '#FF0000'; // Red for high scores (noisy)
+}
 export function addRouteMarkers(mapRef, routeData, startMarkerRef, endMarkerRef) {
   const startCoord = routeData.features[0].geometry.coordinates[0];
   const endCoord = routeData.features[0].geometry.coordinates[routeData.features[0].geometry.coordinates.length - 1];
@@ -76,5 +109,59 @@ export function addRouteMarkers(mapRef, routeData, startMarkerRef, endMarkerRef)
 
         animateMarkers($(endMarker));
     }
+  }
+}
+
+export function zoomToRoute(mapRef, route, helpers) {
+  const { plotRoutePOI, poiGeojson, fetchNoise311, fetchGarbage311, fetchOther311, fetchMulti311, add311Markers, add311Multiple } = helpers;
+
+  if (!route.features || !Array.isArray(route.features) || route.features.length === 0) {
+    console.error('Invalid route data');
+    return;
+  }
+
+  const coordinates = route.features[0].geometry.coordinates;
+  let bounds = coordinates.reduce((bounds, coord) => bounds.extend(coord), new mapboxgl.LngLatBounds(coordinates[0], coordinates[0]));
+
+  const expandFactor = 0.0001;
+  const northEast = bounds.getNorthEast();
+  const southWest = bounds.getSouthWest();
+  bounds = bounds.extend([northEast.lng + expandFactor, northEast.lat + expandFactor]);
+  bounds = bounds.extend([southWest.lng - expandFactor, southWest.lat - expandFactor]);
+
+  mapRef.current.fitBounds(bounds, { padding: 100 });
+
+  plotRoutePOI(mapRef, poiGeojson, bounds);
+
+  const noise311 = fetchNoise311().filter(location => bounds.contains(location.coordinates));
+  const garbage311 = fetchGarbage311().filter(location => bounds.contains(location.coordinates));
+  const other311 = fetchOther311().filter(location => bounds.contains(location.coordinates));
+  const multi311 = fetchMulti311().filter(location => bounds.contains(location.coordinates));
+
+  const noise311high = convertToGeoJSON(noise311.filter(location => (location.category === "High")));
+  const noise311veryhigh = convertToGeoJSON(noise311.filter(location => (location.category === "Very High")));
+  const garbagehigh = convertToGeoJSON(garbage311);
+  const otherhigh = convertToGeoJSON(other311);
+  const multihigh = convertToGeoJSON(multi311.filter(location => (location.severity === "High")));
+  const multiveryhigh = convertToGeoJSON(multi311.filter(location => (location.severity === "Very High")));
+
+  addClusteredLayer(mapRef, noise311high, 'route-noise-h', 'noise-high-marker', 'orange');
+  addClusteredLayer(mapRef, noise311veryhigh, 'route-noise-vh', 'noise-veryhigh-marker', 'red');
+  addClusteredLayer(mapRef, garbagehigh, 'route-garbage-h', 'garbage-high-marker', 'orange');
+  addClusteredLayer(mapRef, otherhigh, 'route-other-h', 'other-high-marker', 'orange');
+  addClusteredLayer(mapRef, multihigh, 'route-multi-h', 'multi-high-marker', 'orange');
+  addClusteredLayer(mapRef, multiveryhigh, 'route-multi-vh', 'multi-veryhigh-marker', 'red');
+}
+
+export function clearRoute(mapRef) {
+  if (mapRef.current.getSource('route')) {
+    mapRef.current.removeLayer('route');
+    mapRef.current.removeSource('route');
+  }
+  if (mapRef.current.getLayer('start-marker')) {
+    mapRef.current.removeLayer('start-marker');
+  }
+  if (mapRef.current.getLayer('end-marker')) {
+    mapRef.current.removeLayer('end-marker');
   }
 }

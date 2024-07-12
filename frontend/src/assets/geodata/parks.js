@@ -99,13 +99,6 @@ function simulateFetchParks() {
     ]
   },
   {
-    "name": "Mill Rock Park",
-    "coordinates": [
-      -73.93838870957835,
-      40.78063240433744
-    ]
-  },
-  {
     "name": "Moore Playground",
     "coordinates": [
       -73.93846941944693,
@@ -1317,13 +1310,6 @@ function simulateFetchParks() {
     ]
   },
   {
-    "name": "East River Walk",
-    "coordinates": [
-      -73.93973853317604,
-      40.78420969725958
-    ]
-  },
-  {
     "name": "Collect Pond Park",
     "coordinates": [
       -74.0018269248935,
@@ -1587,13 +1573,6 @@ function simulateFetchParks() {
     "coordinates": [
       -73.94712873218594,
       40.796405720727634
-    ]
-  },
-  {
-    "name": "Wards Island Park",
-    "coordinates": [
-      -73.929342718958,
-      40.7850120837306
     ]
   },
   {
