@@ -130,7 +130,6 @@ namespace aspRun.Data
             StopGraph = @"CALL gds.graph.drop('NYC1Loud')";
             await RunQuery(StopGraph, []);
             Console.WriteLine($"Graph stopped");
-
         }
 
 
