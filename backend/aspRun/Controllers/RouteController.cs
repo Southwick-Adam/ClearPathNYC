@@ -21,7 +21,7 @@ namespace aspRun.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> NodeToNode([FromQuery] List<double> coord1, [FromQuery] List<double> coord2)
+        public async Task<IActionResult> NodeToNode([FromQuery] List<double> coord1, [FromQuery] List<double> coord2, bool quiet)
         {
             if (coord1 == null || coord1.Count < 2 || coord2 == null || coord2.Count < 2)
             {
@@ -43,7 +43,16 @@ namespace aspRun.Controllers
             {
                 for (var i = 1; i < coord1.Count; i++)
                 {
-                    var result = await _neo4jService.AStar(coord1[i - 1], coord2[i - 1], coord1[i], coord2[i]);
+                    List<string> result;
+
+                    if (quiet)
+                    {
+                        result = await _neo4jService.AStar(coord1[i - 1], coord2[i - 1], coord1[i], coord2[i]);
+                    }
+                    else
+                    {
+                        result = await _neo4jService.AStarLoud(coord1[i - 1], coord2[i - 1], coord1[i], coord2[i]);
+                    }
 
                     if (finalCoordinates.Length > 0)
                     {
