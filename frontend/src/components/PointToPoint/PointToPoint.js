@@ -72,13 +72,14 @@ function PointToPoint({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoder
       geocoderRefs[index].current.setInput(''); // Clear the input field without triggering a query
       hideSuggestions(geocoderRefs[index].current);
     }
-    for (let i = index; i < 4; i++) {
+    for (let i = index; i < visibleWaypoints - 1; i++) {
       waypointStates[i].setCoordinates(waypointStates[i + 1].coordinates);
       if (geocoderRefs[i + 1].current) {
-        geocoderRefs[i + 1].current.setInput(''); // Clear the input field without triggering a query
-        hideSuggestions(geocoderRefs[i + 1].current);
+        geocoderRefs[i].current.setInput(geocoderRefs[i + 1].current._inputEl.value);
+        geocoderRefs[i + 1].current.setInput('');
       }
     }
+    resetWaypointCord(visibleWaypoints); // Clear the last waypoint input
     setVisibleWaypoints(visibleWaypoints - 1);
   }
 
@@ -113,16 +114,16 @@ function PointToPoint({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoder
 
       if (geocoderRefs[index].current && geocoderRefs[index + 1].current) {
         const currentInput = geocoderRefs[index].current._inputEl.value;
-        const nextInput = geocoderRefs[index + 1]._inputEl.value;
+        const nextInput = geocoderRefs[index + 1].current._inputEl.value;
 
         geocoderRefs[index].current.setInput(nextInput);
         geocoderRefs[index + 1].setInput(currentInput);
 
         if (!currentInput.trim()) {
-          hideSuggestions(geocoderRefs[index + 1]);
+          hideSuggestions(geocoderRefs[index + 1].current);
         }
         if (!nextInput.trim()) {
-          hideSuggestions(geocoderRefs[index]);
+          hideSuggestions(geocoderRefs[index].current);
         }
       }
     }
