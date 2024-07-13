@@ -6,7 +6,7 @@ import './PointToPoint.css';
 import Waypoint from '../Waypoint/Waypoint';
 import useStore from '../../store/store';
 
-function PointToPoint({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoderRefs, hideSidebar }) {  // Add hideSidebar prop
+function PointToPoint({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoderRefs, hideSidebar }) {
   const {
     startCord, endCord, isQuiet, includeWaypoints, visibleWaypoints,
     waypointCord1, waypointCord2, waypointCord3, waypointCord4, waypointCord5,
@@ -61,8 +61,11 @@ function PointToPoint({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoder
   }
 
   function handleAddWaypoint() {
-    if (visibleWaypoints < 5) {
-      setVisibleWaypoints(visibleWaypoints + 1);
+    for (let i = 0; i < 5; i++) {
+      if (!waypointStates[i].coordinates) {
+        setVisibleWaypoints(i + 1);
+        return;
+      }
     }
   }
 
@@ -117,7 +120,7 @@ function PointToPoint({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoder
         const nextInput = geocoderRefs[index + 1].current._inputEl.value;
 
         geocoderRefs[index].current.setInput(nextInput);
-        geocoderRefs[index + 1].setInput(currentInput);
+        geocoderRefs[index + 1].current.setInput(currentInput);
 
         if (!currentInput.trim()) {
           hideSuggestions(geocoderRefs[index + 1].current);
