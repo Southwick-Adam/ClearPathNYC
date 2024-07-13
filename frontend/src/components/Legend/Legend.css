@@ -137,3 +137,26 @@
     display: flex;
     justify-content: flex-end;
 }
+
+.toggle-button {
+    background-color: #198754;
+    border-color: #198754;
+}
+
+.toggle-button:hover {
+    background-color: #31b678;
+    border-color: #31b678;
+}
+
+.toggle-button.disabled {
+    background-color: #198754;
+    border-color: #198754;
+}
+
+.btn-primary {
+    --bs-btn-active-bg: #31b678;
+    --bs-btn-active-border-color: #31b678;
+
+  }
+
+
