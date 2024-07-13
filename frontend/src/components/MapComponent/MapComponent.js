@@ -1,10 +1,10 @@
 import React, { useRef, useEffect, useState } from 'react';
 import './MapComponent.css';
-import { MAPBOX_TOKEN, MAPBOX_STYLE_URL, MAPBOX_DAY_STYLE_URL, MAPBOX_NIGHT_STYLE_URL } from '../../config.js';
+import { MAPBOX_TOKEN, MAPBOX_DAY_STYLE_URL, MAPBOX_NIGHT_STYLE_URL } from '../../config.js';
 import mapboxgl from 'mapbox-gl';
 import PropTypes from 'prop-types';
 import { addRouteMarkers, addRouteToMap, zoomToRoute, clearRoute } from './MapHelper/routeHelpers.js';
-import { addMapFeatures, clearMapFeatures } from './MapHelper/markerHelpers.js';
+import { addMapFeatures, clearMapFeatures, toggleLayerVisibility } from './MapHelper/markerHelpers.js';
 import useStore from '../../store/store.js';
 import mapUnfoldVid from '../../assets/videos/mapunfolding.mp4';
 import simulateFetchParks from '../../assets/geodata/parks.js';
@@ -18,15 +18,14 @@ import otherHighImage from '../../assets/images/construction_orange.png';
 import multiHighImage from '../../assets/images/orange_warning.png';
 import multiVeryHighImage from '../../assets/images/red_warning.png';
 import { convertToGeoJSON } from './MapHelper/geojsonHelpers.js';
-import { add311Markers, plotRoutePOI,add311Multiple } from './MapHelper/markerHelpers.js';
+import { add311Markers, plotRoutePOI, add311Multiple } from './MapHelper/markerHelpers.js';
 import fetchNoise311 from '../../assets/geodata/fetchNoise311.js';
 import fetchGarbage311 from '../../assets/geodata/fetchGarbage311.js';
 import fetchOther311 from '../../assets/geodata/fetchOther311.js';
 import poiGeojson from '../../assets/geodata/171_POIs.json';
 import fetchMulti311 from '../../assets/geodata/fetchMulti311.js';
 
-
-function MapComponent({ route, startGeocoderRef, endGeocoderRef, geocoderRefs, playVideo }) {
+function MapComponent({ route, startGeocoderRef, endGeocoderRef, geocoderRefs, playVideo, layerVisibility }) {
   const mapContainerRef = useRef(null);
   const mapRef = useRef(null);
   const isMapLoadedRef = useRef(false);
@@ -35,8 +34,6 @@ function MapComponent({ route, startGeocoderRef, endGeocoderRef, geocoderRefs, p
   const [showMap, setShowMap] = useState(false);
   const [videoEnded, setVideoEnded] = useState(false);
   const waypointRefs = [useRef(null), useRef(null), useRef(null), useRef(null), useRef(null)];
-
-
 
   const {
     setStartCord, setEndCord, setWaypointAndIncrease,
@@ -74,7 +71,6 @@ function MapComponent({ route, startGeocoderRef, endGeocoderRef, geocoderRefs, p
 
     mapRef.current = new mapboxgl.Map({
       container: mapContainerRef.current,
-      /*style: MAPBOX_STYLE_URL,*/
       style: isNightMode ? MAPBOX_NIGHT_STYLE_URL : MAPBOX_DAY_STYLE_URL,
       center: [-73.9712, 40.7831],
       zoom: 13,
@@ -147,7 +143,7 @@ function MapComponent({ route, startGeocoderRef, endGeocoderRef, geocoderRefs, p
     clearMapFeatures(mapRef); // Clear existing POI markers and clusters
 
     addRouteToMap(mapRef, route);
-    addRouteMarkers(mapRef, route, startMarkerRef, endMarkerRef,waypointRefs);
+    addRouteMarkers(mapRef, route, startMarkerRef, endMarkerRef, waypointRefs);
 
     zoomToRoute(mapRef, route, {
       plotRoutePOI,
@@ -166,6 +162,11 @@ function MapComponent({ route, startGeocoderRef, endGeocoderRef, geocoderRefs, p
     const newStyle = isNightMode ? MAPBOX_NIGHT_STYLE_URL : MAPBOX_DAY_STYLE_URL;
     mapRef.current.setStyle(newStyle);
   }, [isNightMode]);
+
+  useEffect(() => {
+    if (!mapRef.current || !isMapLoadedRef.current) return;
+    toggleLayerVisibility(mapRef, layerVisibility);
+  }, [layerVisibility]);
 
   const handleVideoEnd = () => {
     setVideoEnded(true);
@@ -190,7 +191,8 @@ MapComponent.propTypes = {
   startGeocoderRef: PropTypes.object,
   endGeocoderRef: PropTypes.object,
   geocoderRefs: PropTypes.array,
-  playVideo: PropTypes.bool.isRequired // Ensure playVideo is a required prop
+  playVideo: PropTypes.bool.isRequired,
+  layerVisibility: PropTypes.object.isRequired // Add this line
 };
 
 export default MapComponent;
