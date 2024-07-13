@@ -6,7 +6,7 @@ import WeatherPanel from './components/WeatherPanel/WeatherPanel.js';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import SplashScreen from './components/SplashScreen/SplashScreen.js';
 import Legend from './components/Legend/Legend.js';
-import useStore from './store/store.js';import useStore from '../src/store/store.js'
+import useStore from './store/store.js';
 
 
 
