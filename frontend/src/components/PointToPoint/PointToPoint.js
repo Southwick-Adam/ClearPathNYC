@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import LocationFinder from '../LocationFinder/LocationFinder';
 import GoButton from '../GoButton/GoButton';
 import BusyToggleSwitch from '../BusyToggleSwitch/BusyToggleSwitch';
@@ -13,6 +13,8 @@ function PointToPoint({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoder
     setStartCord, setEndCord, setIsQuiet, setIncludeWaypoints, setVisibleWaypoints,
     setWaypointCord1, setWaypointCord2, setWaypointCord3, setWaypointCord4, setWaypointCord5, resetWaypointCord
   } = useStore();
+
+  const [isGoButtonDisabled, setGoButtonDisabled] = useState(true);
 
   const waypointStates = [
     { id: 1, coordinates: waypointCord1, setCoordinates: setWaypointCord1, geocoderRef: geocoderRefs[0] },
@@ -36,6 +38,11 @@ function PointToPoint({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoder
       });
     }
   }, [includeWaypoints]);
+
+  useEffect(() => {
+    const allFieldsFilled = [startCord, endCord, ...waypointStates.slice(0, visibleWaypoints).map(w => w.coordinates)].every(coord => coord !== null);
+    setGoButtonDisabled(!allFieldsFilled);
+  }, [startCord, endCord, waypointCord1, waypointCord2, waypointCord3, waypointCord4, waypointCord5, visibleWaypoints]);
 
   function handleToggleChange() {
     setIsQuiet(!isQuiet);
@@ -120,7 +127,7 @@ function PointToPoint({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoder
         const nextInput = geocoderRefs[index + 1].current._inputEl.value;
 
         geocoderRefs[index].current.setInput(nextInput);
-        geocoderRefs[index + 1].current.setInput(currentInput);
+        geocoderRefs[index + 1].setInput(currentInput);
 
         if (!currentInput.trim()) {
           hideSuggestions(geocoderRefs[index + 1].current);
@@ -172,7 +179,7 @@ function PointToPoint({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoder
       </div>
       <div className="busy_go_row">
         <BusyToggleSwitch isQuiet={isQuiet} handleToggleChange={handleToggleChange} />
-        <GoButton />
+        <GoButton disabled={isGoButtonDisabled} />
       </div>
       <div className='include_waypoints'>
         <label>
