@@ -2,6 +2,14 @@ version: '3.8'
 
 services:
 
+  asp-build:
+    image: asouthwick1/nycapp:aspbuild
+    container_name: asp-build
+    ports:
+      - "5001:8080"
+    networks:
+      - clear_path_net
+
   asp-run:
     image: asouthwick1/nycapp:asprun
     container_name: asp-run
