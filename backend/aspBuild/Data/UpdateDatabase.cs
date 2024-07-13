@@ -27,7 +27,7 @@ namespace aspBuild.Data
         /// Uses the Park, Subway and Taxi data to update the quietscores and add them to the database.
         /// </summary>
         /// <returns>Void</returns>
-        public async Task UpdateTheDatabase()
+        public async Task RunUpdate()
         {
             // time it
             Console.WriteLine("Update started");
@@ -43,6 +43,7 @@ namespace aspBuild.Data
             // loops through the taxi keys - starting a loop by the zone its in
             foreach (var key in jsonDataTaxi.Keys)
             {
+                Console.WriteLine($"Current Taxi Zone: {key}");
                 int tempTaxi = jsonDataTaxi[key];
 
                 // calls all the data from the Taxi zone - checking each node and relationship for that zone

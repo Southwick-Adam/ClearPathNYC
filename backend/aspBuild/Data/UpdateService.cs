@@ -26,7 +26,7 @@ namespace aspBuild.Data
 
         private async void ExecuteTask(object? state)
         {
-            await _updateDatabase.UpdateTheDatabase();
+            await _updateDatabase.RunUpdate();
         }
 
         public Task StopAsync(CancellationToken cancellationToken)
