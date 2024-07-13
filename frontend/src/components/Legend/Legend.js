@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import './Legend.css';
+import useStore from '../../store/store';
 
 function Legend({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoderRefs }) {
   const [isOpen, setIsOpen] = useState(false);
+  const { isNightMode } = useStore();
 
   useEffect(() => {
     const legendTimer = setTimeout(() => {
@@ -23,8 +25,8 @@ function Legend({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoderRefs }
   }
 
   return (
-    <div className={`legend ${isOpen ? 'open' : ''}`}>
-      <button className="btn btn-primary toggle-btn-legend" onClick={toggleLegend}>
+    <div className={`legend ${isOpen ? 'open' : ''} ${isNightMode ? 'night' : 'day'}`}>
+      <button className={`btn btn-primary toggle-btn-legend ${isNightMode ? 'night' : 'day'}`} onClick={toggleLegend}>
         {isOpen ? '◀' : '▶'}
       </button>
       <div className="legend-content">
@@ -44,7 +46,7 @@ function Legend({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoderRefs }
             <img src={require('../../assets/images/pin_orange.png')} alt="Orange Pin" />
             <img src={require('../../assets/images/pin_red.png')} alt="Red Pin" />
           </li>
-          <li>Pin colour indicates level of colume, with red being the greatest.</li>
+          <li>Pin colour indicates level of volume, with red being the greatest.</li>
           <li>Blue and Green pins represent items of interest to the user.</li>
         </ul>
       </div>
