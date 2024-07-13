@@ -12,6 +12,12 @@ function App() {
   const [route, setRoute] = useState(null);
   const [weather, setWeather] = useState(null);
   const [playVideo, setPlayVideo] = useState(false);
+  const [presentLayers, setPresentLayers] = useState({
+    noise: false,
+    trash: false,
+    multipleWarnings: false,
+    other: false,
+  });
 
   const startGeocoderRef = useRef(null);
   const endGeocoderRef = useRef(null);
@@ -119,12 +125,12 @@ function App() {
         geocoderRefs={geocoderRefs}
         playVideo={playVideo} // Pass playVideo prop
         layerVisibility={layerVisibility} // Pass layer visibility state
+        setPresentLayers={setPresentLayers} // Pass the setter for present layers
       />
-      <Legend onToggleLayer={toggleLayerVisibility} /> {/* Pass toggle function */}
+      <Legend onToggleLayer={toggleLayerVisibility} layerVisibility={layerVisibility} presentLayers={presentLayers} /> {/* Pass toggle function and present layers */}
       <WeatherPanel weather={weather} />
     </div>
   );
 }
 
 export default App;
-

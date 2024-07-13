@@ -3,7 +3,7 @@ import './Legend.css';
 import useStore from '../../store/store';
 import { OverlayTrigger, Tooltip, Button } from 'react-bootstrap';
 
-function Legend({ onToggleLayer }) {
+function Legend({ onToggleLayer, layerVisibility, presentLayers }) {
   const [isOpen, setIsOpen] = useState(false);
   const { isNightMode, route } = useStore();
   const [buttonText, setButtonText] = useState({
@@ -29,13 +29,13 @@ function Legend({ onToggleLayer }) {
     if (route) {
       setButtonText((prevText) => ({
         ...prevText,
-        noise: 'Hide',
-        trash: 'Hide',
-        multipleWarnings: 'Hide',
-        other: 'Hide'
+        noise: presentLayers.noise ? 'Hide' : 'View',
+        trash: presentLayers.trash ? 'Hide' : 'View',
+        multipleWarnings: presentLayers.multipleWarnings ? 'Hide' : 'View',
+        other: presentLayers.other ? 'Hide' : 'View'
       }));
     }
-  }, [route]);
+  }, [route, presentLayers]);
 
   function toggleLegend() {
     setIsOpen(!isOpen);
@@ -53,7 +53,7 @@ function Legend({ onToggleLayer }) {
     onToggleLayer(layerName);
   };
 
-  const renderToggleButton = (layerName, label) => {
+  const renderToggleButton = (layerName) => {
     return (
       <Button
         onClick={() => handleButtonClick(layerName)}
@@ -64,8 +64,8 @@ function Legend({ onToggleLayer }) {
     );
   };
 
-  const renderDisableableButton = (layerName, label) => {
-    const isDisabled = !route;
+  const renderDisableableButton = (layerName) => {
+    const isDisabled = !route || !presentLayers[layerName];
     const button = (
       <Button
         onClick={() => handleButtonClick(layerName)}
@@ -76,12 +76,16 @@ function Legend({ onToggleLayer }) {
       </Button>
     );
 
+    const tooltipText = !route
+      ? 'View after finding a route'
+      : 'None found near the route';
+
     if (isDisabled) {
       return (
         <OverlayTrigger
           key={layerName}
           placement="top"
-          overlay={<Tooltip id={`tooltip-${layerName}`}>View after finding a route</Tooltip>}
+          overlay={<Tooltip id={`tooltip-${layerName}`}>{tooltipText}</Tooltip>}
         >
           <span className="d-inline-block">{button}</span>
         </OverlayTrigger>
@@ -113,32 +117,32 @@ function Legend({ onToggleLayer }) {
           <li>
             <img src={require('../../assets/images/Park_flat.png')} alt="Park" />
             Park
-            {renderToggleButton('parks', 'Toggle')}
+            {renderToggleButton('parks')}
           </li>
           <li>
             <img src={require('../../assets/images/PoI_flat.png')} alt="Point of Interest" />
             Point of Interest
-            {renderToggleButton('poi', 'Toggle')}
+            {renderToggleButton('poi')}
           </li>
           <li>
             <img src={require('../../assets/images/Noise_flat.png')} alt="Noise Warning" />
             Noise Warning
-            {renderDisableableButton('noise', 'Toggle')}
+            {renderDisableableButton('noise')}
           </li>
           <li>
             <img src={require('../../assets/images/Bin_flat.png')} alt="Trash Warning" />
             Trash Warning
-            {renderDisableableButton('trash', 'Toggle')}
+            {renderDisableableButton('trash')}
           </li>
           <li>
             <img src={require('../../assets/images/Bin_flat.png')} alt="Street Condition Warning" />
             Street Condition Warning
-            {renderDisableableButton('other', 'Toggle')}
+            {renderDisableableButton('other')}
           </li>
           <li>
             <img src={require('../../assets/images/Warning_flat.png')} alt="Multiple Warnings" />
             Multiple Warnings
-            {renderDisableableButton('multipleWarnings', 'Toggle')}
+            {renderDisableableButton('multipleWarnings')}
           </li>
           <li>
             <img src={require('../../assets/images/pin_blue.png')} alt="Blue Pin" />

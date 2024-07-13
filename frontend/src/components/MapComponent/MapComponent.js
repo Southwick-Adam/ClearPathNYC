@@ -25,7 +25,7 @@ import fetchOther311 from '../../assets/geodata/fetchOther311.js';
 import poiGeojson from '../../assets/geodata/171_POIs.json';
 import fetchMulti311 from '../../assets/geodata/fetchMulti311.js';
 
-function MapComponent({ route, startGeocoderRef, endGeocoderRef, geocoderRefs, playVideo, layerVisibility }) {
+function MapComponent({ route, startGeocoderRef, endGeocoderRef, geocoderRefs, playVideo, layerVisibility, setPresentLayers }) {
   const mapContainerRef = useRef(null);
   const mapRef = useRef(null);
   const isMapLoadedRef = useRef(false);
@@ -153,7 +153,8 @@ function MapComponent({ route, startGeocoderRef, endGeocoderRef, geocoderRefs, p
       fetchOther311,
       fetchMulti311,
       add311Markers,
-      add311Multiple
+      add311Multiple,
+      setPresentLayers, // Pass setPresentLayers to update the state of present layers
     });
   }, [route]);
 
@@ -192,7 +193,8 @@ MapComponent.propTypes = {
   endGeocoderRef: PropTypes.object,
   geocoderRefs: PropTypes.array,
   playVideo: PropTypes.bool.isRequired,
-  layerVisibility: PropTypes.object.isRequired // Add this line
+  layerVisibility: PropTypes.object.isRequired,
+  setPresentLayers: PropTypes.func.isRequired, // Add this line
 };
 
 export default MapComponent;
