@@ -1,8 +1,8 @@
-import React, { forwardRef, useEffect } from 'react';
+import React, { forwardRef } from 'react';
 import LocationFinder from '../LocationFinder/LocationFinder';
+import './Waypoint.css';
 
 const Waypoint = forwardRef(({ id, coordinates, onRemove, onMoveUp, onMoveDown, setWaypointCoordinates, geocoderRef }, ref) => {
-
   return (
     <div className="waypoint" ref={ref}>
       <div className="upDownWrapper">

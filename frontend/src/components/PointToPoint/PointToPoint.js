@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import LocationFinder from '../LocationFinder/LocationFinder';
 import GoButton from '../GoButton/GoButton';
 import BusyToggleSwitch from '../BusyToggleSwitch/BusyToggleSwitch';
@@ -6,13 +6,15 @@ import './PointToPoint.css';
 import Waypoint from '../Waypoint/Waypoint';
 import useStore from '../../store/store';
 
-function PointToPoint({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoderRefs, hideSidebar }) {  // Add hideSidebar prop
+function PointToPoint({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoderRefs, hideSidebar }) {
   const {
     startCord, endCord, isQuiet, includeWaypoints, visibleWaypoints,
     waypointCord1, waypointCord2, waypointCord3, waypointCord4, waypointCord5,
     setStartCord, setEndCord, setIsQuiet, setIncludeWaypoints, setVisibleWaypoints,
     setWaypointCord1, setWaypointCord2, setWaypointCord3, setWaypointCord4, setWaypointCord5, resetWaypointCord
   } = useStore();
+
+  const [isGoButtonDisabled, setGoButtonDisabled] = useState(true);
 
   const waypointStates = [
     { id: 1, coordinates: waypointCord1, setCoordinates: setWaypointCord1, geocoderRef: geocoderRefs[0] },
@@ -36,6 +38,11 @@ function PointToPoint({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoder
       });
     }
   }, [includeWaypoints]);
+
+  useEffect(() => {
+    const allFieldsFilled = [startCord, endCord, ...waypointStates.slice(0, visibleWaypoints).map(w => w.coordinates)].every(coord => coord !== null);
+    setGoButtonDisabled(!allFieldsFilled);
+  }, [startCord, endCord, waypointCord1, waypointCord2, waypointCord3, waypointCord4, waypointCord5, visibleWaypoints]);
 
   function handleToggleChange() {
     setIsQuiet(!isQuiet);
@@ -61,8 +68,11 @@ function PointToPoint({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoder
   }
 
   function handleAddWaypoint() {
-    if (visibleWaypoints < 5) {
-      setVisibleWaypoints(visibleWaypoints + 1);
+    for (let i = 0; i < 5; i++) {
+      if (!waypointStates[i].coordinates) {
+        setVisibleWaypoints(i + 1);
+        return;
+      }
     }
   }
 
@@ -72,13 +82,14 @@ function PointToPoint({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoder
       geocoderRefs[index].current.setInput(''); // Clear the input field without triggering a query
       hideSuggestions(geocoderRefs[index].current);
     }
-    for (let i = index; i < 4; i++) {
+    for (let i = index; i < visibleWaypoints - 1; i++) {
       waypointStates[i].setCoordinates(waypointStates[i + 1].coordinates);
       if (geocoderRefs[i + 1].current) {
-        geocoderRefs[i + 1].current.setInput(''); // Clear the input field without triggering a query
-        hideSuggestions(geocoderRefs[i + 1].current);
+        geocoderRefs[i].current.setInput(geocoderRefs[i + 1].current._inputEl.value);
+        geocoderRefs[i + 1].current.setInput('');
       }
     }
+    resetWaypointCord(visibleWaypoints); // Clear the last waypoint input
     setVisibleWaypoints(visibleWaypoints - 1);
   }
 
@@ -113,16 +124,16 @@ function PointToPoint({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoder
 
       if (geocoderRefs[index].current && geocoderRefs[index + 1].current) {
         const currentInput = geocoderRefs[index].current._inputEl.value;
-        const nextInput = geocoderRefs[index + 1]._inputEl.value;
+        const nextInput = geocoderRefs[index + 1].current._inputEl.value;
 
         geocoderRefs[index].current.setInput(nextInput);
         geocoderRefs[index + 1].setInput(currentInput);
 
         if (!currentInput.trim()) {
-          hideSuggestions(geocoderRefs[index + 1]);
+          hideSuggestions(geocoderRefs[index + 1].current);
         }
         if (!nextInput.trim()) {
-          hideSuggestions(geocoderRefs[index]);
+          hideSuggestions(geocoderRefs[index].current);
         }
       }
     }
@@ -143,24 +154,6 @@ function PointToPoint({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoder
         <div className="ptp_label">Start</div>
         <LocationFinder setCoordinates={setStartCord} geocoderRef={startGeocoderRef} />
       </div>
-      <div className="ptp_row">
-        <div className="ptp_label">End</div>
-        <LocationFinder setCoordinates={setEndCord} geocoderRef={endGeocoderRef} />
-      </div>
-      <div className="busy_go_row">
-        <BusyToggleSwitch isQuiet={isQuiet} handleToggleChange={handleToggleChange} />
-        <GoButton />
-      </div>
-      <div className='include_waypoints'>
-        <label>
-          <input
-            type='checkbox'
-            checked={includeWaypoints}
-            onChange={() => setIncludeWaypoints(!includeWaypoints)}
-          />
-          Include Waypoints
-        </label>
-      </div>
       <div className='waypoints_container' style={{ display: includeWaypoints ? 'block' : 'none' }}>
         {waypointStates.slice(0, visibleWaypoints).map((waypoint, index) => (
           <Waypoint
@@ -179,6 +172,24 @@ function PointToPoint({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoder
         {visibleWaypoints < 5 && (
           <button type='button' className="btn btn-outline-success btn-lg d-block mx-auto addbtn" onClick={handleAddWaypoint}>+</button>
         )}
+      </div>
+      <div className="ptp_row">
+        <div className="ptp_label">End</div>
+        <LocationFinder setCoordinates={setEndCord} geocoderRef={endGeocoderRef} />
+      </div>
+      <div className="busy_go_row">
+        <BusyToggleSwitch isQuiet={isQuiet} handleToggleChange={handleToggleChange} />
+        <GoButton disabled={isGoButtonDisabled} />
+      </div>
+      <div className='include_waypoints'>
+        <label>
+          <input
+            type='checkbox'
+            checked={includeWaypoints}
+            onChange={() => setIncludeWaypoints(!includeWaypoints)}
+          />
+          Include Waypoints
+        </label>
       </div>
     </form>
   );

@@ -47,8 +47,7 @@ function Sidebar({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoderRefs 
         {isOpen ? '◀' : '▶'}
       </button>
       <div className="sidebar-content">
-        <div className='loop_wrapper'>
-          {/* The id here is used to hide the loop container for MVP*/}
+        {/* <div className='loop_wrapper'>
           <div className='toggle_title_row' id='loop_toggle_title_row'> 
             <button className='btn' onClick={toggleLoop}>
               {isLoopOpen ? '▼' : '▶'}
@@ -58,7 +57,7 @@ function Sidebar({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoderRefs 
           <div className={`loop_box ${isLoopOpen ? 'open' : 'closed'}`}>
             <Loop onFormSubmit={onFormSubmit} />
           </div>
-        </div>
+        </div> */}
         <div className='ptp_wrapper'>
           <div className='toggle_title_row'>
             <button className='btn' onClick={togglePtP}>
