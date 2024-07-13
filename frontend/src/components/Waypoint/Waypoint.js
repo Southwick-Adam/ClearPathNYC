@@ -1,5 +1,6 @@
 import React, { forwardRef, useEffect } from 'react';
 import LocationFinder from '../LocationFinder/LocationFinder';
+import './Waypoint.css';
 
 const Waypoint = forwardRef(({ id, coordinates, onRemove, onMoveUp, onMoveDown, setWaypointCoordinates, geocoderRef }, ref) => {
 

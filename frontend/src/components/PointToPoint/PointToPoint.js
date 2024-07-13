@@ -143,24 +143,6 @@ function PointToPoint({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoder
         <div className="ptp_label">Start</div>
         <LocationFinder setCoordinates={setStartCord} geocoderRef={startGeocoderRef} />
       </div>
-      <div className="ptp_row">
-        <div className="ptp_label">End</div>
-        <LocationFinder setCoordinates={setEndCord} geocoderRef={endGeocoderRef} />
-      </div>
-      <div className="busy_go_row">
-        <BusyToggleSwitch isQuiet={isQuiet} handleToggleChange={handleToggleChange} />
-        <GoButton />
-      </div>
-      <div className='include_waypoints'>
-        <label>
-          <input
-            type='checkbox'
-            checked={includeWaypoints}
-            onChange={() => setIncludeWaypoints(!includeWaypoints)}
-          />
-          Include Waypoints
-        </label>
-      </div>
       <div className='waypoints_container' style={{ display: includeWaypoints ? 'block' : 'none' }}>
         {waypointStates.slice(0, visibleWaypoints).map((waypoint, index) => (
           <Waypoint
@@ -179,6 +161,24 @@ function PointToPoint({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoder
         {visibleWaypoints < 5 && (
           <button type='button' className="btn btn-outline-success btn-lg d-block mx-auto addbtn" onClick={handleAddWaypoint}>+</button>
         )}
+      </div>
+      <div className="ptp_row">
+        <div className="ptp_label">End</div>
+        <LocationFinder setCoordinates={setEndCord} geocoderRef={endGeocoderRef} />
+      </div>
+      <div className="busy_go_row">
+        <BusyToggleSwitch isQuiet={isQuiet} handleToggleChange={handleToggleChange} />
+        <GoButton />
+      </div>
+      <div className='include_waypoints'>
+        <label>
+          <input
+            type='checkbox'
+            checked={includeWaypoints}
+            onChange={() => setIncludeWaypoints(!includeWaypoints)}
+          />
+          Include Waypoints
+        </label>
       </div>
     </form>
   );

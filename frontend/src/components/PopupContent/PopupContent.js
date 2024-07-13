@@ -1,8 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import './PopupContent.css';
+import useStore from '../../store/store';
 
 function PopupContent({ coordinates, name, setStartCord, setEndCord, setWaypointAndIncrease, updateStartInput, updateEndInput, updateWaypointInput, geocoderRefs }) {
+  const enableWaypoints = useStore((state) => state.enableWaypoints); // Get the setter from the store
+
   return (
     <div className="popup-content">
       <div className="popup_title">{name}</div>
@@ -16,6 +19,7 @@ function PopupContent({ coordinates, name, setStartCord, setEndCord, setWaypoint
             await updateEndInput(coordinates);
         }}>Set End</button>
         <button className="btn btn-primary btn-sm" onClick={async () => {
+            enableWaypoints(); // Ensure includeWaypoints is true
             const index = setWaypointAndIncrease(coordinates);
             if (index !== -1 && index < 5) {
             await updateWaypointInput(index, coordinates);
