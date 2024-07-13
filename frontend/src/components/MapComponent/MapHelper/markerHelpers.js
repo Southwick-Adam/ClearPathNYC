@@ -454,4 +454,30 @@ export function addMapFeatures(mapRef, helpers) {
   });
 }
 
+export function toggleLayerVisibility(mapRef, layerVisibility) {
+  const visibilityMap = {
+    parks: ['clusters', 'cluster-count', 'unclustered-point'],
+    poi: ['route-pois-clusters', 'route-pois-cluster-count', 'route-pois-unclustered-point'],
+    noise: ['route-noise-h-clusters', 'route-noise-h-cluster-count', 'route-noise-h-unclustered-point',
+            'route-noise-vh-clusters', 'route-noise-vh-cluster-count', 'route-noise-vh-unclustered-point'],
+    trash: ['route-garbage-h-clusters', 'route-garbage-h-cluster-count', 'route-garbage-h-unclustered-point'],
+    other: ['route-other-h-clusters', 'route-other-h-cluster-count', 'route-other-h-unclustered-point'],
+    multipleWarnings: ['route-multi-h-clusters', 'route-multi-h-cluster-count', 'route-multi-h-unclustered-point',
+                       'route-multi-vh-clusters', 'route-multi-vh-cluster-count', 'route-multi-vh-unclustered-point'],
+  };
+
+  Object.keys(visibilityMap).forEach((key) => {
+    const layers = visibilityMap[key];
+    layers.forEach((layerId) => {
+      if (mapRef.current.getLayer(layerId)) {
+        mapRef.current.setLayoutProperty(
+          layerId,
+          'visibility',
+          layerVisibility[key] ? 'visible' : 'none'
+        );
+      }
+    });
+  });
+}
+
 export { animateMarkers };

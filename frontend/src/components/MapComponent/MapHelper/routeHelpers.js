@@ -152,7 +152,7 @@ export function addRouteMarkers(mapRef, routeData, startMarkerRef, endMarkerRef,
 
 
 export function zoomToRoute(mapRef, route, helpers) {
-  const { fetchNoise311, fetchGarbage311, fetchOther311, fetchMulti311, add311Markers, add311Multiple } = helpers;
+  const { fetchNoise311, fetchGarbage311, fetchOther311, fetchMulti311, add311Markers, add311Multiple, setPresentLayers } = helpers;
 
   if (!route.features || !Array.isArray(route.features) || route.features.length === 0) {
     console.error('Invalid route data');
@@ -196,6 +196,14 @@ export function zoomToRoute(mapRef, route, helpers) {
   const otherhigh = convertToGeoJSON(other311);
   const multihigh = convertToGeoJSON(multi311.filter(location => (location.severity === "High")));
   const multiveryhigh = convertToGeoJSON(multi311.filter(location => (location.severity === "Very High")));
+
+  // Update the present layers state
+  setPresentLayers({
+    noise: noise311.length > 0,
+    trash: garbage311.length > 0,
+    multipleWarnings: multi311.length > 0,
+    other: other311.length > 0,
+  });
 
   addClusteredLayer(mapRef, noise311high, 'route-noise-h', 'noise-high-marker', 'orange');
   addClusteredLayer(mapRef, noise311veryhigh, 'route-noise-vh', 'noise-veryhigh-marker', 'red');

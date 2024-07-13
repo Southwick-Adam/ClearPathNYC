@@ -152,3 +152,10 @@
 #loop_toggle_title_row {
     display: none;
 }
+
+.disabled-button {
+    background-color: #d3d3d3;
+    color: #a9a9a9;
+    cursor: not-allowed;
+  }
+  
