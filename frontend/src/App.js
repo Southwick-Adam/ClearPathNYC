@@ -53,26 +53,27 @@ function App() {
   }
 
   async function fetchRoute(formData) {
-    const { coordinates } = formData;
-
+    const { coordinates, isQuiet } = formData;
+  
     const params = new URLSearchParams();
     coordinates.forEach((coord) => {
       params.append('coord1', parseFloat(coord[1])); // Latitude as double
       params.append('coord2', parseFloat(coord[0])); // Longitude as double
     });
-
-    const requestUrl = `/route?${params.toString()}`;
+    params.append('quiet', isQuiet); // Add the quiet parameter
+  
+    const requestUrl = `http://localhost:5056/route?${params.toString()}`;
     console.log('Request URL:', requestUrl);
-
+  
     try {
       const response = await fetch(requestUrl);
       const responseText = await response.text();
       console.log('Response Text:', responseText);
       const data = JSON.parse(responseText);
-
+  
       // Update the route in the store
       useStore.getState().setRoute(data);
-
+  
       return data;
     } catch (error) {
       console.error('Error fetching route:', error);
@@ -81,7 +82,7 @@ function App() {
   }
 
   async function fetchWeatherData() {
-    const apiUrl = '/weather';
+    const apiUrl = 'http://localhost:5056/weather';
     try {
       const response = await fetch(apiUrl, {
         method: 'GET',
