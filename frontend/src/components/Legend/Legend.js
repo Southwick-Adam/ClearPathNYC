@@ -32,7 +32,7 @@ function Legend({ onToggleLayer, layerVisibility, presentLayers }) {
         noise: presentLayers.noise ? 'Hide' : 'View',
         trash: presentLayers.trash ? 'Hide' : 'View',
         multipleWarnings: presentLayers.multipleWarnings ? 'Hide' : 'View',
-        other: presentLayers.other ? 'Hide' : 'View'
+        other: presentLayers.other ? 'Hide' : 'View' // Ensure 'other' is handled similarly
       }));
     }
   }, [route, presentLayers]);
