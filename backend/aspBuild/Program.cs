@@ -1,14 +1,13 @@
 using System.Diagnostics;
 using aspBuild.Data;
-using Neo4j.Driver;
 
-// Updates and times the update function
-Stopwatch stopwatch = Stopwatch.StartNew();
-var updateDatabase = new UpdateDatabase();
-await updateDatabase.UpdateTheDatabase();
-stopwatch.Stop();
-Console.WriteLine("Elapsed Time: {0} milliseconds", stopwatch.ElapsedMilliseconds);
+var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddSingleton<UpdateDatabase>();
+builder.Services.AddHostedService<UpdateService>();
 
-Console.WriteLine("Completed.");
+builder.Services.Configure<Neo4jOptions>(builder.Configuration.GetSection("Neo4j"));
+builder.Services.AddSingleton<Neo4jService>();
 
+var app = builder.Build();
+app.Run();

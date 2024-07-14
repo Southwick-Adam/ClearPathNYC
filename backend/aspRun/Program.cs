@@ -8,7 +8,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("CorsPolicy",
     builder =>
     {
-        builder.WithOrigins("https://clearpath.info.gf")
+        builder.WithOrigins("http://localhost:5056")
             .AllowAnyHeader()
             .AllowAnyMethod();
     });
@@ -18,7 +18,7 @@ builder.Services.AddControllers();
 builder.Services.AddHttpClient();
 
 builder.Services.AddSingleton<WeatherAPI>();
-builder.Services.AddHostedService<WeatherStartup>();
+builder.Services.AddHostedService<WeatherService>();
 
 builder.Services.AddHostedService<ChangeDbService>();
 
@@ -37,7 +37,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// app.UseHttpsRedirection();
 app.UseRouting();
 app.UseCors("CorsPolicy");
 app.UseAuthorization();

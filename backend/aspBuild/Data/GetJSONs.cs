@@ -4,26 +4,55 @@ namespace aspBuild.Data
 {
     public class GetJSONs
     {
-        public static Dictionary<string, int> getJSON(string jsonPath)
+        public static Dictionary<string, int> GetJSON(string jsonPath, string type)
         {
-            Dictionary<string, int> dict = new Dictionary<string, int>();
+            Dictionary<string, int> dict = [];
 
             string json = File.ReadAllText(jsonPath);
 
-            var ListJSONValues = JsonConvert.DeserializeObject<List<JSONObject>>(json);
-            
-            foreach (var item in ListJSONValues)
+            if (string.Equals(type, "taxi"))
             {
-                dict.Add(item.LocationID, item.busyness_rank);
+                List<JSONObjectTaxi>? ListJSONValues = JsonConvert.DeserializeObject<List<JSONObjectTaxi>>(json);
+                dict.Add("-1", 3);
+                foreach (var item in ListJSONValues)
+                {
+                    if (item != null && item.LocationID != null)
+                    {
+                        dict.Add(item.LocationID, ScoreMap(item.Busyness_rank));
+                    }
+                }
+            }
+            if (string.Equals(type, "metro"))
+            {
+                List<JSONObjectMetro>? ListJSONValues = JsonConvert.DeserializeObject<List<JSONObjectMetro>>(json);
+                foreach (var item in ListJSONValues)
+                {
+                    if (item != null && item.station_complex_id != null)
+                    {
+                        dict.Add(item.station_complex_id, ScoreMap(item.Busyness_rank));
+                    }
+                    
+                }
             }
             
             return dict;
         }
+
+        private static int ScoreMap(int n)
+        {
+            return 6 - n;
+        }
     }
 
-    public class JSONObject 
+    public class JSONObjectTaxi 
     {
-        public string LocationID { get; set; }
-        public int busyness_rank { get; set; }
+        public string LocationID { get; set; } = string.Empty;
+        public int Busyness_rank { get; set; }
+    }
+
+    public class JSONObjectMetro 
+    {
+        public string station_complex_id { get; set; } = string.Empty;
+        public int Busyness_rank { get; set; }
     }
 }
