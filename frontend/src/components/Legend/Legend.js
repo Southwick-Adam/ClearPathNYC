@@ -104,15 +104,15 @@ function Legend({ onToggleLayer, layerVisibility, presentLayers }) {
         <ul>
           <li>
             <img src={require('../../assets/images/PTP_A_flat.png')} alt="Point to Point starting location" />
-            Point to Point starting location
+            Starting location
           </li>
           <li>
             <img src={require('../../assets/images/PTP_B_flat.png')} alt="Point to Point end location" />
-            Point to Point end location
+            End location
           </li>
           <li>
             <img src={require('../../assets/images/Waypoint_flat.png')} alt="Waypoint Marker" />
-            Waypoint Marker
+            Waypoint
           </li>
           <li>
             <img src={require('../../assets/images/Park_flat.png')} alt="Park" />
