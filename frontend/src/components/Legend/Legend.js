@@ -135,7 +135,7 @@ function Legend({ onToggleLayer, layerVisibility, presentLayers }) {
             {renderDisableableButton('trash')}
           </li>
           <li>
-            <img src={require('../../assets/images/Bin_flat.png')} alt="Street Condition Warning" />
+            <img src={require('../../assets/images/Road_Warning_flat.png')} alt="Street Condition Warning" />
             Street Condition Warning
             {renderDisableableButton('other')}
           </li>

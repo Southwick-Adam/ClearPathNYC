@@ -80,3 +80,11 @@
     font-family: 'Roboto', sans-serif;
     font-style: italic;
   }
+
+  .include_waypoints:hover{
+    cursor: pointer;
+  }
+
+  .include_waypoints input[type="checkbox"] {
+    accent-color: #2a8754;
+  }

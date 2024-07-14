@@ -179,7 +179,7 @@ function PointToPoint({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoder
         <GoButton disabled={isGoButtonDisabled} />
       </div>
       <div className='include_waypoints'>
-        <label>
+        <label className={includeWaypoints ? 'checked' : ''}>
           <input
             type='checkbox'
             checked={includeWaypoints}

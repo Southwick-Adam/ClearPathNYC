@@ -93,7 +93,7 @@
 
 /* Replace  with streets condition marker*/
 .other_high_marker {
-  background-image: url('../../assets/images/construction_orange.png');
+  background-image: url('../../assets/images/Road_Warning_orange.png');
 }
 .garbage_very_high_marker {
   background-image: url('../../assets/images/rubbish.png');

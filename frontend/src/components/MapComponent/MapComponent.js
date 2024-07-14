@@ -14,7 +14,7 @@ import poiImage from '../../assets/images/POI_marker_blue.png';
 import noiseHighImage from '../../assets/images/orange_volume.png';
 import noiseVeryHighImage from '../../assets/images/high_volume.png';
 import garbageHighImage from '../../assets/images/rubbish_orange.png';
-import otherHighImage from '../../assets/images/construction_orange.png';
+import otherHighImage from '../../assets/images/Road_Warning_orange.png';
 import multiHighImage from '../../assets/images/orange_warning.png';
 import multiVeryHighImage from '../../assets/images/red_warning.png';
 import { convertToGeoJSON } from './MapHelper/geojsonHelpers.js';
