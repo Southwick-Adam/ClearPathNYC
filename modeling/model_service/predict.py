@@ -19,9 +19,9 @@ class Predictor:
         filtered_df = df[df['hour'] == hour]
         return filtered_df
 
-    def prepare_features(self, filtered_df, feature_columns):
+    def prepare_features(self, filtered_df, feature_columns, location_ids_string):
         features = filtered_df[feature_columns]
-        location_ids = filtered_df['LocationID']
+        location_ids = filtered_df[location_ids_string]
         return features, location_ids
 
     def predict_busyness(self, features):
@@ -29,9 +29,6 @@ class Predictor:
         return predictions
 
     def format_output(self, location_ids, predictions, location_ids_string):
-        # location_ids_string = LocationID for taxi
-        # location_ids_string = station_complex_id for subway
-
         results_df = pd.DataFrame(
             {location_ids_string: location_ids, 'busyness_rank': predictions})
         # Occasional returns of busyness 0, therefore clipping to maintain range 1-5
@@ -48,15 +45,18 @@ class Predictor:
     def busyness_ranking(self, hour, location_ids_string):
         feature_columns = [location_ids_string, 'day', 'month', 'year', 'hour']
         filtered_df = self.load_and_filter_data(hour)
-        features, location_ids = self.prepare_features(
-            filtered_df, feature_columns)
+        
+        # location_ids_string = LocationID for taxi
+        # location_ids_string = station_complex_id for subway
+        
+        features, location_ids = self.prepare_features(filtered_df, feature_columns, location_ids_string)
         predictions = self.predict_busyness(features)
         json_output = self.format_output(location_ids, predictions, location_ids_string)
         return json_output
 
 
 def call_taxi_model():
-    csv_file = 'data/subway_data.csv'
+    csv_file = 'data/taxi_data.csv'
     model_file = 'models/taxi_stacking_model.pkl'
     hour = get_hour()
     location_ids_string = "LocationID"
@@ -66,8 +66,8 @@ def call_taxi_model():
 
 
 def call_subway_model():
-    csv_file = 'data/taxi_data.csv'
-    model_file = 'taxi_stacking_model.pkl'
+    csv_file = 'data/subway_data.csv'
+    model_file = 'models/subway_stacking_model.pkl'
     hour = get_hour()
     location_ids_string = "station_complex_id"
 
