@@ -7,6 +7,7 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import SplashScreen from './components/SplashScreen/SplashScreen.js';
 import Legend from './components/Legend/Legend.js';
 import useStore from './store/store.js';
+import './App.css';
 
 function App() {
   const [route, setRoute] = useState(null);

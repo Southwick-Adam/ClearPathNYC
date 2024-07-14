@@ -66,6 +66,81 @@ function MapComponent({ route, startGeocoderRef, endGeocoderRef, geocoderRefs, p
     geocoderRefs[index].current.setInput(placeName);
   };
 
+  const saveLayersAndSources = (map) => {
+    const layers = map.getStyle().layers;
+    const sources = map.getStyle().sources;
+    const images = map.listImages();
+
+    const layerCopy = layers.filter(layer => layer.id !== 'background').map(layer => ({ ...layer }));
+    const sourceCopy = { ...sources };
+    const imageCopy = images.map((imageId) => ({
+      id: imageId,
+    }));
+
+    return { layerCopy, sourceCopy, imageCopy };
+  };
+
+  const restoreLayersAndSources = (map, layerCopy, sourceCopy, imageCopy) => {
+    Object.keys(sourceCopy).forEach((sourceId) => {
+      if (!map.getSource(sourceId)) {
+        map.addSource(sourceId, sourceCopy[sourceId]);
+      }
+    });
+
+    layerCopy.forEach((layer) => {
+      if (!map.getLayer(layer.id)) {
+        map.addLayer(layer);
+      }
+    });
+
+    imageCopy.forEach((image) => {
+      if (!map.hasImage(image.id)) {
+        // Manually load images
+        if (image.id === 'flora-marker') {
+          map.loadImage(floraImage, (error, img) => {
+            if (error) throw error;
+            map.addImage('flora-marker', img);
+          });
+        } else if (image.id === 'poi-marker') {
+          map.loadImage(poiImage, (error, img) => {
+            if (error) throw error;
+            map.addImage('poi-marker', img);
+          });
+        } else if (image.id === 'noise-high-marker') {
+          map.loadImage(noiseHighImage, (error, img) => {
+            if (error) throw error;
+            map.addImage('noise-high-marker', img);
+          });
+        } else if (image.id === 'noise-veryhigh-marker') {
+          map.loadImage(noiseVeryHighImage, (error, img) => {
+            if (error) throw error;
+            map.addImage('noise-veryhigh-marker', img);
+          });
+        } else if (image.id === 'garbage-high-marker') {
+          map.loadImage(garbageHighImage, (error, img) => {
+            if (error) throw error;
+            map.addImage('garbage-high-marker', img);
+          });
+        } else if (image.id === 'other-high-marker') {
+          map.loadImage(otherHighImage, (error, img) => {
+            if (error) throw error;
+            map.addImage('other-high-marker', img);
+          });
+        } else if (image.id === 'multi-high-marker') {
+          map.loadImage(multiHighImage, (error, img) => {
+            if (error) throw error;
+            map.addImage('multi-high-marker', img);
+          });
+        } else if (image.id === 'multi-veryhigh-marker') {
+          map.loadImage(multiVeryHighImage, (error, img) => {
+            if (error) throw error;
+            map.addImage('multi-veryhigh-marker', img);
+          });
+        }
+      }
+    });
+  };
+
   useEffect(() => {
     if (mapRef.current) return;
 
@@ -160,8 +235,15 @@ function MapComponent({ route, startGeocoderRef, endGeocoderRef, geocoderRefs, p
 
   useEffect(() => {
     if (!mapRef.current || !isMapLoadedRef.current) return;
+
+    const { layerCopy, sourceCopy, imageCopy } = saveLayersAndSources(mapRef.current);
     const newStyle = isNightMode ? MAPBOX_NIGHT_STYLE_URL : MAPBOX_DAY_STYLE_URL;
+
     mapRef.current.setStyle(newStyle);
+
+    mapRef.current.once('styledata', () => {
+      restoreLayersAndSources(mapRef.current, layerCopy, sourceCopy, imageCopy);
+    });
   }, [isNightMode]);
 
   useEffect(() => {
