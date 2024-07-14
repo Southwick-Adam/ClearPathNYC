@@ -97,6 +97,9 @@ export function plotRoutePOI(mapRef, geojsonData, helpers) {
   // Add all POIs as a clustered source
   addClusteredLayer(mapRef, allFeaturesGeojsonData, 'route-pois', 'poi-marker', '#00cffa');
 
+  mapRef.current.setPaintProperty('route-pois-unclustered-point', 'icon-opacity', 1);
+
+
   // Add custom popup content for unclustered points
   mapRef.current.on('click', 'route-pois-unclustered-point', e => {
     const coordinates = e.features[0].geometry.coordinates.slice();
@@ -207,6 +210,9 @@ export function addClusteredLayer(mapRef, geoJsonData, sourceId, imageId, cluste
     layout: {
       'icon-image': imageId,
       'icon-size': 0.5
+    },
+    paint: {
+      'icon-opacity': 0.5 // Adjust the opacity to the desired level (0 to 1)
     }
   });
 

@@ -70,7 +70,6 @@ function getColorForQuietness(score) {
   if (score < 200) return 'orange'; // Orange for medium scores
   return '#FF0000'; // Red for high scores (noisy)
 }
-
 function addRouteTooltips(mapRef, coordinates, quietnessScore) {
   const segmentLengths = {};
   let currentColor = null;
@@ -109,20 +108,41 @@ function addRouteTooltips(mapRef, coordinates, quietnessScore) {
       return segment.length > max.length ? segment : max;
     });
 
-    // Add a tooltip to the midpoint of the longest red segment
-    const midpoint = turf.midpoint(turf.point(longestRedSegment.start), turf.point(longestRedSegment.end)).geometry.coordinates;
+    // Find the midpoint by iterating through the coordinates
+    let cumulativeLength = 0;
+    const totalLength = longestRedSegment.length;
+    const targetLength = totalLength / 2;
 
-    new mapboxgl.Popup({
-      offset: 0,
-      className: 'busyness-tooltip',
-      anchor: 'left'
-    })
-      .setLngLat(midpoint)
-      .setHTML(`<p>Very busy</p>`)
-      .addTo(mapRef.current);
+    let midpoint = null;
+    for (let i = 0; i < coordinates.length - 1; i++) {
+      const start = coordinates[i];
+      const end = coordinates[i + 1];
+      const segmentLength = turf.distance(turf.point(start), turf.point(end));
+
+      if (cumulativeLength + segmentLength >= targetLength) {
+        const remainingLength = targetLength - cumulativeLength;
+        const fraction = remainingLength / segmentLength;
+        midpoint = [
+          start[0] + (end[0] - start[0]) * fraction,
+          start[1] + (end[1] - start[1]) * fraction
+        ];
+        break;
+      }
+      cumulativeLength += segmentLength;
+    }
+
+    if (midpoint) {
+      new mapboxgl.Popup({
+        offset: 0,
+        className: 'busyness-tooltip',
+        anchor: 'left'
+      })
+        .setLngLat(midpoint)
+        .setHTML(`<p>Very busy</p>`)
+        .addTo(mapRef.current);
+    }
   }
 }
-
 
 // Function to add markers with animations
 export function addRouteMarkers(mapRef, routeData, startMarkerRef, endMarkerRef, waypointRefs) {
