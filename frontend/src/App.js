@@ -101,12 +101,6 @@ function App() {
     fetchWeatherData();
   }, []);
 
-  useEffect(() => {
-    const hour = new Date().getHours();
-    const isNight = hour >= 18 || hour <= 6; // Night mode between 6 PM and 6 AM
-    setNightMode(isNight);
-  }, [setNightMode]);
-
   const epaIndex = weather ? weather.current.air_quality['us-epa-index'] : null;
 
   return (

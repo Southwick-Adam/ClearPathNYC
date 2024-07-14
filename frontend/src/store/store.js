@@ -1,5 +1,8 @@
 import { create } from 'zustand';
 
+const hour = new Date().getHours();
+const isNight = hour >= 18 || hour <= 6;
+
 const useStore = create((set, get) => ({
   startCord: null,
   endCord: null,
@@ -53,7 +56,8 @@ const useStore = create((set, get) => ({
     set(updatedState);
     return waypointIndex;
   },
-  isNightMode: false,
+  
+  isNightMode: isNight,
   toggleNightMode: () => set((state) => ({ isNightMode: !state.isNightMode })),
   setNightMode: (isNight) => set({ isNightMode: isNight }),
   route: null,
