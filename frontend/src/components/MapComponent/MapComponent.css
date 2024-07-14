@@ -131,3 +131,15 @@
   width: 100%;
   z-index: 1; /* Ensures the video is on top of the map */
 }
+
+.mapboxgl-popup-close-button{
+  margin-right: 3px;
+}
+
+.mapboxgl-popup-anchor-bottom .mapboxgl-popup-content{
+  border-radius: 10px;
+}  
+
+.busyness-tooltip{
+  height:40px;
+}
