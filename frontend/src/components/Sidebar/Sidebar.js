@@ -65,7 +65,7 @@ function Sidebar({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoderRefs 
             <button className='btn' onClick={togglePtP}>
               {isPtPOpen ? '▼' : '▶'}
             </button>
-            <div className={`container_title ${isNightMode ? 'night' : 'day'}`}>Point to Point</div>
+            <div className={`container_title ${isNightMode ? 'night' : 'day'}`}>Find A Route</div>
           </div>
           <div className={`ptp_box ${isPtPOpen ? 'open' : 'closed'}`}>
             <PointToPoint

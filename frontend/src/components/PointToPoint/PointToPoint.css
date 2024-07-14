@@ -12,6 +12,11 @@
     justify-content: center;
     width: 100%;
   }
+/* geocoder z-index bug fix */
+  .ptp_row:first-of-type
+  {
+    z-index: 10;
+  }
 
   .ptp_label{
     font-size: 20px;
@@ -19,10 +24,18 @@
     padding-right: 5%;
   }
 
-  /* This is here because altering the style in waypoint.css didn't work */
+/* geocoder z-index bug fix */
   .waypoint{
     display: flex;
+    position: relative;
   }
+
+  .waypoint:nth-child(0) {z-index: 10;}
+  .waypoint:nth-child(1) {z-index: 9;}
+  .waypoint:nth-child(2) {z-index: 8;}
+  .waypoint:nth-child(3) {z-index: 7;}
+  .waypoint:nth-child(4) {z-index: 6;}
+  .waypoint:nth-child(5) {z-index: 5;}
 
   .checkbox{
     background-color: #198754;
@@ -55,8 +68,10 @@
     height: 30px;
   }
 
+  /* geocoder z-index bug fix */
   .waypoints_container{
     margin-top: 20px;
+    z-index: 5;
   }
 
   @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
@@ -64,4 +79,12 @@
   body {
     font-family: 'Roboto', sans-serif;
     font-style: italic;
+  }
+
+  .include_waypoints:hover{
+    cursor: pointer;
+  }
+
+  .include_waypoints input[type="checkbox"] {
+    accent-color: #2a8754;
   }

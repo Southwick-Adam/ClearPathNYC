@@ -68,11 +68,8 @@ function PointToPoint({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoder
   }
 
   function handleAddWaypoint() {
-    for (let i = 0; i < 5; i++) {
-      if (!waypointStates[i].coordinates) {
-        setVisibleWaypoints(i + 1);
-        return;
-      }
+    if (visibleWaypoints < 5) {
+      setVisibleWaypoints(visibleWaypoints + 1);
     }
   }
 
@@ -182,7 +179,7 @@ function PointToPoint({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoder
         <GoButton disabled={isGoButtonDisabled} />
       </div>
       <div className='include_waypoints'>
-        <label>
+        <label className={includeWaypoints ? 'checked' : ''}>
           <input
             type='checkbox'
             checked={includeWaypoints}

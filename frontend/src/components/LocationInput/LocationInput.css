@@ -18,25 +18,30 @@
     margin-top: 10px;
 }
 
-/* Overriding default z-index in mapbox geocoder styling */
-.mapboxgl-ctrl-geocoder {
-    z-index: 500;
-}
 
 .mapboxgl-ctrl-geocoder{
     background-color: rgb(91, 104, 104);
-}
-
-.mapboxgl-ctrl-geocoder--input {
-    color:rgb(181, 185, 189);
 }
 
 .mapboxgl-ctrl-geocoder.night{
     background-color: rgb(91, 104, 104);
 }
 
-.mapboxgl-ctrl-geocoder--input.night {
+.mapboxgl-ctrl-geocoder--input.night, 
+.night .mapboxgl-ctrl-geocoder--input::placeholder,
+.night .mapboxgl-ctrl-geocoder--input:focus
+{
     color:rgb(181, 185, 189)
+}
+
+.mapboxgl-ctrl-geocoder--button:hover
+{
+    cursor: pointer;
+}
+
+.night .mapboxgl-ctrl-geocoder--button
+{
+    background-color: rgb(0 0 0 / 5%);
 }
 
 .mapboxgl-ctrl-geocoder.day{
@@ -45,4 +50,32 @@
 
 .mapboxgl-ctrl-geocoder--input.day {
     color:rgb(0, 0, 0);
+}
+
+.night .mapboxgl-ctrl-geocoder--input::placeholder
+{
+    color: rgb(181, 185, 189);
+}
+
+/* Night Mode geocoder suggestion styling */
+.mapboxgl-ctrl-geocoder.night .suggestions
+{
+    background-color: #808080;
+}
+
+.location_finder_container .location_input_container .mapboxgl-ctrl-geocoder.night .suggestions > li > a
+{
+    color: white;
+    background-color: #808080;
+}
+
+.location_finder_container .location_input_container .mapboxgl-ctrl-geocoder.night .suggestions > li > a:hover
+{
+    color: white;
+    background-color: #a1a1a1;
+}
+
+.mapboxgl-ctrl-geocoder--powered-by>a
+{
+    display: none;
 }

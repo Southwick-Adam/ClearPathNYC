@@ -3,6 +3,7 @@ import $ from 'jquery';
 import { animateMarkers, addClusteredLayer } from './markerHelpers';
 import { convertToGeoJSON } from './geojsonHelpers.js';
 import useStore from '../../../store/store.js';
+import * as turf from '@turf/turf';
 
 export function addRouteToMap(mapRef) {
   const route = useStore.getState().route;
@@ -56,6 +57,9 @@ export function addRouteToMap(mapRef) {
         'line-gradient': lineGradient,
       },
     });
+
+    // Add a tooltip for the longest red segment in the route
+    addRouteTooltips(mapRef, coordinates, quietnessScore);
   }
 }
 
@@ -63,8 +67,81 @@ export function addRouteToMap(mapRef) {
 function getColorForQuietness(score) {
   // Define a color scale for quietness scores (example: green to red)
   if (score < 100) return '#00FF00'; // Green for low scores (quiet)
-  if (score < 200) return 'orange'; // Yellow for medium scores
+  if (score < 200) return 'orange'; // Orange for medium scores
   return '#FF0000'; // Red for high scores (noisy)
+}
+function addRouteTooltips(mapRef, coordinates, quietnessScore) {
+  const segmentLengths = {};
+  let currentColor = null;
+  let currentSegmentStart = null;
+
+  function addSegmentLength(color, start, end) {
+    if (!segmentLengths[color]) {
+      segmentLengths[color] = [];
+    }
+    const length = turf.distance(turf.point(start), turf.point(end));
+    segmentLengths[color].push({ start, end, length });
+  }
+
+  for (let i = 0; i < coordinates.length - 1; i++) {
+    const score = quietnessScore[i];
+    const color = getColorForQuietness(score);
+    const nextCoord = coordinates[i + 1];
+
+    if (color !== currentColor) {
+      if (currentColor !== null && currentSegmentStart !== null) {
+        addSegmentLength(currentColor, currentSegmentStart, coordinates[i]);
+      }
+      currentColor = color;
+      currentSegmentStart = coordinates[i];
+    }
+
+    if (i === coordinates.length - 2) {
+      addSegmentLength(currentColor, currentSegmentStart, nextCoord);
+    }
+  }
+
+  // Find the longest red segment
+  const redSegments = segmentLengths['#FF0000'];
+  if (redSegments && redSegments.length > 0) {
+    const longestRedSegment = redSegments.reduce((max, segment) => {
+      return segment.length > max.length ? segment : max;
+    });
+
+    // Find the midpoint by iterating through the coordinates
+    let cumulativeLength = 0;
+    const totalLength = longestRedSegment.length;
+    const targetLength = totalLength / 2;
+
+    let midpoint = null;
+    for (let i = 0; i < coordinates.length - 1; i++) {
+      const start = coordinates[i];
+      const end = coordinates[i + 1];
+      const segmentLength = turf.distance(turf.point(start), turf.point(end));
+
+      if (cumulativeLength + segmentLength >= targetLength) {
+        const remainingLength = targetLength - cumulativeLength;
+        const fraction = remainingLength / segmentLength;
+        midpoint = [
+          start[0] + (end[0] - start[0]) * fraction,
+          start[1] + (end[1] - start[1]) * fraction
+        ];
+        break;
+      }
+      cumulativeLength += segmentLength;
+    }
+
+    if (midpoint) {
+      new mapboxgl.Popup({
+        offset: 0,
+        className: 'busyness-tooltip',
+        anchor: 'left'
+      })
+        .setLngLat(midpoint)
+        .setHTML(`<p>Very busy</p>`)
+        .addTo(mapRef.current);
+    }
+  }
 }
 
 // Function to add markers with animations
