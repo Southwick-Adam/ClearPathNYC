@@ -137,9 +137,7 @@
   opacity: 0;
 }
 
-.ptp_wrapper, .loop_wrapper {
-  border-bottom: 1px solid black;
-}
+
 .sidebar {
   color: rgb(224, 221, 221);
 }
@@ -176,7 +174,11 @@
 }
 
 .night-export-container{
+  width: 300px;
+  height: 46px;
   display: flex;
   justify-content: center;
-  margin-top: 10px;
+  position: absolute;
+  left: 30px;
+  bottom: 115px;
 }
