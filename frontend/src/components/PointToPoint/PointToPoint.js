@@ -68,11 +68,8 @@ function PointToPoint({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoder
   }
 
   function handleAddWaypoint() {
-    for (let i = 0; i < 5; i++) {
-      if (!waypointStates[i].coordinates) {
-        setVisibleWaypoints(i + 1);
-        return;
-      }
+    if (visibleWaypoints < 5) {
+      setVisibleWaypoints(visibleWaypoints + 1);
     }
   }
 
