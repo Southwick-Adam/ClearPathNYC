@@ -159,7 +159,7 @@ function Legend({ onToggleLayer, layerVisibility, presentLayers }) {
         <li className="pin-container">
             <img src={require('../../assets/images/pin_blue.png')} alt="Blue Pin" />
             <img src={require('../../assets/images/pin_green.png')} alt="Green Pin" />
-            <img src={require('../../assets/images/pin_yellow.png')} alt="Yellow Pin" />
+            {/* <img src={require('../../assets/images/pin_yellow.png')} alt="Yellow Pin" /> */}
             <img src={require('../../assets/images/pin_orange.png')} alt="Orange Pin" />
             <img src={require('../../assets/images/pin_red.png')} alt="Red Pin" />
         </li>
