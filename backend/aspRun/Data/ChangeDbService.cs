@@ -22,7 +22,7 @@ namespace aspRun.Data
         public Task StartAsync(CancellationToken cancellationToken)
         {
             _logger.LogInformation("Starting background service...");
-            _timer = new Timer(ExecuteTask, null, TimeSpan.Zero, TimeSpan.FromHours(1));
+            _timer = new Timer(ExecuteTask, null, TimeSpan.Zero, TimeSpan.FromHours(2));
             return Task.CompletedTask;
         }
 
