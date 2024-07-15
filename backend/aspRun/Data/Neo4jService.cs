@@ -6,44 +6,14 @@ namespace aspRun.Data
 {
     public class Neo4jService
     {
-        private IDriver _driver;
+        private readonly IDriver _driver;
         private readonly Neo4jOptions _neo4jOptions;
         private readonly string _database = "neo4j";
 
         public Neo4jService(IOptions<Neo4jOptions> options)
         {
             _neo4jOptions = options.Value;
-            _driver = GraphDatabase.Driver(_neo4jOptions.Uri_1, AuthTokens.Basic(_neo4jOptions.Username_1, _neo4jOptions.Password_1));
-        }
-
-        public void ChangeDB(bool useContainer1)
-        {
-            string uri;
-            string username;
-            string password;
-
-            if (useContainer1)
-            {
-                uri = _neo4jOptions.Uri_1;
-                username = _neo4jOptions.Username_1;
-                password = _neo4jOptions.Password_1;
-            }
-            else
-            {
-                uri = _neo4jOptions.Uri_2;
-                username = _neo4jOptions.Username_2;
-                password = _neo4jOptions.Password_2;
-            }
-            _driver = GraphDatabase.Driver(uri, AuthTokens.Basic(username, password));
-            Console.WriteLine("DB CHANGE EXECUTED");
-            if (useContainer1)
-            {
-                Console.WriteLine("NOW USING NEO4J CONTAINER 1");
-            }
-            else
-            {
-                Console.WriteLine("NOW USING NEO4J CONTAINER 2");
-            }
+            _driver = GraphDatabase.Driver(_neo4jOptions.Uri, AuthTokens.Basic(_neo4jOptions.Username, _neo4jOptions.Password));
         }
 
         public async Task<T> ReadAsync<T>(Func<IAsyncQueryRunner, Task<T>> func)
@@ -60,12 +30,7 @@ namespace aspRun.Data
             }
         }
 
-        /// <summary>
-        /// Used for running queries to the Neo4j database
-        /// </summary>
-        /// <param name="Query"></param>
-        /// <param name="Params"></param>
-        /// <returns>List IRecord</returns> 
+        // Used for running queries to the Neo4j database
         public async Task<List<IRecord>> RunQuery(string Query, Dictionary<string, object> Params)
         {
             try
@@ -83,32 +48,27 @@ namespace aspRun.Data
             catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
-                return new List<IRecord>();
+                return [];
             }
         }
 
 
-        /// <summary>
-        /// returns the closest node to the given Latitude, Longitude combination
-        /// </summary>
-        /// <param name="Lat"></param>
-        /// <param name="Long"></param>
-        /// <returns>OSM Node ID</returns>
+        // returns the closest node to the given Latitude, Longitude combination
         public async Task<long> FindNode(double Lat, double Long)
         {
             string query = @"
-        WITH point({ latitude: $Lat, longitude: $Long }) AS targetPoint
-        MATCH (n:nodes)
-        WITH n, point.distance(point({ longitude: n.longitude, latitude: n.latitude }), targetPoint) AS dist
-        RETURN n.nodeid, dist
-        order by dist
-        LIMIT 1";
+            WITH point({ latitude: $Lat, longitude: $Long }) AS targetPoint
+            MATCH (n:nodes)
+            WITH n, point.distance(point({ longitude: n.longitude, latitude: n.latitude }), targetPoint) AS dist
+            RETURN n.nodeid, dist
+            order by dist
+            LIMIT 1";
 
             var parameters = new Dictionary<string, object>
-        {
-            {"Lat", Long},
-            {"Long", Lat}
-        };
+            {
+                {"Lat", Lat},
+                {"Long", Long}
+            };
 
             List<IRecord> records = await this.RunQuery(query, parameters);
             try
@@ -122,7 +82,6 @@ namespace aspRun.Data
             }
         }
 
-
         public async Task StopGraph()
         {
             var StopGraph = @"CALL gds.graph.drop('NYC1')";
@@ -131,7 +90,6 @@ namespace aspRun.Data
             await RunQuery(StopGraph, []);
             Console.WriteLine($"Graph stopped");
         }
-
 
         public async Task StartGraph()
         {
@@ -182,15 +140,7 @@ namespace aspRun.Data
             Console.WriteLine($"CheckGraph: {output.First()["exists"]}");
         }
 
-
-        /// <summary>
-        /// Used to find a path from a given Latitude/Longitude to another Latitude/Longitude
-        /// </summary>
-        /// <param name="StartLat"></param>
-        /// <param name="StartLong"></param>
-        /// <param name="FinishLat"></param>
-        /// <param name="FinishLong"></param>
-        /// <returns>string of a GeoJSON</returns>
+        // Used to find a path from a given Latitude/Longitude to another Latitude/Longitude
         public async Task<List<string>> AStar(double StartLat, double StartLong, double FinishLat, double FinishLong)
         {
             long start = await this.FindNode(StartLat, StartLong);
@@ -270,8 +220,6 @@ namespace aspRun.Data
             return [route.CoordinatesString, route.CostsString];
         }
 
-
-
         public async Task<List<string>> AStarLoud(double StartLat, double StartLong, double FinishLat, double FinishLong)
         {
             long start = await this.FindNode(StartLat, StartLong);
@@ -305,12 +253,12 @@ namespace aspRun.Data
 
             var Query = @"
             MATCH (source: nodes{nodeid: $start}), (target: nodes{nodeid: $dest})
-            CALL gds.shortestPath.astar.stream('NYC1Loud', {
+            CALL gds.shortestPath.astar.stream('NYC1', {
                 sourceNode: source,
                 targetNode: target,
                 latitudeProperty: 'latitude',
                 longitudeProperty: 'longitude',
-                relationshipWeightProperty: 'loudscore'
+                relationshipWeightProperty: 'distance'
             })
             YIELD nodeIds, costs
             RETURN 
@@ -351,16 +299,7 @@ namespace aspRun.Data
             return [route.CoordinatesString, route.CostsString];
         }
 
-
-        /// <summary>
-        /// Used to return a GeoJSON format
-        /// </summary>
-        /// <param name="coordinates"></param>
-        /// <param name="loopOrP2P"></param>
-        /// <param name="isLoop"></param>
-        /// <param name="elevation"></param>
-        /// <param name="quietScore"></param>
-        /// <returns>string in the GeoJSON format</returns> 
+        // Used to return a GeoJSON format
         public string GeoJSON(string coordinates, string loopOrP2P, string isLoop, string elevation, string quietScore)
         {
 
@@ -402,7 +341,6 @@ namespace aspRun.Data
             });
             Console.WriteLine("Loud score added");
         }
-
 
         public async Task DisposeAsync()
         //Disposes of session

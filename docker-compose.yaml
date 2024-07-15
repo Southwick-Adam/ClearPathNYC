@@ -8,7 +8,7 @@ services:
     ports:
       - "5001:8080"
     networks:
-      - clear_path_net
+      - clearpath_net
 
   asp-run:
     image: asouthwick1/nycapp:asprun
@@ -18,7 +18,7 @@ services:
     env_file: 
       - .env
     networks:
-      - clear_path_net
+      - clearpath_net
 
   react-app:
     image: asouthwick1/nycapp:react
@@ -28,7 +28,7 @@ services:
     depends_on:
       - asp-run
     networks:
-      - clear_path_net
+      - clearpath_net
 
   nginx:
     image: asouthwick1/nycapp:proxy
@@ -40,8 +40,9 @@ services:
       - react-app
       - asp-run
     networks:
-      - clear_path_net
+      - clearpath_net
 
 networks:
-  clear_path_net:
+  clearpath_net:
+    external: true
     driver: bridge

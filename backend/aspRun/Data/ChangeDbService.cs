@@ -11,14 +11,12 @@ namespace aspRun.Data
         private readonly ILogger<ChangeDbService> _logger;
         private Timer? _timer;
         private readonly Neo4jService _neo4jService;
-        private bool _changeToNeo4j1;
 
         public ChangeDbService(ILogger<ChangeDbService> logger, Neo4jService neo4jService)
         {
             _logger = logger;
             _neo4jService = neo4jService;
             _timer = null;
-            _changeToNeo4j1 = true;
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
@@ -35,8 +33,6 @@ namespace aspRun.Data
                 await _neo4jService.CheckGraph();
                 await _neo4jService.StopGraph();
                 await _neo4jService.CheckGraph();
-                _neo4jService.ChangeDB(_changeToNeo4j1);
-                _changeToNeo4j1 = !_changeToNeo4j1;
                 await _neo4jService.CheckGraph();
                 await _neo4jService.StartGraph();
                 await _neo4jService.CheckGraph();

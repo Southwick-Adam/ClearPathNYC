@@ -101,10 +101,10 @@ function Legend({ onToggleLayer, layerVisibility, presentLayers }) {
         {isOpen ? '◀' : '▶'}
       </button>
       <div className="legend-content">
-        <ul>
-          <li>
+    <ul>
+        <li>
             <img src={require('../../assets/images/PTP_A_flat.png')} alt="Point to Point starting location" />
-            Starting location
+            Start Location
           </li>
           <li>
             <img src={require('../../assets/images/PTP_B_flat.png')} alt="Point to Point end location" />
@@ -113,48 +113,61 @@ function Legend({ onToggleLayer, layerVisibility, presentLayers }) {
           <li>
             <img src={require('../../assets/images/Waypoint_flat.png')} alt="Waypoint Marker" />
             Waypoint
-          </li>
-          <li>
+        </li>
+        <li>
             <img src={require('../../assets/images/Park_flat.png')} alt="Park" />
             Park
-            {renderToggleButton('parks')}
-          </li>
-          <li>
+            <div className="button-container">
+                {renderToggleButton('parks')}
+            </div>
+        </li>
+        <li>
             <img src={require('../../assets/images/PoI_flat.png')} alt="Point of Interest" />
             Point of Interest
-            {renderToggleButton('poi')}
-          </li>
-          <li>
+            <div className="button-container">
+                {renderToggleButton('poi')}
+            </div>
+        </li>
+        <li>
             <img src={require('../../assets/images/Noise_flat.png')} alt="Noise Warning" />
             Noise Warning
-            {renderDisableableButton('noise')}
-          </li>
-          <li>
+            <div className="button-container">
+                {renderDisableableButton('noise')}
+            </div>
+        </li>
+        <li>
             <img src={require('../../assets/images/Bin_flat.png')} alt="Trash Warning" />
             Trash Warning
-            {renderDisableableButton('trash')}
-          </li>
-          <li>
+            <div className="button-container">
+                {renderDisableableButton('trash')}
+            </div>
+        </li>
+        <li>
             <img src={require('../../assets/images/Road_Warning_flat.png')} alt="Street Condition Warning" />
             Street Condition Warning
-            {renderDisableableButton('other')}
-          </li>
-          <li>
+            <div className="button-container">
+                {renderDisableableButton('other')}
+            </div>
+        </li>
+        <li>
             <img src={require('../../assets/images/Warning_flat.png')} alt="Multiple Warnings" />
             Multiple Warnings
-            {renderDisableableButton('multipleWarnings')}
-          </li>
-          <li>
+            <div className="button-container">
+                {renderDisableableButton('multipleWarnings')}
+            </div>
+        </li>
+        <li className="pin-container">
             <img src={require('../../assets/images/pin_blue.png')} alt="Blue Pin" />
             <img src={require('../../assets/images/pin_green.png')} alt="Green Pin" />
-            <img src={require('../../assets/images/pin_yellow.png')} alt="Yellow Pin" />
+            {/* <img src={require('../../assets/images/pin_yellow.png')} alt="Yellow Pin" /> */}
             <img src={require('../../assets/images/pin_orange.png')} alt="Orange Pin" />
             <img src={require('../../assets/images/pin_red.png')} alt="Red Pin" />
-          </li>
-          <li>Pin colour indicates level of volume, with red being the greatest.</li>
-          <li>Blue and Green pins represent items of interest to the user.</li>
-        </ul>
-      </div>
+        </li>
+        <li>Pin colour indicates level of volume, with red being the greatest.</li>
+        <li>Blue and Green pins represent items of interest to the user.</li>
+    </ul>
+</div>
+
     </div>
   );
 }

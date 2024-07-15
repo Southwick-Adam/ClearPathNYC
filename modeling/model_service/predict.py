@@ -4,6 +4,7 @@ import json
 from datetime import datetime
 import pytz
 
+
 class Predictor:
     def __init__(self, model_file, csv_file, feature_order):
         self.model = self.load_model(model_file)
@@ -48,7 +49,8 @@ class Predictor:
         filtered_df = self.load_and_filter_data(hour)
         features, location_ids = self.prepare_features(filtered_df, location_ids_string)
         predictions = self.predict_busyness(features)
-        json_output = self.format_output(location_ids, predictions, location_ids_string)
+        json_output = self.format_output(
+            location_ids, predictions, location_ids_string)
         return json_output
 
 
@@ -78,11 +80,3 @@ def get_hour():
     nyc_tz = pytz.timezone('America/New_York')
     nyc_time = datetime.now(nyc_tz)
     return nyc_time.hour + 2
-
-# Testing output
-#if __name__ == "__main__":
-    #print("Taxi Model Output:")
-    #print(call_taxi_model())
-    
-    #print("\nSubway Model Output:")
-    #print(call_subway_model())
