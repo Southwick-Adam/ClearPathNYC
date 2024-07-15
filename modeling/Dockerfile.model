@@ -1,7 +1,11 @@
 FROM centos:latest
 
-COPY /model_service  .
+COPY /model_service .
 
-RUN yum install python3 -y  && pip3 install -r requirements.txt
+RUN yum install python3 -y && \
+    python3 -m pip install --upgrade pip && \
+    python3 -m pip install -r requirements.txt
 
-ENTRYPOINT ["./app.py"]
+EXPOSE 5000
+
+ENTRYPOINT ["python3", "./app.py"]
