@@ -24,16 +24,16 @@ namespace aspBuild.ApiCalls
             }
             catch (HttpRequestException ex)
             {
-                Console.WriteLine($"Error while fetching weather data: {ex.StatusCode}");
+                Console.WriteLine($"Error while fetching {url} data: {ex.StatusCode}");
             }
         }
 
         public async Task UpdateDataFiles()
         {
-            string taxiUrl = "http://models:5000/taxi";
-            string subwayUrl = "http://models:5000/subway";
-            string taxiFilePath = "../DataFiles/taxi_busyness_ranking.json";
-            string subwayFilePath = "../DataFiles/subway_busyness_ranking.json";
+            string taxiUrl = "http://flask:5000/taxi";//change
+            string subwayUrl = "http://flask:5000/subway";//change
+            string taxiFilePath = "DataFiles/taxi_busyness_ranking.json";
+            string subwayFilePath = "DataFiles/subway_busyness_ranking.json";
 
             await ModelCallAsync(taxiUrl, taxiFilePath);
             await ModelCallAsync(subwayUrl, subwayFilePath);
