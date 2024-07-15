@@ -58,7 +58,7 @@ namespace aspBuild.Data
             catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
-                return new List<IRecord>();
+                return [];
             }
         }
 
