@@ -5,9 +5,10 @@ from datetime import datetime
 import pytz
 
 class Predictor:
-    def __init__(self, model_file, csv_file):
+    def __init__(self, model_file, csv_file, feature_order):
         self.model = self.load_model(model_file)
         self.csv_file = csv_file
+        self.feature_order = feature_order
 
     def load_model(self, model_file):
         with open(model_file, 'rb') as f:
@@ -18,9 +19,13 @@ class Predictor:
         df = pd.read_csv(self.csv_file)
         filtered_df = df[df['hour'] == hour]
         return filtered_df
+    
+    def reorder_features(self, df): 
+        # Restructure the features according to what each model expects
+        return df[self.feature_order]
 
-    def prepare_features(self, filtered_df, feature_columns, location_ids_string):
-        features = filtered_df[feature_columns]
+    def prepare_features(self, filtered_df, location_ids_string):
+        features = self.reorder_features(filtered_df)
         location_ids = filtered_df[location_ids_string]
         return features, location_ids
 
@@ -31,9 +36,6 @@ class Predictor:
     def format_output(self, location_ids, predictions, location_ids_string):
         results_df = pd.DataFrame(
             {location_ids_string: location_ids, 'busyness_rank': predictions})
-        # Occasional returns of busyness 0, therefore clipping to maintain range 1-5
-        results_df['busyness_rank'] = results_df['busyness_rank'].clip(
-            lower=1, upper=5)
         grouped_df = results_df.groupby(location_ids_string)[
             'busyness_rank'].mean().reset_index()
         grouped_df['busyness_rank'] = grouped_df['busyness_rank'].round().astype(
@@ -43,13 +45,8 @@ class Predictor:
         return json_output
 
     def busyness_ranking(self, hour, location_ids_string):
-        feature_columns = [location_ids_string, 'day', 'month', 'year', 'hour']
         filtered_df = self.load_and_filter_data(hour)
-        
-        # location_ids_string = LocationID for taxi
-        # location_ids_string = station_complex_id for subway
-        
-        features, location_ids = self.prepare_features(filtered_df, feature_columns, location_ids_string)
+        features, location_ids = self.prepare_features(filtered_df, location_ids_string)
         predictions = self.predict_busyness(features)
         json_output = self.format_output(location_ids, predictions, location_ids_string)
         return json_output
@@ -60,8 +57,9 @@ def call_taxi_model():
     model_file = 'models/taxi_stacking_model.pkl'
     hour = get_hour()
     location_ids_string = "LocationID"
-    
-    predictor = Predictor(model_file, csv_file)
+    feature_order = ['LocationID', 'day', 'month', 'year', 'hour']
+
+    predictor = Predictor(model_file, csv_file, feature_order)
     return predictor.busyness_ranking(hour, location_ids_string)
 
 
@@ -70,8 +68,9 @@ def call_subway_model():
     model_file = 'models/subway_stacking_model.pkl'
     hour = get_hour()
     location_ids_string = "station_complex_id"
+    feature_order = ['station_complex_id', 'year', 'month', 'day', 'hour']
 
-    predictor = Predictor(model_file, csv_file)
+    predictor = Predictor(model_file, csv_file, feature_order)
     return predictor.busyness_ranking(hour, location_ids_string)
 
 
@@ -79,3 +78,11 @@ def get_hour():
     nyc_tz = pytz.timezone('America/New_York')
     nyc_time = datetime.now(nyc_tz)
     return nyc_time.hour + 2
+
+# Testing output
+#if __name__ == "__main__":
+    #print("Taxi Model Output:")
+    #print(call_taxi_model())
+    
+    #print("\nSubway Model Output:")
+    #print(call_subway_model())
