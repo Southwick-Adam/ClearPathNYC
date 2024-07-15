@@ -4,6 +4,7 @@ import json
 from datetime import datetime
 import pytz
 
+
 class Predictor:
     def __init__(self, model_file, csv_file):
         self.model = self.load_model(model_file)
@@ -45,13 +46,15 @@ class Predictor:
     def busyness_ranking(self, hour, location_ids_string):
         feature_columns = [location_ids_string, 'day', 'month', 'year', 'hour']
         filtered_df = self.load_and_filter_data(hour)
-        
+
         # location_ids_string = LocationID for taxi
         # location_ids_string = station_complex_id for subway
-        
-        features, location_ids = self.prepare_features(filtered_df, feature_columns, location_ids_string)
+
+        features, location_ids = self.prepare_features(
+            filtered_df, feature_columns, location_ids_string)
         predictions = self.predict_busyness(features)
-        json_output = self.format_output(location_ids, predictions, location_ids_string)
+        json_output = self.format_output(
+            location_ids, predictions, location_ids_string)
         return json_output
 
 
@@ -60,7 +63,7 @@ def call_taxi_model():
     model_file = 'models/taxi_stacking_model.pkl'
     hour = get_hour()
     location_ids_string = "LocationID"
-    
+
     predictor = Predictor(model_file, csv_file)
     return predictor.busyness_ranking(hour, location_ids_string)
 

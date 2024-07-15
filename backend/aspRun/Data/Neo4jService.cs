@@ -60,12 +60,7 @@ namespace aspRun.Data
             }
         }
 
-        /// <summary>
-        /// Used for running queries to the Neo4j database
-        /// </summary>
-        /// <param name="Query"></param>
-        /// <param name="Params"></param>
-        /// <returns>List IRecord</returns> 
+        // Used for running queries to the Neo4j database
         public async Task<List<IRecord>> RunQuery(string Query, Dictionary<string, object> Params)
         {
             try
@@ -88,12 +83,7 @@ namespace aspRun.Data
         }
 
 
-        /// <summary>
-        /// returns the closest node to the given Latitude, Longitude combination
-        /// </summary>
-        /// <param name="Lat"></param>
-        /// <param name="Long"></param>
-        /// <returns>OSM Node ID</returns>
+        // returns the closest node to the given Latitude, Longitude combination
         public async Task<long> FindNode(double Lat, double Long)
         {
             string query = @"
@@ -182,15 +172,7 @@ namespace aspRun.Data
             Console.WriteLine($"CheckGraph: {output.First()["exists"]}");
         }
 
-
-        /// <summary>
-        /// Used to find a path from a given Latitude/Longitude to another Latitude/Longitude
-        /// </summary>
-        /// <param name="StartLat"></param>
-        /// <param name="StartLong"></param>
-        /// <param name="FinishLat"></param>
-        /// <param name="FinishLong"></param>
-        /// <returns>string of a GeoJSON</returns>
+        // Used to find a path from a given Latitude/Longitude to another Latitude/Longitude
         public async Task<List<string>> AStar(double StartLat, double StartLong, double FinishLat, double FinishLong)
         {
             long start = await this.FindNode(StartLat, StartLong);
@@ -270,8 +252,7 @@ namespace aspRun.Data
             return [route.CoordinatesString, route.CostsString];
         }
 
-
-
+      
         public async Task<List<string>> AStarLoud(double StartLat, double StartLong, double FinishLat, double FinishLong)
         {
             long start = await this.FindNode(StartLat, StartLong);
@@ -351,16 +332,7 @@ namespace aspRun.Data
             return [route.CoordinatesString, route.CostsString];
         }
 
-
-        /// <summary>
-        /// Used to return a GeoJSON format
-        /// </summary>
-        /// <param name="coordinates"></param>
-        /// <param name="loopOrP2P"></param>
-        /// <param name="isLoop"></param>
-        /// <param name="elevation"></param>
-        /// <param name="quietScore"></param>
-        /// <returns>string in the GeoJSON format</returns> 
+        // Used to return a GeoJSON format
         public string GeoJSON(string coordinates, string loopOrP2P, string isLoop, string elevation, string quietScore)
         {
 
