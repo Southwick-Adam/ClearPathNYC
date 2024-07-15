@@ -35,8 +35,8 @@ namespace aspRun.Data
                 await _neo4jService.CheckGraph();
                 await _neo4jService.StopGraph();
                 await _neo4jService.CheckGraph();
-                _neo4jService.ChangeDB(_changeToNeo4j1);
-                _changeToNeo4j1 = !_changeToNeo4j1;
+                // _neo4jService.ChangeDB(_changeToNeo4j1);
+                // _changeToNeo4j1 = !_changeToNeo4j1;
                 await _neo4jService.CheckGraph();
                 await _neo4jService.StartGraph();
                 await _neo4jService.CheckGraph();
