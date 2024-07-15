@@ -8,7 +8,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("CorsPolicy",
     builder =>
     {
-        builder.WithOrigins("http://localhost:5056")
+        builder.WithOrigins("https://clearpath.info.gf")
             .AllowAnyHeader()
             .AllowAnyMethod();
     });
