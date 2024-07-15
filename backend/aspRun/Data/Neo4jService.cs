@@ -97,18 +97,18 @@ namespace aspRun.Data
         public async Task<long> FindNode(double Lat, double Long)
         {
             string query = @"
-        WITH point({ latitude: $Lat, longitude: $Long }) AS targetPoint
-        MATCH (n:nodes)
-        WITH n, point.distance(point({ longitude: n.longitude, latitude: n.latitude }), targetPoint) AS dist
-        RETURN n.nodeid, dist
-        order by dist
-        LIMIT 1";
+            WITH point({ latitude: $Lat, longitude: $Long }) AS targetPoint
+            MATCH (n:nodes)
+            WITH n, point.distance(point({ longitude: n.longitude, latitude: n.latitude }), targetPoint) AS dist
+            RETURN n.nodeid, dist
+            order by dist
+            LIMIT 1";
 
             var parameters = new Dictionary<string, object>
-        {
-            {"Lat", Long},
-            {"Long", Lat}
-        };
+            {
+                {"Lat", Lat},
+                {"Long", Long}
+            };
 
             List<IRecord> records = await this.RunQuery(query, parameters);
             try
