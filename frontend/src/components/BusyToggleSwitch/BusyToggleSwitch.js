@@ -1,9 +1,17 @@
 import React, { useRef, useId } from 'react';
+import { OverlayTrigger, Tooltip } from 'react-bootstrap';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import './BusyToggleSwitch.css';
 
 const BusyToggleSwitch = ({ isQuiet, handleToggleChange }) => {
   const inputRef = useRef(null);
   const uniqueId = useId();
+
+  const renderTooltip = (props) => (
+    <Tooltip id="toggle-tooltip" {...props}>
+      Toggle to find a quieter route
+    </Tooltip>
+  );
 
   return (
     <div className="toggle-switch-container">
@@ -17,9 +25,11 @@ const BusyToggleSwitch = ({ isQuiet, handleToggleChange }) => {
           checked={isQuiet}
           onChange={handleToggleChange}
         />
-        <label className="toggle-switch-label" htmlFor={uniqueId}>
-          <span className="toggle-switch-switch"></span>
-        </label>
+        <OverlayTrigger placement="top" overlay={renderTooltip}>
+          <label className="toggle-switch-label" htmlFor={uniqueId}>
+            <span className="toggle-switch-switch"></span>
+          </label>
+        </OverlayTrigger>
       </div>
       <span className="toggle-label">Quiet</span>
     </div>

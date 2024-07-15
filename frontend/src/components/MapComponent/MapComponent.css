@@ -18,6 +18,22 @@
       }
   }
 
+/* Add this to your CSS file */
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    top: 0;
+  }
+  40% {
+    top: -30px;
+  }
+  60% {
+    top: -15px;
+  }
+}
+
+.bounce {
+  animation: bounce 2s infinite;
+}
 
 .marker {
     width: 30px;
@@ -28,10 +44,30 @@
 
 .start_marker{
     background-image: url('../../assets/images/PTP_A.png');
+    width: 45px;
+    height: 66.6px;
+}
+
+.waypoint1_marker{
+  background-image: url(../../assets/images/waypoint1.png)
+}
+.waypoint2_marker{
+  background-image: url(../../assets/images/waypoint2.png)
+}
+.waypoint3_marker{
+  background-image: url(../../assets/images/waypoint3.png)
+}
+.waypoint4_marker{
+  background-image: url(../../assets/images/waypoint4.png)
+}
+.waypoint5_marker{
+  background-image: url(../../assets/images/waypoint5.png)
 }
 
 .end_marker{
     background-image: url('../../assets/images/PTP_B.png');
+    width: 45px;
+    height: 66.6px;
 }
 
 .poi_marker{
@@ -57,7 +93,7 @@
 
 /* Replace  with streets condition marker*/
 .other_high_marker {
-  background-image: url('../../assets/images/construction_orange.png');
+  background-image: url('../../assets/images/Road_Warning_orange.png');
 }
 .garbage_very_high_marker {
   background-image: url('../../assets/images/rubbish.png');
@@ -70,4 +106,40 @@
 
 .multi_very_high_marker {
   background-image: url('../../assets/images/red_warning.png'); 
+}
+
+.map-container {
+  position: relative;
+  height: 100vh;
+  width: 100%;
+}
+
+.map {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  z-index: 0; /* Ensure the map is beneath the video */
+}
+
+.mapUnfoldVid {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  z-index: 1; /* Ensures the video is on top of the map */
+}
+
+.mapboxgl-popup-close-button{
+  margin-right: 3px;
+}
+
+.mapboxgl-popup-anchor-bottom .mapboxgl-popup-content{
+  border-radius: 10px;
+}  
+
+.busyness-tooltip{
+  height:40px;
 }

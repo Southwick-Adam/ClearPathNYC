@@ -54,3 +54,36 @@
     opacity: 0;
     transform: translate(-52%, -65%);
 }
+
+.start-button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 18px;
+    background-color: #198754;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    z-index: 10; /* Ensure the button is on top */
+    transition: opacity 2s ease;
+    opacity: 0;
+}
+
+.start-button.active
+{
+    opacity: 1;
+}
+
+.start-button:hover {
+background-color: #47c498;
+}
+
+.start_container{
+    width: 100%;
+    display:flex;
+    top:55%;
+    position: relative;
+    justify-content: center;
+}
+
+  

@@ -1,5 +1,8 @@
 import { create } from 'zustand';
 
+const hour = new Date().getHours();
+const isNight = hour >= 18 || hour <= 6;
+
 const useStore = create((set, get) => ({
   startCord: null,
   endCord: null,
@@ -14,7 +17,8 @@ const useStore = create((set, get) => ({
   setStartCord: (cord) => set({ startCord: cord }),
   setEndCord: (cord) => set({ endCord: cord }),
   setIsQuiet: () => set((state) => ({ isQuiet: !state.isQuiet })),
-  setIncludeWaypoints: () => set((state) => ({ includeWaypoints: !state.includeWaypoints })),
+  setIncludeWaypoints: () => set((state) => ({ includeWaypoints: !state.includeWaypoints })),// This one is for when the user click on the include waypoint checkbox
+  enableWaypoints: () => set({ includeWaypoints: true }),// This one's for the popup to set includewaypoint=true
   setVisibleWaypoints: (count) => set({ visibleWaypoints: count }),
   setWaypointCord1: (cord) => set({ waypointCord1: cord }),
   setWaypointCord2: (cord) => set({ waypointCord2: cord }),
@@ -45,13 +49,19 @@ const useStore = create((set, get) => ({
       waypointIndex = 4; // Set the index to 4 for 0-based indexing
     }
 
-    if (waypointIndex !== -1 && state.visibleWaypoints < 5) {
-      updatedState.visibleWaypoints = state.visibleWaypoints + 1;
+    if (waypointIndex !== -1 && state.visibleWaypoints <= waypointIndex) {
+      updatedState.visibleWaypoints = waypointIndex + 1;
     }
 
     set(updatedState);
     return waypointIndex;
   },
+  
+  isNightMode: isNight,
+  toggleNightMode: () => set((state) => ({ isNightMode: !state.isNightMode })),
+  setNightMode: (isNight) => set({ isNightMode: isNight }),
+  route: null,
+  setRoute: (route) => set({ route }),
 }));
 
 export default useStore;

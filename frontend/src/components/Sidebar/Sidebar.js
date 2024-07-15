@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from 'react';
+import useStore from '../../store/store';
 import './Sidebar.css';
 import Loop from '../Loop/Loop.js';
 import PointToPoint from '../PointToPoint/PointToPoint.js';
+import NightModeButton from '../NightModeButton/NightModeButton.js';
+import ExportButton from '../ExportButton/ExportButton.js';
 
 function Sidebar({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoderRefs }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoopOpen, setLoopOpen] = useState(false);
   const [isPtPOpen, setPtPOpen] = useState(false);
+  const { isNightMode } = useStore();
 
   useEffect(() => {
     const sidebarTimer = setTimeout(() => {
@@ -40,13 +44,12 @@ function Sidebar({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoderRefs 
   }
 
   return (
-    <div className={`sidebar ${isOpen ? 'open' : ''}`}>
-      <button className="btn btn-primary toggle-btn" onClick={toggleSidebar}>
+    <div className={`sidebar ${isOpen ? 'open' : ''} ${isNightMode ? 'night' : 'day'}`}>
+      <button className={`btn btn-primary toggle-btn ${isNightMode ? 'night' : 'day'}`} onClick={toggleSidebar}>
         {isOpen ? '◀' : '▶'}
       </button>
       <div className="sidebar-content">
-        <div className='loop_wrapper'>
-          {/* The id here is used to hide the loop container for MVP*/}
+        {/* <div className='loop_wrapper'>
           <div className='toggle_title_row' id='loop_toggle_title_row'> 
             <button className='btn' onClick={toggleLoop}>
               {isLoopOpen ? '▼' : '▶'}
@@ -56,13 +59,13 @@ function Sidebar({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoderRefs 
           <div className={`loop_box ${isLoopOpen ? 'open' : 'closed'}`}>
             <Loop onFormSubmit={onFormSubmit} />
           </div>
-        </div>
+        </div> */}
         <div className='ptp_wrapper'>
           <div className='toggle_title_row'>
             <button className='btn' onClick={togglePtP}>
               {isPtPOpen ? '▼' : '▶'}
             </button>
-            <div className='container_title'>Point to Point</div>
+            <div className={`container_title ${isNightMode ? 'night' : 'day'}`}>Find A Route</div>
           </div>
           <div className={`ptp_box ${isPtPOpen ? 'open' : 'closed'}`}>
             <PointToPoint
@@ -73,6 +76,13 @@ function Sidebar({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoderRefs 
               hideSidebar={hideSidebar}  // Pass hideSidebar function to PointToPoint
             />
           </div>
+        </div>
+        <div className='night-export-container'>
+          <NightModeButton />
+          <ExportButton />
+        </div>
+        <div className="sidebar_logo">
+          <img src={require('../../assets/images/ClearPath_logo.png')} alt="ClearPath NYC logo monochrome" />
         </div>
       </div>
     </div>

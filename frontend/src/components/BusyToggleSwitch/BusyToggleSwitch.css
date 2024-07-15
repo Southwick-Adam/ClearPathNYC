@@ -64,3 +64,6 @@
     display: none;
   }
   
+  .toggle-switch-checkbox:checked + .toggle-switch-label{
+    background-color: #2a8754;
+  }

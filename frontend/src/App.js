@@ -4,22 +4,46 @@ import Sidebar from './components/Sidebar/Sidebar.js';
 import SmogAlert from './components/SmogAlert/SmogAlert.js';
 import WeatherPanel from './components/WeatherPanel/WeatherPanel.js';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import { samplegeojson } from './smallergeojson.js';
 import SplashScreen from './components/SplashScreen/SplashScreen.js';
+import Legend from './components/Legend/Legend.js';
+import useStore from './store/store.js';
+import './App.css';
 
 function App() {
   const [route, setRoute] = useState(null);
-  const [weather, setWeather] = useState(null); // State to hold weather data
+  const [weather, setWeather] = useState(null);
+  const [playVideo, setPlayVideo] = useState(false);
+  const [presentLayers, setPresentLayers] = useState({
+    noise: false,
+    trash: false,
+    multipleWarnings: false,
+    other: false,
+  });
 
   const startGeocoderRef = useRef(null);
   const endGeocoderRef = useRef(null);
   const geocoderRefs = [useRef(null), useRef(null), useRef(null), useRef(null), useRef(null)];
+  const { isNightMode, setNightMode } = useStore();
+
+  const [layerVisibility, setLayerVisibility] = useState({
+    parks: true,
+    poi: true,
+    noise: true,
+    trash: true,
+    multipleWarnings: true,
+  });
+
+  const toggleLayerVisibility = (layer) => {
+    setLayerVisibility((prevVisibility) => ({
+      ...prevVisibility,
+      [layer]: !prevVisibility[layer],
+    }));
+  };
 
   async function handleFormSubmit(formType, formData) {
     console.log('handleFormSubmit called with formType:', formType);
     console.log(`Form data for ${formType} sent to backend: `, formData);
 
-    // Fetch the route data from the backend
     const routeData = await fetchRoute(formData);
 
     if (routeData) {
@@ -29,23 +53,27 @@ function App() {
   }
 
   async function fetchRoute(formData) {
-    const { coordinates } = formData;
-
-    // Create query parameters from coordinates
+    const { coordinates, isQuiet } = formData;
+  
     const params = new URLSearchParams();
     coordinates.forEach((coord) => {
       params.append('coord1', parseFloat(coord[1])); // Latitude as double
       params.append('coord2', parseFloat(coord[0])); // Longitude as double
     });
-
-    const requestUrl = `/route?${params.toString()}`;
+    params.append('quiet', isQuiet); // Add the quiet parameter
+  
+    const requestUrl = `http://localhost:5056/route?${params.toString()}`;
     console.log('Request URL:', requestUrl);
-
+  
     try {
       const response = await fetch(requestUrl);
       const responseText = await response.text();
       console.log('Response Text:', responseText);
       const data = JSON.parse(responseText);
+  
+      // Update the route in the store
+      useStore.getState().setRoute(data);
+  
       return data;
     } catch (error) {
       console.error('Error fetching route:', error);
@@ -54,7 +82,7 @@ function App() {
   }
 
   async function fetchWeatherData() {
-    const apiUrl = '/weather';
+    const apiUrl = 'http://localhost:5056/weather';
     try {
       const response = await fetch(apiUrl, {
         method: 'GET',
@@ -64,21 +92,21 @@ function App() {
       });
       const data = await response.json();
       console.log(data);
-      setWeather(data); 
+      setWeather(data);
     } catch (error) {
       console.error('Error fetching weather data:', error);
     }
   }
 
   useEffect(() => {
-    fetchWeatherData(); // Fetch weather data when component mounts
+    fetchWeatherData();
   }, []);
 
   const epaIndex = weather ? weather.current.air_quality['us-epa-index'] : null;
 
   return (
     <div className="App">
-      <SplashScreen />
+      <SplashScreen setPlayVideo={setPlayVideo} />
       <SmogAlert epaIndex={epaIndex} />
       <Sidebar
         onFormSubmit={handleFormSubmit}
@@ -91,8 +119,12 @@ function App() {
         startGeocoderRef={startGeocoderRef}
         endGeocoderRef={endGeocoderRef}
         geocoderRefs={geocoderRefs}
+        playVideo={playVideo} // Pass playVideo prop
+        layerVisibility={layerVisibility} // Pass layer visibility state
+        setPresentLayers={setPresentLayers} // Pass the setter for present layers
       />
-      <WeatherPanel weather={weather} /> {/* Pass weather data to WeatherPanel */}
+      <Legend onToggleLayer={toggleLayerVisibility} layerVisibility={layerVisibility} presentLayers={presentLayers} /> {/* Pass toggle function and present layers */}
+      <WeatherPanel weather={weather} />
     </div>
   );
 }

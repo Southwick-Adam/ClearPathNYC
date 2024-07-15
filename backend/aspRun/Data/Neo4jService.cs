@@ -127,11 +127,12 @@ namespace aspRun.Data
         {
             var StopGraph = @"CALL gds.graph.drop('NYC1')";
             await RunQuery(StopGraph, []);
+            StopGraph = @"CALL gds.graph.drop('NYC1Loud')";
+            await RunQuery(StopGraph, []);
             Console.WriteLine($"Graph stopped");
-
         }
 
-        
+
         public async Task StartGraph()
         {
             var StartGraph = @"
@@ -149,9 +150,27 @@ namespace aspRun.Data
                 }
             });";
             await RunQuery(StartGraph, []);
+
+            await AddLoudScore();
+            StartGraph = @"
+            CALL gds.graph.project(
+            'NYC1Loud',
+            {
+                nodes: {
+                label: 'nodes',
+                properties: ['latitude', 'longitude']
+                }
+            },
+            {
+                PATH: {
+                properties: ['distance', 'loudscore']
+                }
+            });";
+            await RunQuery(StartGraph, []);
+
             Console.WriteLine($"Graph started");
         }
-        
+
         public async Task CheckGraph()
         {
             var CheckGraph = @"
@@ -159,8 +178,8 @@ namespace aspRun.Data
             YIELD exists
             RETURN exists
         ";
-        var output = await RunQuery(CheckGraph, []);
-        Console.WriteLine($"CheckGraph: {output.First()["exists"]}");
+            var output = await RunQuery(CheckGraph, []);
+            Console.WriteLine($"CheckGraph: {output.First()["exists"]}");
         }
 
 
@@ -252,6 +271,87 @@ namespace aspRun.Data
         }
 
 
+
+        public async Task<List<string>> AStarLoud(double StartLat, double StartLong, double FinishLat, double FinishLong)
+        {
+            long start = await this.FindNode(StartLat, StartLong);
+            long destination = await this.FindNode(FinishLat, FinishLong);
+
+            Console.WriteLine($"Start: {start}");
+            Console.WriteLine($"Fin: {destination}");
+
+            // graph is a temporary structure stored in Main Memory for faster queries
+            var CheckGraph = @"
+            CALL gds.graph.exists('NYC1Loud')
+            YIELD exists
+            RETURN exists
+        ";
+
+            var StartGraph = @"
+            CALL gds.graph.project(
+            'NYC1Loud',
+            {
+                nodes: {
+                label: 'nodes',
+                properties: ['latitude', 'longitude']
+                }
+            },
+            {
+                PATH: {
+                properties: ['distance', 'loudscore']
+                }
+            });
+        ";
+
+            var Query = @"
+            MATCH (source: nodes{nodeid: $start}), (target: nodes{nodeid: $dest})
+            CALL gds.shortestPath.astar.stream('NYC1Loud', {
+                sourceNode: source,
+                targetNode: target,
+                latitudeProperty: 'latitude',
+                longitudeProperty: 'longitude',
+                relationshipWeightProperty: 'loudscore'
+            })
+            YIELD nodeIds, costs
+            RETURN 
+                [nodeId IN nodeIds | gds.util.asNode(nodeId).nodeid] AS nodeNames,
+                [nodeId IN nodeIds | gds.util.asNode(nodeId).latitude] AS nodeLat,
+                [nodeId IN nodeIds | gds.util.asNode(nodeId).longitude] AS nodeLong,
+                costs
+        ";
+
+            var Params = new Dictionary<string, object>
+        {
+            {"start", start},
+            {"dest", destination}
+        };
+
+            // check that the temp database is set up using CheckGraph
+            var graphResult = await this.RunQuery(CheckGraph, []);
+            bool graph = (bool)graphResult.First()["exists"];
+            Console.WriteLine($"Graph T/F: {graph}");
+
+            List<IRecord> routeResult;
+            if (graph)
+            {
+                routeResult = await this.RunQuery(Query, Params);
+            }
+            else
+            {
+                await this.RunQuery(StartGraph, []);
+                routeResult = await this.RunQuery(Query, Params);
+            }
+            Console.WriteLine(routeResult);
+            var result = routeResult.First();
+
+            var route = RouteMapper.Map(result);
+            route.generateCoordinatesString();
+            route.generateQuietScoresString();
+
+            return [route.CoordinatesString, route.CostsString];
+        }
+
+
         /// <summary>
         /// Used to return a GeoJSON format
         /// </summary>
@@ -287,6 +387,20 @@ namespace aspRun.Data
         }}
         ";
             return GeoJSON;
+        }
+
+        public async Task AddLoudScore()
+        {
+            var query = "MATCH ()-[r:PATH]->() SET r.loudscore = -r.quietscore;";
+            var parameters = new Dictionary<string, object>();
+             await using var session = _driver.AsyncSession(o => o.WithDatabase(_database));
+
+            await session.ExecuteWriteAsync(
+                async tx =>
+            {
+                await tx.RunAsync(query, parameters);
+            });
+            Console.WriteLine("Loud score added");
         }
 
 
