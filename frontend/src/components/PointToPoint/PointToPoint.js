@@ -171,7 +171,7 @@ function PointToPoint({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoder
         )}
       </div>
       <div className="ptp_row">
-        <div className="ptp_label">End</div>
+        <div className="ptp_label_end">End</div>
         <LocationFinder setCoordinates={setEndCord} geocoderRef={endGeocoderRef} />
       </div>
       <div className="busy_go_row">

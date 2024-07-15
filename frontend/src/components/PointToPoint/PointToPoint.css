@@ -4,6 +4,7 @@
     flex-direction: column;
     align-items: center;
     width: 100%;
+    margin-bottom: 0px;
   }
 
   .ptp_row
@@ -21,7 +22,15 @@
   .ptp_label{
     font-size: 20px;
     font-weight: bold;
-    padding-right: 5%;
+    padding-right: 3px;
+    padding-left:12px;
+  }
+
+  .ptp_label_end{
+    font-size: 20px;
+    font-weight: bold;
+    padding-left: 17px;
+    padding-right: 10px;
   }
 
 /* geocoder z-index bug fix */
@@ -44,40 +53,63 @@
   .upDownWrapper{
     flex-direction: column;
     display: flex;
+    padding-left: 2px;
+    padding-bottom: 15px;
   }
 
   .addbtn{
-    width: 332px;
+    width: 200px;
     margin: 10px 20px 10px 20px;
 
   }
 
   .upbtn{
     height: 17px;
+    width: 50px;
     display: flex;
     align-items: center;
     justify-content: center;
+    color:#198754;
+    border-color: #198754;
   }
+
+  .upbtn:hover{
+    color:#ffffff;
+    border-color: #198754;
+    background-color: #198754;
+  }
+  
   .downbtn{
   height: 17px;
+  width: 50px;
   display: flex;
   align-items: center;
   justify-content: center;
+  color:#198754;
+  border-color: #198754;
 }
+
+.downbtn:hover{
+  color:#ffffff;
+  border-color: #198754;
+  background-color: #198754;
+}
+
   .removebtn{
-    height: 30px;
+    height: 42px;
+    width: 42px;
   }
 
   /* geocoder z-index bug fix */
   .waypoints_container{
-    margin-top: 20px;
+    margin-top: 10px;
+    margin-bottom: 10px;
     z-index: 5;
   }
 
-  @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
-
+  @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
   body {
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     font-style: italic;
   }
 

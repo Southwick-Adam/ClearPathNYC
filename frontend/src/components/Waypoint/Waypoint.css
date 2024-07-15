@@ -17,3 +17,8 @@
 .waypoint .location_finder_container .autobutton{
   display: none; 
 }
+
+.autobutton {
+  padding-right: 12px;
+  padding-left: 7px;
+}
