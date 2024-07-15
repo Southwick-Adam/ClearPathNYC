@@ -31,6 +31,7 @@ function App() {
     noise: true,
     trash: true,
     multipleWarnings: true,
+    other: true
   });
 
   const toggleLayerVisibility = (layer) => {

@@ -17,14 +17,6 @@ export function addRouteToMap(mapRef) {
   const coordinates = route.features[0].geometry.coordinates;
   const quietnessScore = route.features[0].properties.quietness_score;
 
-  // Calculate the thresholds for the quietness scores
-  const thresholds = calculateThresholds(quietnessScore);
-
-  if (!thresholds) {
-    console.error('Could not calculate thresholds for quietness scores.');
-    return;
-  }
-
   // Create a GeoJSON line string with properties including quietness score
   const lineString = {
     type: 'Feature',
@@ -48,7 +40,7 @@ export function addRouteToMap(mapRef) {
     const lineGradient = ['interpolate', ['linear'], ['line-progress']];
     for (let i = 0; i < quietnessScore.length; i++) {
       const progress = i / (quietnessScore.length - 1);
-      const color = getColorForQuietness(quietnessScore[i], thresholds);
+      const color = getColorForQuietness(quietnessScore[i]);
       lineGradient.push(progress, color);
     }
 
@@ -66,40 +58,15 @@ export function addRouteToMap(mapRef) {
       },
     });
 
-    // Add a tooltip for the longest red segment in the route
-    addRouteTooltips(mapRef, coordinates, quietnessScore);
+    // addRouteTooltips(mapRef, coordinates, quietnessScore);
   }
 }
 
-function calculateThresholds(scores) {
-  if (!Array.isArray(scores) || scores.length === 0) {
-    console.error('Invalid scores array:', scores);
-    return null;
-  }
-
-  const sortedScores = [...scores].sort((a, b) => a - b);
-  const oneThirdIndex = Math.floor(sortedScores.length / 3);
-  const twoThirdIndex = Math.floor((2 * sortedScores.length) / 3);
-
-  return {
-    lowThreshold: sortedScores[oneThirdIndex],
-    highThreshold: sortedScores[twoThirdIndex],
-  };
-}
-
-// Function to map quietness score to a color using pre-calculated thresholds
-function getColorForQuietness(score, thresholds) {
-  if (!thresholds) {
-    console.error('Thresholds are not defined:', thresholds);
-    return '#000000'; // Default to black in case of an error
-  }
-
-  const { lowThreshold, highThreshold } = thresholds;
-
-  // Define a color scale for quietness scores
-  if (score <= lowThreshold) return '#00FF00'; // Green for low scores (quiet)
-  if (score <= highThreshold) return 'orange'; // Orange for medium scores
-  return '#FF0000'; // Red for high scores (noisy)
+// Function to map quietness score to a color based on predefined ranges
+function getColorForQuietness(score) {
+  if (score >= 4) return '#FF0000'; // Red for scores 4-5
+  if (score >= 2 && score <= 3) return 'orange';  // Orange for scores 2-3
+  if (score <= 1) return '#189e01'; // Green for scores 0-1
 }
 
 function addRouteTooltips(mapRef, coordinates, quietnessScore) {
@@ -117,7 +84,7 @@ function addRouteTooltips(mapRef, coordinates, quietnessScore) {
 
   for (let i = 0; i < coordinates.length - 1; i++) {
     const score = quietnessScore[i];
-    const color = getColorForQuietness(score, calculateThresholds(quietnessScore));
+    const color = getColorForQuietness(score);
     const nextCoord = coordinates[i + 1];
 
     if (color !== currentColor) {
@@ -175,7 +142,6 @@ function addRouteTooltips(mapRef, coordinates, quietnessScore) {
     }
   }
 }
-
 // Function to add markers with animations
 export function addRouteMarkers(mapRef, routeData, startMarkerRef, endMarkerRef, waypointRefs) {
   const startCoord = routeData.features[0].geometry.coordinates[0];
