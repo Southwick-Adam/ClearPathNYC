@@ -16,13 +16,7 @@ namespace aspBuild.Data
             _driver = GraphDatabase.Driver(_neo4jOptions.Uri, AuthTokens.Basic(_neo4jOptions.Username, _neo4jOptions.Password));
         }
 
-        /// <summary>
-        /// Adds the relationship to NodeA on the Path to NodeB
-        /// </summary>
-        /// <param name="NodeIDA"></param>
-        /// <param name="NodeIDB"></param>
-        /// <param name="quietscore"></param>
-        /// <returns>Void</returns>
+        // Adds the relationship to NodeA on the Path to NodeB
         public async Task UpdateNodeRelationship(long NodeIDA, long NodeIDB, double quietscore, string taxiZone)
         {
             string query = @"
@@ -46,12 +40,7 @@ namespace aspBuild.Data
             });
         }
 
-        /// <summary>
-        /// Runs the input query and parameter. 
-        /// </summary>
-        /// <param name="Query">Required</param>
-        /// <param name="Params">Empty list if null</param>
-        /// <returns>List of IRecords</returns>
+        //Runs the input query and parameter. 
         public async Task<List<IRecord>> RunQuery(string Query, Dictionary<string, object> Params)
         {
             try
@@ -69,16 +58,12 @@ namespace aspBuild.Data
             catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
-                return new List<IRecord>();
+                return [];
             }
         }
 
 
-        /// <summary>
-        /// Queries the Neo4j database
-        /// </summary>
-        /// <param name="taxizone"></param>
-        /// <returns>List of NodeToNode objects</returns>
+        // Queries the Neo4j database
         public async Task<List<NodeToNode>> GetNodeInfoForUpdate(string taxizone)
         {
             List<NodeToNode> returnList = new List<NodeToNode>();

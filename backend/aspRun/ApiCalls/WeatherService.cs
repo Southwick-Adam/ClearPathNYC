@@ -36,7 +36,6 @@ namespace aspRun.ApiCalls
             try
             {
                 await _weatherAPI.GetWeatherAsync();
-                Console.WriteLine("WEATHER UPDATED");
             }
             catch (Exception ex)
             {
