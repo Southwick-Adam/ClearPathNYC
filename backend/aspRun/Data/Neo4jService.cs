@@ -6,44 +6,14 @@ namespace aspRun.Data
 {
     public class Neo4jService
     {
-        private IDriver _driver;
+        private readonly IDriver _driver;
         private readonly Neo4jOptions _neo4jOptions;
         private readonly string _database = "neo4j";
 
         public Neo4jService(IOptions<Neo4jOptions> options)
         {
             _neo4jOptions = options.Value;
-            _driver = GraphDatabase.Driver(_neo4jOptions.Uri_1, AuthTokens.Basic(_neo4jOptions.Username_1, _neo4jOptions.Password_1));
-        }
-
-        public void ChangeDB(bool useContainer1)
-        {
-            string uri;
-            string username;
-            string password;
-
-            if (useContainer1)
-            {
-                uri = _neo4jOptions.Uri_1;
-                username = _neo4jOptions.Username_1;
-                password = _neo4jOptions.Password_1;
-            }
-            else
-            {
-                uri = _neo4jOptions.Uri_2;
-                username = _neo4jOptions.Username_2;
-                password = _neo4jOptions.Password_2;
-            }
-            _driver = GraphDatabase.Driver(uri, AuthTokens.Basic(username, password));
-            Console.WriteLine("DB CHANGE EXECUTED");
-            if (useContainer1)
-            {
-                Console.WriteLine("NOW USING NEO4J CONTAINER 1");
-            }
-            else
-            {
-                Console.WriteLine("NOW USING NEO4J CONTAINER 2");
-            }
+            _driver = GraphDatabase.Driver(_neo4jOptions.Uri, AuthTokens.Basic(_neo4jOptions.Username, _neo4jOptions.Password));
         }
 
         public async Task<T> ReadAsync<T>(Func<IAsyncQueryRunner, Task<T>> func)
@@ -78,7 +48,7 @@ namespace aspRun.Data
             catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
-                return new List<IRecord>();
+                return [];
             }
         }
 
@@ -112,7 +82,6 @@ namespace aspRun.Data
             }
         }
 
-
         public async Task StopGraph()
         {
             var StopGraph = @"CALL gds.graph.drop('NYC1')";
@@ -121,7 +90,6 @@ namespace aspRun.Data
             await RunQuery(StopGraph, []);
             Console.WriteLine($"Graph stopped");
         }
-
 
         public async Task StartGraph()
         {
@@ -252,7 +220,6 @@ namespace aspRun.Data
             return [route.CoordinatesString, route.CostsString];
         }
 
-      
         public async Task<List<string>> AStarLoud(double StartLat, double StartLong, double FinishLat, double FinishLong)
         {
             long start = await this.FindNode(StartLat, StartLong);
