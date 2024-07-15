@@ -19,6 +19,7 @@ namespace aspBuild.ApiCalls
             var response = await _httpClient.GetAsync(url);
             response.EnsureSuccessStatusCode();
             var content = await response.Content.ReadAsStringAsync();
+            Console.WriteLine(content);//remove
             File.WriteAllText(filePath, content);
             }
             catch (HttpRequestException ex)

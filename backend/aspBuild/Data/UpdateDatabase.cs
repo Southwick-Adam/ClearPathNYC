@@ -27,11 +27,13 @@ namespace aspBuild.Data
         // Uses the Park, Subway and Taxi data to update the quietscores and add them to the database.
         public async Task RunUpdate()
         {
-            // time it
-            Console.WriteLine("Update started");
-            Stopwatch stopwatch = Stopwatch.StartNew();
+            //Console.WriteLine("Update started");
+            //Stopwatch stopwatch = Stopwatch.StartNew();
 
             await _modelAPI.UpdateDataFiles();
+
+            return;
+            /*
 
             jsonDataTaxi = GetJSONs.GetJSON(jsonTaxiPath, "taxi");
             jsonDataSubway = GetJSONs.GetJSON(jsonSubwayPath, "metro");
@@ -57,6 +59,7 @@ namespace aspBuild.Data
             }
             stopwatch.Stop();
             Console.WriteLine("Elapsed Time: {0} milliseconds", stopwatch.ElapsedMilliseconds);
+            */
         }
 
 
