@@ -305,12 +305,12 @@ namespace aspRun.Data
 
             var Query = @"
             MATCH (source: nodes{nodeid: $start}), (target: nodes{nodeid: $dest})
-            CALL gds.shortestPath.astar.stream('NYC1Loud', {
+            CALL gds.shortestPath.astar.stream('NYC1', {
                 sourceNode: source,
                 targetNode: target,
                 latitudeProperty: 'latitude',
                 longitudeProperty: 'longitude',
-                relationshipWeightProperty: 'loudscore'
+                relationshipWeightProperty: 'distance'
             })
             YIELD nodeIds, costs
             RETURN 
