@@ -342,7 +342,6 @@ namespace aspRun.Data
             Console.WriteLine("Loud score added");
         }
 
-
         public async Task DisposeAsync()
         //Disposes of session
         {
