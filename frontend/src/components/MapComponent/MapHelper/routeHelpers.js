@@ -58,8 +58,7 @@ export function addRouteToMap(mapRef) {
       },
     });
 
-    // Add a tooltip for the longest red segment in the route
-    addRouteTooltips(mapRef, coordinates, quietnessScore);
+    // addRouteTooltips(mapRef, coordinates, quietnessScore);
   }
 }
 
