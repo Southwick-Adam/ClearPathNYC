@@ -1,8 +1,8 @@
 using System.Diagnostics;
+using aspBuild.ApiCalls;
 
 namespace aspBuild.Data
 {
-
     public class UpdateDatabase
     {   
         // locations of each file used in the update database
@@ -14,24 +14,24 @@ namespace aspBuild.Data
         Dictionary<string, int> jsonDataSubway;
 
         private readonly Neo4jService _neo4jService;
+        private readonly ModelAPI _modelAPI;
 
-        public UpdateDatabase(Neo4jService neo4jService)
+        public UpdateDatabase(Neo4jService neo4jService, ModelAPI modelAPI)
         {
             _neo4jService = neo4jService;
+            _modelAPI = modelAPI;
             jsonDataSubway = [];
             jsonDataTaxi = [];
         }
 
-
-        /// <summary>
-        /// Uses the Park, Subway and Taxi data to update the quietscores and add them to the database.
-        /// </summary>
-        /// <returns>Void</returns>
+        // Uses the Park, Subway and Taxi data to update the quietscores and add them to the database.
         public async Task RunUpdate()
         {
             // time it
             Console.WriteLine("Update started");
             Stopwatch stopwatch = Stopwatch.StartNew();
+
+            await _modelAPI.UpdateDataFiles();
 
             jsonDataTaxi = GetJSONs.GetJSON(jsonTaxiPath, "taxi");
             jsonDataSubway = GetJSONs.GetJSON(jsonSubwayPath, "metro");
@@ -60,16 +60,7 @@ namespace aspBuild.Data
         }
 
 
-        /// <summary>
-        /// Calculates the quietscore and multiplies it by the distance.
-        /// </summary>
-        /// <param name="metro"></param>
-        /// <param name="road"></param>
-        /// <param name="taxi"></param>
-        /// <param name="park"></param>
-        /// <param name="threeOneOne"></param>
-        /// <param name="distance"></param>
-        /// <returns>double</returns>
+        // Calculates the quietscore and multiplies it by the distance.
         private double CalculateQuietScore(string metro, int road, int taxi, bool park, bool threeOneOne, double distance)
         {
             if (threeOneOne) { return 1000 * distance; }

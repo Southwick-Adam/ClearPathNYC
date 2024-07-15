@@ -18,7 +18,6 @@ namespace aspRun.ApiCalls
         public async Task GetWeatherAsync()
         {
             var key = Environment.GetEnvironmentVariable("WEATHER_KEY");
-            Console.WriteLine($"WEATHER_KEY: {key}");
             var url = $"http://api.weatherapi.com/v1/current.json?key={key}&q=10018&aqi=yes";
 
             try
