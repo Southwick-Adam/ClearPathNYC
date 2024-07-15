@@ -1,35 +1,44 @@
-import React, { useRef, useEffect } from 'react';
-import ReactDOM from 'react-dom';
+import React, { useRef, useEffect, useState } from 'react';
 import './MapComponent.css';
-import { MAPBOX_TOKEN, MAPBOX_STYLE_URL } from '../../config.js';
+import { MAPBOX_TOKEN, MAPBOX_DAY_STYLE_URL, MAPBOX_NIGHT_STYLE_URL } from '../../config.js';
 import mapboxgl from 'mapbox-gl';
 import PropTypes from 'prop-types';
+import { addRouteMarkers, addRouteToMap, zoomToRoute, clearRoute } from './MapHelper/routeHelpers.js';
+import { addMapFeatures, clearMapFeatures, toggleLayerVisibility } from './MapHelper/markerHelpers.js';
+import useStore from '../../store/store.js';
+import mapUnfoldVid from '../../assets/videos/mapunfolding.mp4';
 import simulateFetchParks from '../../assets/geodata/parks.js';
 import fetchInitialPOI from '../../assets/geodata/initialPOI.js';
 import floraImage from '../../assets/images/flora.png';
 import poiImage from '../../assets/images/POI_marker_blue.png';
+import noiseHighImage from '../../assets/images/orange_volume.png';
+import noiseVeryHighImage from '../../assets/images/high_volume.png';
+import garbageHighImage from '../../assets/images/rubbish_orange.png';
+import otherHighImage from '../../assets/images/Road_Warning_orange.png';
+import multiHighImage from '../../assets/images/orange_warning.png';
+import multiVeryHighImage from '../../assets/images/red_warning.png';
 import { convertToGeoJSON } from './MapHelper/geojsonHelpers.js';
-import { addRouteMarkers, addRouteToMap } from './MapHelper/routeHelpers.js';
-import { addMarkers, add311Markers, plotRoutePOI, add311Multiple } from './MapHelper/markerHelpers.js';
+import { add311Markers, plotRoutePOI, add311Multiple } from './MapHelper/markerHelpers.js';
 import fetchNoise311 from '../../assets/geodata/fetchNoise311.js';
 import fetchGarbage311 from '../../assets/geodata/fetchGarbage311.js';
 import fetchOther311 from '../../assets/geodata/fetchOther311.js';
 import poiGeojson from '../../assets/geodata/171_POIs.json';
 import fetchMulti311 from '../../assets/geodata/fetchMulti311.js';
-import useStore from '../../store/store.js';
-import PopupContent from '../PopupContent/PopupContent.js';
 
-function MapComponent({ route, startGeocoderRef, endGeocoderRef, geocoderRefs }) {
+function MapComponent({ route, startGeocoderRef, endGeocoderRef, geocoderRefs, playVideo, layerVisibility, setPresentLayers }) {
   const mapContainerRef = useRef(null);
   const mapRef = useRef(null);
   const isMapLoadedRef = useRef(false);
   const startMarkerRef = useRef(null);
   const endMarkerRef = useRef(null);
+  const [showMap, setShowMap] = useState(false);
+  const [videoEnded, setVideoEnded] = useState(false);
+  const waypointRefs = [useRef(null), useRef(null), useRef(null), useRef(null), useRef(null)];
 
   const {
     setStartCord, setEndCord, setWaypointAndIncrease,
     waypointCord1, waypointCord2, waypointCord3, waypointCord4, waypointCord5,
-    visibleWaypoints
+    visibleWaypoints, isNightMode
   } = useStore();
 
   const reverseGeocode = async (lng, lat) => {
@@ -53,18 +62,91 @@ function MapComponent({ route, startGeocoderRef, endGeocoderRef, geocoderRefs })
   };
 
   const updateWaypointInput = async (index, coordinates) => {
-    console.log(`updateWaypointInput called with index: ${index} and coordinates: ${coordinates}`);
     const placeName = await reverseGeocode(coordinates[0], coordinates[1]);
-    console.log(`Reverse geocoded place name: ${placeName}`);
     geocoderRefs[index].current.setInput(placeName);
-    console.log(`geocoderRef at index ${index} input set to: ${placeName}`);
+  };
+
+  const saveLayersAndSources = (map) => {
+    const layers = map.getStyle().layers;
+    const sources = map.getStyle().sources;
+    const images = map.listImages();
+
+    const layerCopy = layers.filter(layer => layer.id !== 'background').map(layer => ({ ...layer }));
+    const sourceCopy = { ...sources };
+    const imageCopy = images.map((imageId) => ({
+      id: imageId,
+    }));
+
+    return { layerCopy, sourceCopy, imageCopy };
+  };
+
+  const restoreLayersAndSources = (map, layerCopy, sourceCopy, imageCopy) => {
+    Object.keys(sourceCopy).forEach((sourceId) => {
+      if (!map.getSource(sourceId)) {
+        map.addSource(sourceId, sourceCopy[sourceId]);
+      }
+    });
+
+    layerCopy.forEach((layer) => {
+      if (!map.getLayer(layer.id)) {
+        map.addLayer(layer);
+      }
+    });
+
+    imageCopy.forEach((image) => {
+      if (!map.hasImage(image.id)) {
+        // Manually load images
+        if (image.id === 'flora-marker') {
+          map.loadImage(floraImage, (error, img) => {
+            if (error) throw error;
+            map.addImage('flora-marker', img);
+          });
+        } else if (image.id === 'poi-marker') {
+          map.loadImage(poiImage, (error, img) => {
+            if (error) throw error;
+            map.addImage('poi-marker', img);
+          });
+        } else if (image.id === 'noise-high-marker') {
+          map.loadImage(noiseHighImage, (error, img) => {
+            if (error) throw error;
+            map.addImage('noise-high-marker', img);
+          });
+        } else if (image.id === 'noise-veryhigh-marker') {
+          map.loadImage(noiseVeryHighImage, (error, img) => {
+            if (error) throw error;
+            map.addImage('noise-veryhigh-marker', img);
+          });
+        } else if (image.id === 'garbage-high-marker') {
+          map.loadImage(garbageHighImage, (error, img) => {
+            if (error) throw error;
+            map.addImage('garbage-high-marker', img);
+          });
+        } else if (image.id === 'other-high-marker') {
+          map.loadImage(otherHighImage, (error, img) => {
+            if (error) throw error;
+            map.addImage('other-high-marker', img);
+          });
+        } else if (image.id === 'multi-high-marker') {
+          map.loadImage(multiHighImage, (error, img) => {
+            if (error) throw error;
+            map.addImage('multi-high-marker', img);
+          });
+        } else if (image.id === 'multi-veryhigh-marker') {
+          map.loadImage(multiVeryHighImage, (error, img) => {
+            if (error) throw error;
+            map.addImage('multi-veryhigh-marker', img);
+          });
+        }
+      }
+    });
   };
 
   useEffect(() => {
     if (mapRef.current) return;
+
     mapRef.current = new mapboxgl.Map({
       container: mapContainerRef.current,
-      style: MAPBOX_STYLE_URL,
+      style: isNightMode ? MAPBOX_NIGHT_STYLE_URL : MAPBOX_DAY_STYLE_URL,
       center: [-73.9712, 40.7831],
       zoom: 13,
       minZoom: 13,
@@ -79,201 +161,122 @@ function MapComponent({ route, startGeocoderRef, endGeocoderRef, geocoderRefs })
     mapRef.current.on('load', () => {
       isMapLoadedRef.current = true;
 
-      const initialPOI = fetchInitialPOI();
-      const parkData = simulateFetchParks();
-      addMarkers(mapRef, initialPOI, 'poi');
-      const parkGeoJson = convertToGeoJSON(parkData);
-
-      mapRef.current.loadImage(floraImage, (error, image) => {
-        if (error) throw error;
-        mapRef.current.addImage('flora-marker', image);
-      });
-
-      mapRef.current.loadImage(poiImage, (error, image) => {
-        if (error) throw error;
-        mapRef.current.addImage('poi-marker', image);
-      });
-
-      mapRef.current.addSource('parks', {
-        type: 'geojson',
-        data: parkGeoJson,
-        cluster: true,
-        clusterMaxZoom: 14,
-        clusterRadius: 50
-      });
-
-      mapRef.current.addLayer({
-        id: 'clusters',
-        type: 'circle',
-        source: 'parks',
-        filter: ['has', 'point_count'],
-        paint: {
-          'circle-color': [
-            'step',
-            ['get', 'point_count'],
-            '#4CAF50',
-            100,
-            '#388E3C',
-            750,
-            '#2E7D32'
-          ],
-          'circle-radius': [
-            'step',
-            ['get', 'point_count'],
-            20,
-            100,
-            30,
-            750,
-            40
-          ],
-          'circle-opacity': 0.6
-        }
-      });
-
-      mapRef.current.addLayer({
-        id: 'cluster-count',
-        type: 'symbol',
-        source: 'parks',
-        filter: ['has', 'point_count'],
-        layout: {
-          'text-field': '{point_count_abbreviated}',
-          'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
-          'text-size': 12
-        },
-        paint: {
-          'text-color': '#FFFFFF'
-        }
-      });
-
-      mapRef.current.addLayer({
-        id: 'unclustered-point',
-        type: 'symbol',
-        source: 'parks',
-        filter: ['!', ['has', 'point_count']],
-        layout: {
-          'icon-image': 'flora-marker',
-          'icon-size': 0.5,
-          'icon-offset': [0, -0]
-        }
-      });
-
-      mapRef.current.on('click', 'unclustered-point', e => {
-        const coordinates = e.features[0].geometry.coordinates.slice();
-        const { name } = e.features[0].properties;
-
-        const popupNode = document.createElement('div');
-        ReactDOM.render(
-          <PopupContent
-            coordinates={coordinates}
-            name={name}
-            setStartCord={setStartCord}
-            setEndCord={setEndCord}
-            setWaypointAndIncrease={setWaypointAndIncrease}
-            updateStartInput={updateStartInput}
-            updateEndInput={updateEndInput}
-            updateWaypointInput={updateWaypointInput}
-            geocoderRefs={geocoderRefs}
-          />,
-          popupNode
-        );
-
-        new mapboxgl.Popup({ offset: 25, className: 'custom-popup' })
-          .setLngLat(coordinates)
-          .setDOMContent(popupNode)
-          .addTo(mapRef.current);
-      });
-
-      mapRef.current.on('mouseenter', 'clusters', () => {
-        mapRef.current.getCanvas().style.cursor = 'pointer';
-      });
-      mapRef.current.on('mouseleave', 'clusters', () => {
-        mapRef.current.getCanvas().style.cursor = '';
-      });
-
-      mapRef.current.on('mouseenter', 'unclustered-point', () => {
-        mapRef.current.getCanvas().style.cursor = 'pointer';
-      });
-      mapRef.current.on('mouseleave', 'unclustered-point', () => {
-        mapRef.current.getCanvas().style.cursor = '';
-      });
-
-      mapRef.current.on('click', 'clusters', e => {
-        const features = mapRef.current.queryRenderedFeatures(e.point, {
-          layers: ['clusters']
+      if (videoEnded) {
+        addMapFeatures(mapRef, {
+          fetchInitialPOI,
+          simulateFetchParks,
+          convertToGeoJSON,
+          floraImage,
+          noiseHighImage,
+          noiseVeryHighImage,
+          garbageHighImage,
+          otherHighImage,
+          multiHighImage,
+          multiVeryHighImage,
+          poiImage,
+          setStartCord,
+          setEndCord,
+          setWaypointAndIncrease,
+          updateStartInput,
+          updateEndInput,
+          updateWaypointInput,
+          geocoderRefs
         });
-        const clusterId = features[0].properties.cluster_id;
-        mapRef.current.getSource('parks').getClusterExpansionZoom(
-          clusterId,
-          (err, zoom) => {
-            if (err) return;
-
-            mapRef.current.easeTo({
-              center: features[0].geometry.coordinates,
-              zoom: zoom
-            });
-          }
-        );
-      });
+      }
     });
   }, []);
 
   useEffect(() => {
+    if (videoEnded && isMapLoadedRef.current) {
+      addMapFeatures(mapRef, {
+        fetchInitialPOI,
+        simulateFetchParks,
+        convertToGeoJSON,
+        floraImage,
+        noiseHighImage,
+        noiseVeryHighImage,
+        garbageHighImage,
+        otherHighImage,
+        multiHighImage,
+        multiVeryHighImage,
+        poiImage,
+        setStartCord,
+        setEndCord,
+        setWaypointAndIncrease,
+        updateStartInput,
+        updateEndInput,
+        updateWaypointInput,
+        geocoderRefs
+      });
+    }
+  }, [videoEnded, isMapLoadedRef.current]);
+
+  useEffect(() => {
     if (!route || !mapRef.current || !isMapLoadedRef.current) return;
 
-    if (mapRef.current.getSource('route')) {
-      mapRef.current.getSource('route').setData(route);
-    } else {
-      console.log('Drawing route...');
-      addRouteToMap(mapRef, route);
-      addRouteMarkers(mapRef, route, startMarkerRef, endMarkerRef);
-    }
-    addRouteMarkers(mapRef, route, startMarkerRef, endMarkerRef);
+    clearRoute(mapRef); // Clear existing route and markers
+    clearMapFeatures(mapRef); // Clear existing POI markers and clusters
 
-    zoomToRoute(route);
+    addRouteToMap(mapRef, route);
+    addRouteMarkers(mapRef, route, startMarkerRef, endMarkerRef, waypointRefs);
+
+    zoomToRoute(mapRef, route, {
+      plotRoutePOI,
+      poiGeojson,
+      fetchNoise311,
+      fetchGarbage311,
+      fetchOther311,
+      fetchMulti311,
+      add311Markers,
+      add311Multiple,
+      setPresentLayers, // Pass setPresentLayers to update the state of present layers
+    });
   }, [route]);
 
-  const zoomToRoute = (route) => {
-    if (!route.features || !Array.isArray(route.features) || route.features.length === 0) {
-      console.error('Invalid route data');
-      return;
-    }
+  useEffect(() => {
+    if (!mapRef.current || !isMapLoadedRef.current) return;
 
-    const coordinates = route.features[0].geometry.coordinates;
-    let bounds = coordinates.reduce((bounds, coord) => {
-      return bounds.extend(coord);
-    }, new mapboxgl.LngLatBounds(coordinates[0], coordinates[0]));
+    const { layerCopy, sourceCopy, imageCopy } = saveLayersAndSources(mapRef.current);
+    const newStyle = isNightMode ? MAPBOX_NIGHT_STYLE_URL : MAPBOX_DAY_STYLE_URL;
 
-    const expandFactor = 0.001;
-    const northEast = bounds.getNorthEast();
-    const southWest = bounds.getSouthWest();
-    bounds = bounds.extend([northEast.lng + expandFactor, northEast.lat + expandFactor]);
-    bounds = bounds.extend([southWest.lng - expandFactor, southWest.lat - expandFactor]);
+    mapRef.current.setStyle(newStyle);
 
-    mapRef.current.fitBounds(bounds, {
-      padding: 100
+    mapRef.current.once('styledata', () => {
+      restoreLayersAndSources(mapRef.current, layerCopy, sourceCopy, imageCopy);
     });
+  }, [isNightMode]);
 
-    plotRoutePOI(mapRef, poiGeojson, bounds);
+  useEffect(() => {
+    if (!mapRef.current || !isMapLoadedRef.current) return;
+    toggleLayerVisibility(mapRef, layerVisibility);
+  }, [layerVisibility]);
 
-    const noise311 = fetchNoise311().filter(location => bounds.contains(location.coordinates));
-    const garbage311 = fetchGarbage311().filter(location => bounds.contains(location.coordinates));
-    const other311 = fetchOther311().filter(location => bounds.contains(location.coordinates));
-    const multi311 = fetchMulti311().filter(location => bounds.contains(location.coordinates));
-
-    add311Markers(mapRef, noise311, 'Noise');
-    add311Markers(mapRef, garbage311, 'Garbage');
-    add311Markers(mapRef, other311, 'Other');
-    add311Multiple(mapRef, multi311);
+  const handleVideoEnd = () => {
+    setVideoEnded(true);
+    setShowMap(true);
   };
 
-  return <div ref={mapContainerRef} className='map' />;
+  return (
+    <div className="map-container">
+      <div className="map" ref={mapContainerRef} />
+      {playVideo && !showMap && (
+        <video autoPlay onEnded={handleVideoEnd} className="mapUnfoldVid">
+          <source src={mapUnfoldVid} type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+      )}
+    </div>
+  );
 }
 
 MapComponent.propTypes = {
   route: PropTypes.object,
   startGeocoderRef: PropTypes.object,
   endGeocoderRef: PropTypes.object,
-  geocoderRefs: PropTypes.array
+  geocoderRefs: PropTypes.array,
+  playVideo: PropTypes.bool.isRequired,
+  layerVisibility: PropTypes.object.isRequired,
+  setPresentLayers: PropTypes.func.isRequired, // Add this line
 };
 
 export default MapComponent;

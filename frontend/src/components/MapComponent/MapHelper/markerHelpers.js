@@ -1,5 +1,10 @@
 import mapboxgl from 'mapbox-gl';
 import $ from 'jquery';
+import ReactDOM from 'react-dom';
+import PopupContent from '../../PopupContent/PopupContent';
+import poijson from '../../../assets/geodata/171_POIs.json'
+
+
 
 export function addMarkers(mapRef, markerData, markerType) {
   markerData.forEach(location => {
@@ -21,7 +26,7 @@ export function add311Markers(mapRef, markerData, category) {
   markerData.forEach(location => {
     const marker = document.createElement('div');
     const markerType = getMarkerType(category, location.category);
-    marker.className = `marker ${markerType}_marker`;
+    marker.className = `marker ${markerType}_marker marker311`;
 
     new mapboxgl.Marker({
       element: marker,
@@ -33,6 +38,15 @@ export function add311Markers(mapRef, markerData, category) {
 
     animateMarkers($(marker));
   });
+}
+function animateMarkers($marker) {
+  $marker.css({
+    top: '-50px',
+    opacity: 0,
+  }).animate({
+    top: '0px',
+    opacity: 1,
+  }, 500);
 }
 
 // Function to add 311 multiple complaint markers
@@ -50,9 +64,12 @@ export function add311Multiple(mapRef, markerData) {
       .setPopup(new mapboxgl.Popup({ offset: 25 }).setText(location.Complaint_Type_collection))
       .addTo(mapRef.current);
 
-    animateMarkers($(marker));
-  });
+    animateMarkers($(marker));}
+  );
 }
+
+
+
 function getMarkerType(complaintCategory, severityCategory) {
   let markerType = complaintCategory.toLowerCase();
 
@@ -70,35 +87,82 @@ function getMultiMarkerType(severity) {
   return severity === 'Very High' ? 'multi_very_high' : 'multi_high';
 }
 
-
-export function plotRoutePOI(mapRef, geojsonData, bounds) {
-  const isWithinBounds = (lngLat, bounds) => {
-    const [lng, lat] = lngLat;
-    return lng >= bounds.getWest() && lng <= bounds.getEast() && lat >= bounds.getSouth() && lat <= bounds.getNorth();
+export function plotRoutePOI(mapRef, geojsonData, helpers) {
+  // No filtering by bounds, just use all features
+  const allFeaturesGeojsonData = {
+    type: 'FeatureCollection',
+    features: geojsonData.features
   };
 
-  const filteredFeatures = geojsonData.features.filter(feature => {
-    const { coordinates } = feature.geometry;
-    return isWithinBounds(coordinates, bounds);
+  // Add all POIs as a clustered source
+  addClusteredLayer(mapRef, allFeaturesGeojsonData, 'route-pois', 'poi-marker', '#00cffa');
+
+  mapRef.current.setPaintProperty('route-pois-unclustered-point', 'icon-opacity', 1);
+
+
+  // Add custom popup content for unclustered points
+  mapRef.current.on('click', 'route-pois-unclustered-point', e => {
+    const coordinates = e.features[0].geometry.coordinates.slice();
+    const { name } = e.features[0].properties;
+
+    // Remove any existing popups
+    const existingPopups = document.getElementsByClassName('mapboxgl-popup');
+    while (existingPopups.length > 0) {
+      existingPopups[0].remove();
+    }
+
+    const popupNode = document.createElement('div');
+    ReactDOM.render(
+      <PopupContent
+        coordinates={coordinates}
+        name={name}
+        setStartCord={helpers.setStartCord}
+        setEndCord={helpers.setEndCord}
+        setWaypointAndIncrease={helpers.setWaypointAndIncrease}
+        updateStartInput={helpers.updateStartInput}
+        updateEndInput={helpers.updateEndInput}
+        updateWaypointInput={helpers.updateWaypointInput}
+        geocoderRefs={helpers.geocoderRefs}
+      />,
+      popupNode
+    );
+
+    new mapboxgl.Popup({ offset: 25, className: 'custom-popup' })
+      .setLngLat(coordinates)
+      .setDOMContent(popupNode)
+      .addTo(mapRef.current);
   });
 
-  const filteredGeojsonData = {
-    type: 'FeatureCollection',
-    features: filteredFeatures
-  };
+  mapRef.current.on('mouseenter', 'route-pois-clusters', () => {
+    mapRef.current.getCanvas().style.cursor = 'pointer';
+  });
+  mapRef.current.on('mouseleave', 'route-pois-clusters', () => {
+    mapRef.current.getCanvas().style.cursor = '';
+  });
 
-  // Add the filtered POIs as a clustered source
-  addClusteredLayer(mapRef, filteredGeojsonData, 'route-pois', 'poi-marker');
+  mapRef.current.on('mouseenter', 'route-pois-unclustered-point', () => {
+    mapRef.current.getCanvas().style.cursor = 'pointer';
+  });
+  mapRef.current.on('mouseleave', 'route-pois-unclustered-point', () => {
+    mapRef.current.getCanvas().style.cursor = '';
+  });
 }
 
 
-export function addClusteredLayer (mapRef, geoJsonData, sourceId, imageId) {
+export function addClusteredLayer(mapRef, geoJsonData, sourceId, imageId, clusterColor) {
+  if (mapRef.current.getSource(sourceId)) {
+    mapRef.current.removeLayer(`${sourceId}-clusters`);
+    mapRef.current.removeLayer(`${sourceId}-cluster-count`);
+    mapRef.current.removeLayer(`${sourceId}-unclustered-point`);
+    mapRef.current.removeSource(sourceId);
+  }
+
   mapRef.current.addSource(sourceId, {
     type: 'geojson',
     data: geoJsonData,
     cluster: true,
     clusterMaxZoom: 14,
-    clusterRadius: 50
+    clusterRadius: 80
   });
 
   // Clusters are displayed using circles
@@ -108,15 +172,7 @@ export function addClusteredLayer (mapRef, geoJsonData, sourceId, imageId) {
     source: sourceId,
     filter: ['has', 'point_count'],
     paint: {
-      'circle-color': [
-        'step',
-        ['get', 'point_count'],
-        '#51bbd6',
-        100,
-        '#f1f075',
-        750,
-        '#f28cb1'
-      ],
+      'circle-color': clusterColor,
       'circle-radius': [
         'step',
         ['get', 'point_count'],
@@ -125,7 +181,8 @@ export function addClusteredLayer (mapRef, geoJsonData, sourceId, imageId) {
         30,
         750,
         40
-      ]
+      ],
+      'circle-opacity': 0.6
     }
   });
 
@@ -153,6 +210,9 @@ export function addClusteredLayer (mapRef, geoJsonData, sourceId, imageId) {
     layout: {
       'icon-image': imageId,
       'icon-size': 0.5
+    },
+    paint: {
+      'icon-opacity': 0.5 // Adjust the opacity to the desired level (0 to 1)
     }
   });
 
@@ -194,16 +254,236 @@ export function addClusteredLayer (mapRef, geoJsonData, sourceId, imageId) {
   mapRef.current.on('mouseleave', `${sourceId}-unclustered-point`, () => {
     mapRef.current.getCanvas().style.cursor = '';
   });
-};
+}
 
-function animateMarkers($marker) {
-  $marker.css({
-    top: '-50px',
-    opacity: 0,
-  }).animate({
-    top: '0px',
-    opacity: 1,
-  }, 500);
+
+export function clearMapFeatures(mapRef) {
+  // Function to ckear features close to the route
+  const sourceIds = ['route-noise-h','route-noise-vh','route-garbage-h','route-other-h','route-multi-h','route-multi-vh']; 
+
+  sourceIds.forEach(sourceId => {
+    if (mapRef.current.getSource(sourceId)) {
+      mapRef.current.removeLayer(`${sourceId}-clusters`);
+      mapRef.current.removeLayer(`${sourceId}-cluster-count`);
+      mapRef.current.removeLayer(`${sourceId}-unclustered-point`);
+      mapRef.current.removeSource(sourceId);
+    }
+  });
+}
+
+export function addMapFeatures(mapRef, helpers) {
+  const {
+    fetchInitialPOI,
+    simulateFetchParks,
+    convertToGeoJSON,
+    floraImage,
+    noiseHighImage,
+    noiseVeryHighImage,
+    garbageHighImage,
+    otherHighImage,
+    multiHighImage,
+    multiVeryHighImage,
+    poiImage,
+    setStartCord,
+    setEndCord,
+    setWaypointAndIncrease,
+    updateStartInput,
+    updateEndInput,
+    updateWaypointInput,
+    geocoderRefs
+  } = helpers;
+
+  const parkData = simulateFetchParks();
+  const parkGeoJson = convertToGeoJSON(parkData);
+  plotRoutePOI(mapRef, poijson, helpers);
+
+
+  mapRef.current.loadImage(floraImage, (error, image) => {
+    if (error) throw error;
+    mapRef.current.addImage('flora-marker', image);
+  });
+
+  mapRef.current.loadImage(noiseHighImage, (error, image) => {
+    if (error) throw error;
+    mapRef.current.addImage('noise-high-marker', image);
+  });
+
+  mapRef.current.loadImage(noiseVeryHighImage, (error, image) => {
+    if (error) throw error;
+    mapRef.current.addImage('noise-veryhigh-marker', image);
+  });
+
+  mapRef.current.loadImage(garbageHighImage, (error, image) => {
+    if (error) throw error;
+    mapRef.current.addImage('garbage-high-marker', image);
+  });
+
+  mapRef.current.loadImage(otherHighImage, (error, image) => {
+    if (error) throw error;
+    mapRef.current.addImage('other-high-marker', image);
+  });
+
+  mapRef.current.loadImage(multiHighImage, (error, image) => {
+    if (error) throw error;
+    mapRef.current.addImage('multi-high-marker', image);
+  });
+
+  mapRef.current.loadImage(multiVeryHighImage, (error, image) => {
+    if (error) throw error;
+    mapRef.current.addImage('multi-veryhigh-marker', image);
+  });
+
+  mapRef.current.loadImage(poiImage, (error, image) => {
+    if (error) throw error;
+    mapRef.current.addImage('poi-marker', image);
+  });
+
+  mapRef.current.addSource('parks', {
+    type: 'geojson',
+    data: parkGeoJson,
+    cluster: true,
+    clusterMaxZoom: 14,
+    clusterRadius: 80
+  });
+
+  mapRef.current.addLayer({
+    id: 'clusters',
+    type: 'circle',
+    source: 'parks',
+    filter: ['has', 'point_count'],
+    paint: {
+      'circle-color': [
+        'step',
+        ['get', 'point_count'],
+        '#4CAF50',
+        100,
+        '#388E3C',
+        750,
+        '#2E7D32'
+      ],
+      'circle-radius': [
+        'step',
+        ['get', 'point_count'],
+        20,
+        100,
+        30,
+        750,
+        40
+      ],
+      'circle-opacity': 0.6
+    }
+  });
+
+  mapRef.current.addLayer({
+    id: 'cluster-count',
+    type: 'symbol',
+    source: 'parks',
+    filter: ['has', 'point_count'],
+    layout: {
+      'text-field': '{point_count_abbreviated}',
+      'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
+      'text-size': 12
+    },
+    paint: {
+      'text-color': '#FFFFFF'
+    }
+  });
+
+  mapRef.current.addLayer({
+    id: 'unclustered-point',
+    type: 'symbol',
+    source: 'parks',
+    filter: ['!', ['has', 'point_count']],
+    layout: {
+      'icon-image': 'flora-marker',
+      'icon-size': 0.5,
+      'icon-offset': [0, -0]
+    }
+  });
+
+  mapRef.current.on('click', 'unclustered-point', e => {
+    const coordinates = e.features[0].geometry.coordinates.slice();
+    const { name } = e.features[0].properties;
+
+    const popupNode = document.createElement('div');
+    ReactDOM.render(
+      <PopupContent
+        coordinates={coordinates}
+        name={name}
+        setStartCord={setStartCord}
+        setEndCord={setEndCord}
+        setWaypointAndIncrease={setWaypointAndIncrease}
+        updateStartInput={updateStartInput}
+        updateEndInput={updateEndInput}
+        updateWaypointInput={updateWaypointInput}
+        geocoderRefs={geocoderRefs}
+      />,
+      popupNode
+    );
+
+    new mapboxgl.Popup({ offset: 25, className: 'custom-popup' })
+      .setLngLat(coordinates)
+      .setDOMContent(popupNode)
+      .addTo(mapRef.current);
+  });
+
+  mapRef.current.on('mouseenter', 'clusters', () => {
+    mapRef.current.getCanvas().style.cursor = 'pointer';
+  });
+  mapRef.current.on('mouseleave', 'clusters', () => {
+    mapRef.current.getCanvas().style.cursor = '';
+  });
+
+  mapRef.current.on('mouseenter', 'unclustered-point', () => {
+    mapRef.current.getCanvas().style.cursor = 'pointer';
+  });
+  mapRef.current.on('mouseleave', 'unclustered-point', () => {
+    mapRef.current.getCanvas().style.cursor = '';
+  });
+
+  mapRef.current.on('click', 'clusters', e => {
+    const features = mapRef.current.queryRenderedFeatures(e.point, {
+      layers: ['clusters']
+    });
+    const clusterId = features[0].properties.cluster_id;
+    mapRef.current.getSource('parks').getClusterExpansionZoom(
+      clusterId,
+      (err, zoom) => {
+        if (err) return;
+
+        mapRef.current.easeTo({
+          center: features[0].geometry.coordinates,
+          zoom
+        });
+      }
+    );
+  });
+}
+
+export function toggleLayerVisibility(mapRef, layerVisibility) {
+  const visibilityMap = {
+    parks: ['clusters', 'cluster-count', 'unclustered-point'],
+    poi: ['route-pois-clusters', 'route-pois-cluster-count', 'route-pois-unclustered-point'],
+    noise: ['route-noise-h-clusters', 'route-noise-h-cluster-count', 'route-noise-h-unclustered-point',
+            'route-noise-vh-clusters', 'route-noise-vh-cluster-count', 'route-noise-vh-unclustered-point'],
+    trash: ['route-garbage-h-clusters', 'route-garbage-h-cluster-count', 'route-garbage-h-unclustered-point'],
+    other: ['route-other-h-clusters', 'route-other-h-cluster-count', 'route-other-h-unclustered-point'],
+    multipleWarnings: ['route-multi-h-clusters', 'route-multi-h-cluster-count', 'route-multi-h-unclustered-point',
+                       'route-multi-vh-clusters', 'route-multi-vh-cluster-count', 'route-multi-vh-unclustered-point'],
+  };
+
+  Object.keys(visibilityMap).forEach((key) => {
+    const layers = visibilityMap[key];
+    layers.forEach((layerId) => {
+      if (mapRef.current.getLayer(layerId)) {
+        mapRef.current.setLayoutProperty(
+          layerId,
+          'visibility',
+          layerVisibility[key] ? 'visible' : 'none'
+        );
+      }
+    });
+  });
 }
 
 export { animateMarkers };

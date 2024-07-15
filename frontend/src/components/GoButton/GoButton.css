@@ -1,7 +1,6 @@
-
 .go_button {
-    background-color: #0d6efd;
-    color: #fff;
+    background-color: #198754;
+    color: rgb(224, 221, 221);
     border: none;
     padding: 10px;
     margin-top: 10px;
@@ -10,10 +9,12 @@
     border-radius: 5px;
     transition: background-color 0.3s ease-in-out;
 }
-  
+
 .go_button:hover {
-    background-color: #0a53be;
+    background-color: #31b678;
 }
-  
-  
-  
+
+.go_button.disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
+}

@@ -63,7 +63,7 @@ namespace aspBuild.Data
         // Calculates the quietscore and multiplies it by the distance.
         private double CalculateQuietScore(string metro, int road, int taxi, bool park, bool threeOneOne, double distance)
         {
-            if (threeOneOne) { return 5000; }
+            if (threeOneOne) { return 1000 * distance; }
             // if (park && string.Equals(metro, "-1")) { return 0.25 * distance; }
             if (park) { return 0.25 * distance; }
             if (string.Equals(metro, "-1")) { return ((road + taxi) / 2) * distance; }
