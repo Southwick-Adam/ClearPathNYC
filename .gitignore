@@ -2,3 +2,4 @@
 *.tar.gz
 .DS_Store
 .fake
+docker-compose-neo.yaml
