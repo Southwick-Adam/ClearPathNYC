@@ -20,13 +20,13 @@ builder.Services.AddHttpClient();
 builder.Services.AddSingleton<WeatherAPI>();
 builder.Services.AddHostedService<WeatherService>();
 
-builder.Services.AddHostedService<ChangeDbService>();
-
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.Configure<Neo4jOptions>(builder.Configuration.GetSection("Neo4j"));
 builder.Services.AddSingleton<Neo4jService>();
+
+builder.Services.AddSingleton<ChangeDb>();
 
 var app = builder.Build();
 

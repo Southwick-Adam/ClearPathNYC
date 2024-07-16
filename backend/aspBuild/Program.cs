@@ -13,6 +13,7 @@ builder.Services.Configure<Neo4jOptions>(builder.Configuration.GetSection("Neo4j
 builder.Services.AddSingleton<Neo4jService>();
 
 builder.Services.AddSingleton<ModelAPI>();
+builder.Services.AddSingleton<RunningGraphAPI>();
 
 var app = builder.Build();
 app.Run();
