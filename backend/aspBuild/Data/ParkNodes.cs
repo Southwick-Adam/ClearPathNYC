@@ -4,11 +4,12 @@ namespace aspBuild.Data
 {
     public class ParkNodes
     {
-        public List<long> ParkNodeList = new List<long>();
+        public List<long> ParkNodeList;
 
         // Imports and sorts the List of parks
         public ParkNodes(string filePath)
         {
+            ParkNodeList = [];
             CreateParkNodes(filePath);
             if (!CheckSortedList()) ParkNodeList.Sort();
             Console.WriteLine($"ParkNode - CheckSortedList: {CheckSortedList()}");
@@ -18,7 +19,7 @@ namespace aspBuild.Data
         {
             try
                 {
-                    using (StreamReader readText = new StreamReader(filePath))
+                    using (StreamReader readText = new(filePath))
                     {
                         string line;
     #pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
@@ -86,10 +87,6 @@ namespace aspBuild.Data
                 }
             }
             return false;
-
         }
-
     }
-
-    
 }

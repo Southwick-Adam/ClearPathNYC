@@ -4,68 +4,82 @@ import Sidebar from './components/Sidebar/Sidebar.js';
 import SmogAlert from './components/SmogAlert/SmogAlert.js';
 import WeatherPanel from './components/WeatherPanel/WeatherPanel.js';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import { samplegeojson } from './smallergeojson.js';
 import SplashScreen from './components/SplashScreen/SplashScreen.js';
+import Legend from './components/Legend/Legend.js';
+import useStore from './store/store.js';
+import './App.css';
 
 function App() {
   const [route, setRoute] = useState(null);
-  const [weather, setWeather] = useState(null); // State to hold weather data
+  const [weather, setWeather] = useState(null);
+  const [playVideo, setPlayVideo] = useState(false);
+  const [presentLayers, setPresentLayers] = useState({
+    noise: false,
+    trash: false,
+    multipleWarnings: false,
+    other: false,
+  });
 
   const startGeocoderRef = useRef(null);
   const endGeocoderRef = useRef(null);
   const geocoderRefs = [useRef(null), useRef(null), useRef(null), useRef(null), useRef(null)];
+  const { isNightMode, setNightMode } = useStore();
 
-  // Simulate fetching geoJson data from backend
-  function simulateFetchRoute(formType, formData) {
-    console.log('simulateFetchRoute called with formType:', formType); 
-    let routeData;
+  const [layerVisibility, setLayerVisibility] = useState({
+    parks: true,
+    poi: true,
+    noise: true,
+    trash: true,
+    multipleWarnings: true,
+    other: true
+  });
 
-    if (formType === 'loop') {
-      console.log('Generating loop route data...');
-      routeData = {
-        "type": "FeatureCollection",
-        "features": [
-          {
-            "type": "Feature",
-            "geometry": {
-              "type": "LineString",
-              "coordinates": [
-                [-73.9712, 40.7831], 
-                [-73.9710, 40.7840], 
-                [-73.9700, 40.7840], 
-                [-73.9690, 40.7840], 
-                [-73.9690, 40.7831], 
-                [-73.9690, 40.7822], 
-                [-73.9700, 40.7822], 
-                [-73.9710, 40.7822], 
-                [-73.9712, 40.7831]
-              ]
-            },
-            "properties": {
-              "name": "Loop Route",
-              "isLoop": true,
-              "quietness_score": [5, 6, 7, 8, 7, 6, 5, 4, 5]
-            }
-          }
-        ]
-      };
-    } else if (formType === 'pointToPoint') {
-      console.log('Generating point to point route data...');
-      routeData = samplegeojson;
+  const toggleLayerVisibility = (layer) => {
+    setLayerVisibility((prevVisibility) => ({
+      ...prevVisibility,
+      [layer]: !prevVisibility[layer],
+    }));
+  };
+
+  async function handleFormSubmit(formType, formData) {
+    console.log('handleFormSubmit called with formType:', formType);
+    console.log(`Form data for ${formType} sent to backend: `, formData);
+
+    const routeData = await fetchRoute(formData);
+
+    if (routeData) {
+      console.log('Fetched route data:', routeData);
+      setRoute(routeData);
     }
-    console.log('Simulated route data:', routeData);
-    setRoute(routeData);
   }
 
-  function handleFormSubmit(formType, formData) {
-    console.log('handleFormSubmit called with formType:', formType); // Dev log, remove later
-    // Simulate sending the form data to the backend, replace with API calls in future
-    setTimeout(() => {
-      console.log(`Form data for ${formType} sent to backend: `, formData);
-
-      // Simulate fetching the route data after form submission
-      simulateFetchRoute(formType, formData);
-    }, 1000); // Simulate network delay of 1 second, remove in future
+  async function fetchRoute(formData) {
+    const { coordinates, isQuiet } = formData;
+  
+    const params = new URLSearchParams();
+    coordinates.forEach((coord) => {
+      params.append('coord1', parseFloat(coord[1])); // Latitude as double
+      params.append('coord2', parseFloat(coord[0])); // Longitude as double
+    });
+    params.append('quiet', isQuiet); // Add the quiet parameter
+  
+    const requestUrl = `/route?${params.toString()}`;
+    console.log('Request URL:', requestUrl);
+  
+    try {
+      const response = await fetch(requestUrl);
+      const responseText = await response.text();
+      console.log('Response Text:', responseText);
+      const data = JSON.parse(responseText);
+  
+      // Update the route in the store
+      useStore.getState().setRoute(data);
+  
+      return data;
+    } catch (error) {
+      console.error('Error fetching route:', error);
+      return null;
+    }
   }
 
   async function fetchWeatherData() {
@@ -79,19 +93,22 @@ function App() {
       });
       const data = await response.json();
       console.log(data);
+      setWeather(data);
     } catch (error) {
       console.error('Error fetching weather data:', error);
     }
   }
 
   useEffect(() => {
-    fetchWeatherData(); // Fetch weather data when component mounts
+    fetchWeatherData();
   }, []);
+
+  const epaIndex = weather ? weather.current.air_quality['us-epa-index'] : null;
 
   return (
     <div className="App">
-      <SplashScreen />
-      <SmogAlert />
+      <SplashScreen setPlayVideo={setPlayVideo} />
+      <SmogAlert epaIndex={epaIndex} />
       <Sidebar
         onFormSubmit={handleFormSubmit}
         startGeocoderRef={startGeocoderRef}
@@ -103,8 +120,12 @@ function App() {
         startGeocoderRef={startGeocoderRef}
         endGeocoderRef={endGeocoderRef}
         geocoderRefs={geocoderRefs}
+        playVideo={playVideo} // Pass playVideo prop
+        layerVisibility={layerVisibility} // Pass layer visibility state
+        setPresentLayers={setPresentLayers} // Pass the setter for present layers
       />
-      <WeatherPanel weather={weather} /> {/* Pass weather data to WeatherPanel */}
+      <Legend onToggleLayer={toggleLayerVisibility} layerVisibility={layerVisibility} presentLayers={presentLayers} /> {/* Pass toggle function and present layers */}
+      <WeatherPanel weather={weather} />
     </div>
   );
 }

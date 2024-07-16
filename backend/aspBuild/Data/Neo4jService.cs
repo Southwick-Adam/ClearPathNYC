@@ -4,35 +4,31 @@ using Neo4j.Driver;
 
 namespace aspBuild.Data
 {
-    public class Neo4jService : IDisposable
+    public class Neo4jService
     {
         private readonly IDriver _driver;
-        private readonly string _database = "testdatabase";
-        private string uri = "bolt://localhost:7687";
-        private string user = "neo4j";
-        private string password = "password";
+        private readonly string _database = "neo4j";
+        private readonly Neo4jOptions _neo4jOptions;
 
-        public Neo4jService()
+        public Neo4jService(IOptions<Neo4jOptions> options)
         {
-            _driver = GraphDatabase.Driver(uri, AuthTokens.Basic(user, password));
+            _neo4jOptions = options.Value;
+            _driver = GraphDatabase.Driver(_neo4jOptions.Uri, AuthTokens.Basic(_neo4jOptions.Username, _neo4jOptions.Password));
         }
 
-        /// <summary>
-        /// Adds the relationship to NodeA on the Path to NodeB
-        /// </summary>
-        /// <param name="NodeIDA"></param>
-        /// <param name="NodeIDB"></param>
-        /// <param name="quietscore"></param>
-        /// <returns>Void</returns>
-        public async Task UpdateNodeRelationship(long NodeIDA, long NodeIDB, double quietscore)
+        // Adds the relationship to NodeA on the Path to NodeB
+        public async Task UpdateNodeRelationship(long NodeIDA, long NodeIDB, double quietscore, string taxiZone)
         {
-            string query = @"MATCH (a:nodes{nodeid:$nodeida})-[r:PATH] -> (b:nodes{nodeid:$nodeidb}) set r.quietscore = $quietscore";
+            string query = @"
+            MATCH (a:nodes {nodeid: $nodeida, taxizone: $taxizonea})-[r:PATH]->(b:nodes {nodeid:$nodeidb})
+            SET r.quietscore = $quietscore";
 
             var parameters = new Dictionary<string, object>
             {
                 {"nodeida", NodeIDA},
                 {"nodeidb", NodeIDB},
-                {"quietscore", quietscore}
+                {"quietscore", quietscore},
+                {"taxizonea", taxiZone}
             };
 
             await using var session = _driver.AsyncSession(o => o.WithDatabase(_database));
@@ -44,12 +40,7 @@ namespace aspBuild.Data
             });
         }
 
-        /// <summary>
-        /// Runs the input query and parameter. 
-        /// </summary>
-        /// <param name="Query">Required</param>
-        /// <param name="Params">Empty list if null</param>
-        /// <returns>List of IRecords</returns>
+        //Runs the input query and parameter. 
         public async Task<List<IRecord>> RunQuery(string Query, Dictionary<string, object> Params)
         {
             try
@@ -67,16 +58,12 @@ namespace aspBuild.Data
             catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
-                return new List<IRecord>();
+                return [];
             }
         }
 
 
-        /// <summary>
-        /// Queries the Neo4j database
-        /// </summary>
-        /// <param name="taxizone"></param>
-        /// <returns>List of NodeToNode objects</returns>
+        // Queries the Neo4j database
         public async Task<List<NodeToNode>> GetNodeInfoForUpdate(string taxizone)
         {
             List<NodeToNode> returnList = new List<NodeToNode>();
@@ -112,9 +99,30 @@ namespace aspBuild.Data
             return returnList;
         }
 
-        public void Dispose()
+
+        public async Task PreRunQueries()
         {
-            _driver?.Dispose();
+            List<string> prerunQueries = [];
+            prerunQueries.Add(@"MATCH (n:nodes) WHERE n.metrozone = 'TRAM2' SET n.metrozone = '2' RETURN n;");
+            prerunQueries.Add(@"MATCH (n:nodes) WHERE n.metrozone = 'TRAM1' SET n.metrozone = '1' RETURN n;");
+            prerunQueries.Add(@"CREATE CONSTRAINT nodeid_unique IF NOT EXISTS FOR (n:nodes) REQUIRE n.nodeid IS UNIQUE;");
+            prerunQueries.Add(@"CREATE INDEX nodeid_taxizone_index IF NOT EXISTS FOR (n:nodes) ON (n.nodeid, n.taxizone);");
+
+            using (var session = _driver.AsyncSession())
+            {
+                foreach (var query in prerunQueries)
+                {
+                    try
+                    {
+                        await session.RunAsync(query);
+                        Console.WriteLine($"Query Completed: {query}");
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.ToString());
+                    }
+                }
+            }
         }
     }
 

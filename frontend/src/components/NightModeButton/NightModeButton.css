@@ -1,0 +1,51 @@
+/* NightModeButton.css */
+.night_button_container {
+    display: flex;
+    justify-content: left;
+  }
+  
+  .toggle_night_mode {
+    padding: 10px;
+    font-size: 16px;
+    background-color: #fff;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    border: 1px black solid;
+    margin-left: 10%;
+    width: 100%;
+  }
+  
+  .toggle_night_mode:hover {
+    background-color: #f0f0f0;
+  }
+  
+  .toggle_night_mode.day {
+    padding: 10px;
+    font-size: 16px;
+    background: linear-gradient(to bottom, #8ac9fd, #336288);
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    border: 1px black solid;
+    margin-left: 10%;
+    width: 100%;
+  }
+
+  .toggle_night_mode.night {
+    padding: 10px;
+    font-size: 16px;
+    background: linear-gradient(to bottom, #214452, #000000);
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    border: 1px black solid;
+    margin-left: 10%;
+    width: 100%;
+  }
+
+  .toggle_night_mode.night:hover {
+    background: linear-gradient(to bottom, #41616d, #252525);  }
+
+  .toggle_night_mode.day:hover {
+    background: linear-gradient(to bottom, #a1d5ff, #456b8a);  }

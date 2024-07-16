@@ -5,6 +5,9 @@ WORKDIR /app
 # Restore dotnet packages
 COPY aspBuild.csproj .
 RUN dotnet restore
+# Install curl
+RUN apt-get update && apt-get install -y curl
+
 # Publish
 COPY . .
 RUN dotnet publish -c Release -o /app/out
@@ -16,6 +19,5 @@ WORKDIR /app
 COPY --from=build /app/out .
 
 EXPOSE 8080
-EXPOSE 80
 
 ENTRYPOINT ["dotnet", "aspBuild.dll"]

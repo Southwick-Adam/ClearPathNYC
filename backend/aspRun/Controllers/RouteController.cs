@@ -21,11 +21,19 @@ namespace aspRun.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> NodeToNode([FromQuery] List<int> coord1, [FromQuery] List<int> coord2)
+        public async Task<IActionResult> NodeToNode([FromQuery] List<double> coord1, [FromQuery] List<double> coord2, [FromQuery] bool quiet)
         {
             if (coord1 == null || coord1.Count < 2 || coord2 == null || coord2.Count < 2)
             {
                 return BadRequest("Invalid coordinates list. Each list should contain at least two coordinate pairs.");
+            }
+            foreach (var coord in coord1)
+            {
+                Console.WriteLine(coord);
+            }
+            foreach (var coord in coord2)
+            {
+                Console.WriteLine(coord);
             }
 
             var finalCoordinates = new StringBuilder();
@@ -35,7 +43,16 @@ namespace aspRun.Controllers
             {
                 for (var i = 1; i < coord1.Count; i++)
                 {
-                    var result = await _neo4jService.AStar(coord1[i - 1], coord2[i - 1], coord1[i], coord2[i]);
+                    List<string> result;
+
+                    if (quiet)
+                    {
+                        result = await _neo4jService.AStar(coord1[i - 1], coord2[i - 1], coord1[i], coord2[i]);
+                    }
+                    else
+                    {
+                        result = await _neo4jService.AStarLoud(coord1[i - 1], coord2[i - 1], coord1[i], coord2[i]);
+                    }
 
                     if (finalCoordinates.Length > 0)
                     {

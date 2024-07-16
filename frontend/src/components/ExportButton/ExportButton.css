@@ -1,0 +1,39 @@
+.export-button-container {
+  display: flex; /* Use flexbox */
+  align-items: center;
+  margin: 10px 0;
+  padding: 10px;
+}
+
+.export-button {
+  padding: 10px;
+  font-size: 16px;
+  background-color: orange;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  border: 1px black solid;
+  margin-right: 10px; /* Add margin to the right to space from the icon */
+  width: auto; /* Adjust width to auto */
+  color: white;
+}
+
+.export-button:disabled {
+  background-color: grey;
+  cursor: not-allowed;
+  color: white;
+  padding: 10px;
+}
+
+.info-icon.day {
+  color: black; /* Black for day mode */
+}
+
+.info-icon.night {
+  color: white; /* White for night mode */
+}
+
+.info-icon {
+  cursor: pointer;
+  width: 20px;
+}
