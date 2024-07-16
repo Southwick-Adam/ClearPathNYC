@@ -15,11 +15,13 @@ namespace aspBuild.Data
 
         private readonly Neo4jService _neo4jService;
         private readonly ModelAPI _modelAPI;
+        private readonly RunningGraphAPI _runningGraphAPI;
 
-        public UpdateDatabase(Neo4jService neo4jService, ModelAPI modelAPI)
+        public UpdateDatabase(Neo4jService neo4jService, ModelAPI modelAPI, RunningGraphAPI runningGraphAPI)
         {
             _neo4jService = neo4jService;
             _modelAPI = modelAPI;
+            _runningGraphAPI = runningGraphAPI;
             jsonDataSubway = [];
             jsonDataTaxi = [];
         }
@@ -56,6 +58,8 @@ namespace aspBuild.Data
             }
             stopwatch.Stop();
             Console.WriteLine("Elapsed Time: {0} milliseconds", stopwatch.ElapsedMilliseconds);
+
+            await _runningGraphAPI.ApiCallAsync();
         }
 
 
