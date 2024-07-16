@@ -5,8 +5,8 @@ from predict import call_taxi_model, call_subway_model
 app = Flask(__name__)
 
 CORS(app, resources={
-    r"/taxi": {"origins": "http://asp-build:5000"},
-    r"/subway": {"origins": "http://asp-build:5000"}
+    r"/taxi": {"origins": "https://clearpath.info.gf"},
+    r"/subway": {"origins": "https://clearpath.info.gf"}
 })
 
 @app.route('/taxi', methods=['GET'])

@@ -31,8 +31,8 @@ namespace aspBuild.ApiCalls
 
         public async Task UpdateDataFiles()
         {
-            string taxiUrl = "http://modeling:5000/taxi";
-            string subwayUrl = "http://modeling:5000/subway";
+            string taxiUrl = "https://clearpath.info.gf/taxi";
+            string subwayUrl = "https://clearpath.info.gf/subway";
             string taxiFilePath = "DataFiles/taxi_busyness_ranking.json";
             string subwayFilePath = "DataFiles/subway_busyness_ranking.json";
 
