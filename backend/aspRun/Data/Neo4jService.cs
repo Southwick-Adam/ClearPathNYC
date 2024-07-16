@@ -66,8 +66,8 @@ namespace aspRun.Data
 
             var parameters = new Dictionary<string, object>
             {
-                {"Lat", Lat},
-                {"Long", Long}
+                {"Lat", Long},
+                {"Long", Lat}
             };
 
             List<IRecord> records = await this.RunQuery(query, parameters);
