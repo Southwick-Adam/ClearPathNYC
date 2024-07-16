@@ -33,16 +33,15 @@ namespace aspBuild.Data
                 return;
             }
             var now = DateTime.Now.TimeOfDay;
-            if (true)//(now.Minutes < 5 && now.Hours % 2 == 0)
+            if (now.Minutes < 5 && now.Hours % 2 == 0)
             {
                 await ExecuteTask();
-                _blockOverlap = true;
             }
         }
 
         private async Task ExecuteTask()
         {
-            Console.WriteLine("DO UPDATE");
+            Console.WriteLine("TIME CHECK: DO UPDATE");
             await _updateDatabase.RunUpdate();
             Console.WriteLine("DONE WITH UPDATE");
             _blockOverlap = false;
