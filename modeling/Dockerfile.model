@@ -13,4 +13,4 @@ RUN apt-get update && \
 
 EXPOSE 5000
 
-ENTRYPOINT ["python3", "./app.py"]
+CMD ["gunicorn", "-c", "gunicorn_config.py", "app:app"]
