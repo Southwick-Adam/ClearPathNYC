@@ -1,3 +1,4 @@
+using System;
 using Neo4j.Driver;
 
 namespace aspRun.Data
@@ -11,28 +12,38 @@ namespace aspRun.Data
         public string CoordinatesString { get; set; }
         public string CostsString { get; set; }
 
-        public void generateCoordinatesString()
+        public Route()
+        {
+            NodeNames = [];
+            NodeLats = [];
+            NodeLongs = [];
+            Costs = [];
+            CoordinatesString = string.Empty;
+            CostsString = string.Empty;
+        }
+
+        public void GenerateCoordinatesString()
         {
             var coordinates = NodeLongs.Zip(NodeLats, (lat, lng) => new[] { lat, lng });
             CoordinatesString = string.Join(",\n ", coordinates.Select(coord => $"[{coord[1]}, {coord[0]}]"));
         }
 
-        public void generateQuietScoresString()
+        public void GenerateQuietScoresString()
         {
-            List<double> distances = new List<double>();
-            List<double> costsLocal = new List<double>();
+            List<double> distances = [];
+            List<double> costsLocal = [];
             // distances.Add(0);
             // costsLocal.Add(0);
             for (var i = 1; i < NodeLats.Count; i++)
             {
-                distances.Add((HaversineCalculator.CalculateDistance(NodeLats[i-1], NodeLongs[i-1], NodeLats[i], NodeLongs[i])));
-                costsLocal.Add((Costs[i]-Costs[i-1]));
+                distances.Add(HaversineCalculator.CalculateDistance(NodeLats[i-1], NodeLongs[i-1], NodeLats[i], NodeLongs[i]));
+                costsLocal.Add(Costs[i]-Costs[i-1]);
             }
             
-            List<double> finalQuietScore = new List<double>();
+            List<double> finalQuietScore = [];
             for (var i = 0; i < distances.Count; i++)
             {
-                finalQuietScore.Add(Math.Round(costsLocal[i] / (distances [i])));
+                finalQuietScore.Add(Math.Round(costsLocal[i] / distances [i]));
             }
             CostsString = string.Join(", ", finalQuietScore);
         }
@@ -49,10 +60,10 @@ namespace aspRun.Data
 
             return new Route
             {
-                NodeNames = nodeNamesObjList?.OfType<long>().ToList() ?? new List<long>(),
-                NodeLats = nodeLatsObjList?.OfType<double>().ToList() ?? new List<double>(),
-                NodeLongs = nodeLongObjList?.OfType<double>().ToList() ?? new List<double>(),
-                Costs = nodeCostsObjList?.OfType<double>().ToList() ?? new List<double>()
+                NodeNames = nodeNamesObjList?.OfType<long>().ToList() ?? [],
+                NodeLats = nodeLatsObjList?.OfType<double>().ToList() ?? [],
+                NodeLongs = nodeLongObjList?.OfType<double>().ToList() ?? [],
+                Costs = nodeCostsObjList?.OfType<double>().ToList() ?? []
             };
         }
     }

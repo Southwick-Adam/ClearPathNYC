@@ -214,8 +214,8 @@ namespace aspRun.Data
             var result = routeResult.First();
 
             var route = RouteMapper.Map(result);
-            route.generateCoordinatesString();
-            route.generateQuietScoresString();
+            route.GenerateCoordinatesString();
+            route.GenerateQuietScoresString();
 
             return [route.CoordinatesString, route.CostsString];
         }
@@ -293,8 +293,8 @@ namespace aspRun.Data
             var result = routeResult.First();
 
             var route = RouteMapper.Map(result);
-            route.generateCoordinatesString();
-            route.generateQuietScoresString();
+            route.GenerateCoordinatesString();
+            route.GenerateQuietScoresString();
 
             return [route.CoordinatesString, route.CostsString];
         }
