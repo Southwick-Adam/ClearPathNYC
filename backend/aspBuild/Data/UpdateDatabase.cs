@@ -44,7 +44,6 @@ namespace aspBuild.Data
             // loops through the taxi keys - starting a loop by the zone its in
             foreach (var key in jsonDataTaxi.Keys)
             {
-                Console.WriteLine($"Current Taxi Zone: {key}");
                 int tempTaxi = jsonDataTaxi[key];
 
                 // calls all the data from the Taxi zone - checking each node and relationship for that zone

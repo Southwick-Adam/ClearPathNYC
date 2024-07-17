@@ -28,21 +28,23 @@ namespace aspBuild.Data
 
         private async Task CheckTime(object? state)
         {
+            Console.WriteLine("CHECK TIME");
             if (_blockOverlap) {
-                _blockOverlap = false;
                 return;
             }
             var now = DateTime.Now.TimeOfDay;
             if (now.Minutes < 5 && now.Hours % 2 == 0)
             {
                 await ExecuteTask();
-                _blockOverlap = true;
             }
         }
 
         private async Task ExecuteTask()
         {
+            Console.WriteLine("TIME CHECK: DO UPDATE");
             await _updateDatabase.RunUpdate();
+            Console.WriteLine("DONE WITH UPDATE");
+            _blockOverlap = false;
         }
 
         public Task StopAsync(CancellationToken cancellationToken)
