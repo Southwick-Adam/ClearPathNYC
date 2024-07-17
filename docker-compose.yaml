@@ -2,12 +2,22 @@ version: '3.8'
 
 services:
 
+  modeling:
+    image: asouthwick1/nycapp:model
+    container_name: model
+    ports:
+      - "4000:5000"
+    networks:
+      - clearpath_net
+
   asp-build:
     image: asouthwick1/nycapp:aspbuild
     container_name: asp-build
     restart: on-failure:3
     ports:
       - "5001:8080"
+    depends_on:
+      - modeling
     networks:
       - clearpath_net
 

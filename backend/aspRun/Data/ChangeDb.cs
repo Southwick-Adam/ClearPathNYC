@@ -15,11 +15,13 @@ namespace aspRun.Data
         {
             try
             {
+                Console.WriteLine("Graph: start");
                 await _neo4jService.CheckGraph();
                 await _neo4jService.StopGraph();
                 await _neo4jService.CheckGraph();
                 await _neo4jService.StartGraph();
                 await _neo4jService.CheckGraph();
+                Console.WriteLine("Graph: success");
             }
             catch (Exception ex)
             {

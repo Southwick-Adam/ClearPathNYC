@@ -33,7 +33,7 @@ namespace aspBuild.Data
             Stopwatch stopwatch = Stopwatch.StartNew();
 
             await _modelAPI.UpdateDataFiles();
-
+            
             jsonDataTaxi = GetJSONs.GetJSON(jsonTaxiPath, "taxi");
             jsonDataSubway = GetJSONs.GetJSON(jsonSubwayPath, "metro");
 
@@ -56,7 +56,7 @@ namespace aspBuild.Data
                 }
             }
             stopwatch.Stop();
-            Console.WriteLine("Elapsed Time: {0} milliseconds", stopwatch.ElapsedMilliseconds);
+            Console.WriteLine("Elapsed Time: ", (stopwatch.ElapsedMilliseconds/1000)/60, " minuites");
 
             await _runningGraphAPI.ApiCallAsync();
         }
