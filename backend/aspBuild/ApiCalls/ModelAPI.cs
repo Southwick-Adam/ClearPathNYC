@@ -10,7 +10,7 @@ namespace aspBuild.ApiCalls
         public ModelAPI(HttpClient httpClient)
         {
             _httpClient = httpClient;
-            _httpClient.Timeout = TimeSpan.FromMinutes(10);
+            _httpClient.Timeout = TimeSpan.FromMinutes(5);
         }
 
         private async Task ModelCallAsync(string url, string filePath)

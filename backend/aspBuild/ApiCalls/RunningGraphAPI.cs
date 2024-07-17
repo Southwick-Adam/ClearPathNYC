@@ -10,7 +10,7 @@ namespace aspBuild.ApiCalls
         public RunningGraphAPI(HttpClient httpClient)
         {
             _httpClient = httpClient;
-            _httpClient.Timeout = TimeSpan.FromMinutes(10);
+            _httpClient.Timeout = TimeSpan.FromMinutes(5);
         }
 
         public async Task ApiCallAsync()

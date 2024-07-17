@@ -16,8 +16,6 @@ services:
     restart: on-failure:3
     ports:
       - "5001:8080"
-    depends_on:
-      - modeling
     networks:
       - clearpath_net
 
@@ -51,6 +49,8 @@ services:
     depends_on:
       - react-app
       - asp-run
+      - modeling
+      - asp-build
     networks:
       - clearpath_net
 
