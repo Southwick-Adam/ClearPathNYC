@@ -22,7 +22,7 @@ namespace aspBuild.Data
         public Task StartAsync(CancellationToken cancellationToken)
         {
             _logger.LogInformation("Starting background service...");
-            _timer = new Timer(async state => await CheckTime(state), null, TimeSpan.Zero, TimeSpan.FromMinutes(5));
+            _timer = new Timer(async state => await CheckTime(state), null, TimeSpan.FromMinutes(3), TimeSpan.FromMinutes(5));
             return Task.CompletedTask;
         }
 
@@ -35,6 +35,7 @@ namespace aspBuild.Data
             var now = DateTime.Now.TimeOfDay;
             if (now.Minutes < 5 && now.Hours % 2 == 0)
             {
+                Console.WriteLine(DateTime.Now.TimeOfDay);
                 await ExecuteTask();
             }
         }

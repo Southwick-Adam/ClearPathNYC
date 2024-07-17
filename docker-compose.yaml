@@ -2,6 +2,14 @@ version: '3.8'
 
 services:
 
+  modeling:
+    image: asouthwick1/nycapp:model
+    container_name: model
+    ports:
+      - "4000:5000"
+    networks:
+      - clearpath_net
+
   asp-build:
     image: asouthwick1/nycapp:aspbuild
     container_name: asp-build
@@ -41,6 +49,8 @@ services:
     depends_on:
       - react-app
       - asp-run
+      - modeling
+      - asp-build
     networks:
       - clearpath_net
 

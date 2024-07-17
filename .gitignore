@@ -3,4 +3,4 @@
 .DS_Store
 .fake
 docker-compose-neo4j.yaml
-docker-compose-model.yaml
+docker-compose-test.yaml
