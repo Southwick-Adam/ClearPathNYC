@@ -56,7 +56,9 @@ namespace aspBuild.Data
                 }
             }
             stopwatch.Stop();
-            Console.WriteLine("Elapsed Time: ", (stopwatch.ElapsedMilliseconds/1000)/60, " minuites");
+            //report time taken for update
+            double elapsedMinutes = (stopwatch.ElapsedMilliseconds / 1000.0) / 60.0;
+            Console.WriteLine("Elapsed Time: {0} minutes", elapsedMinutes);
 
             await _runningGraphAPI.ApiCallAsync();
         }
