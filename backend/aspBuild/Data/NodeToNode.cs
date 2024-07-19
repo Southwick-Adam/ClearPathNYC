@@ -13,7 +13,7 @@ namespace aspBuild.Data
         public byte Direction { get; set; }
         public long RelatedNodeID { get; set; }
         public int RelatedNodeRoadRank { get; set; }
-        public int RelatedNodeMetroZone { get; set; };
+        public int RelatedNodeMetroZone { get; set; }
         public bool RelatedNodeThreeOneOne { get; set; }
         public bool RelatedNodePark { get; set; }
     }

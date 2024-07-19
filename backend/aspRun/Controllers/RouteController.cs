@@ -90,7 +90,7 @@ namespace aspRun.Controllers
 
             try
             {
-                // result = await _neo4jService.Loop(latitude, longitude, distance, quiet);                
+                result = await _neo4jService.Loop(latitude, longitude, distance, quiet);                
             }
             catch (Exception ex)
             {

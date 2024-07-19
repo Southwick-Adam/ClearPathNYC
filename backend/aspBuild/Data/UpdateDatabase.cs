@@ -10,8 +10,8 @@ namespace aspBuild.Data
         private readonly string jsonSubwayPath = "DataFiles/subway_busyness_ranking.json";
 
         // format each dataset will be saved in
-        Dictionary<string, int> jsonDataTaxi;
-        Dictionary<string, int> jsonDataSubway;
+        Dictionary<int, int> jsonDataTaxi;
+        Dictionary<int, int> jsonDataSubway;
 
         private readonly Neo4jService _neo4jService;
         private readonly ModelAPI _modelAPI;

@@ -347,5 +347,18 @@ namespace aspRun.Data
         {
             await _driver.DisposeAsync();
         }
+
+        public async Task<string> Loop(double latitude, double longitude, double distance, bool quiet)
+        {
+            Random random = new();
+
+            int startDirection = random.Next(0,360);
+            
+
+
+
+
+            throw new NotImplementedException();
+        }
     }
 }
