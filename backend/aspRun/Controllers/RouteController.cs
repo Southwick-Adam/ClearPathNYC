@@ -16,7 +16,7 @@ namespace aspRun.Controllers
             _neo4jService = neo4jService;
         }
 
-        [HttpGet]
+        [HttpGet("p2p")]
         public async Task<IActionResult> NodeToNode([FromQuery] List<double> coord1, [FromQuery] List<double> coord2, [FromQuery] bool quiet)
         {
             if (coord1 == null || coord1.Count < 2 || coord2 == null || coord2.Count < 2)
@@ -74,7 +74,6 @@ namespace aspRun.Controllers
 
 
         
-        // TODO: Fix routes
         [HttpGet("loop")]
         public async Task<IActionResult> Loop([FromQuery] List<double> coordinate, [FromQuery] double distance, [FromQuery] bool quiet)
         {
@@ -91,14 +90,14 @@ namespace aspRun.Controllers
 
             try
             {
-                result = await _neo4jService.Loop(latitude, longitude, distance, quiet);                
+                // result = await _neo4jService.Loop(latitude, longitude, distance, quiet);                
             }
             catch (Exception ex)
             {
                 return StatusCode(500, $"An error occurred while connecting to the Neo4j database: {ex.Message}");
             }
 
-            return Ok(result);
+            return Ok(1);
         }
     }
 }
