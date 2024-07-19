@@ -47,17 +47,13 @@ public class Neo4jImplementation : IDisposable
                 n.threeoneone = $threeoneone
         RETURN n;";
 
-        // Handle MetroZones as a comma-separated string or default to "0"
-        string metroInfo = node.MetroZones != null ? string.Join(",", node.MetroZones) : "0";
-
-
         var parameters = new Dictionary<string, object>
         {
             {"ID", node.ID},
             {"latitude", node.Latitude},
             {"longitude", node.Longitude},
             {"taxizone", node.TaxiZone},
-            {"metrozone", metroInfo},
+            {"metrozone", node.MetroZones},
             {"roadrank", node.RoadRank},
             {"park", node.Park},
             {"threeoneone", node.ThreeOneOne}
