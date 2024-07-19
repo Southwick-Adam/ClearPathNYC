@@ -11,9 +11,9 @@ public class MapNode
     public double Latitude {get;}
     public double Longitude {get;}
     public bool Park {get; set;}
-    public string TaxiZone {get; set;}
+    public int TaxiZone {get; set;}
     public int RoadRank {get; set;}
-    public string MetroZones {get; set;}
+    public int MetroZones {get; set;}
     public bool ThreeOneOne {get; set;}
     public List<long> vertices = [];
     public Hashtable verticesInfo = new Hashtable();

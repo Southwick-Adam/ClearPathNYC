@@ -6,16 +6,16 @@ using TinyCsvParser.TypeConverter;
 public class MetroStops 
 {
     // uses circles for the geometry
-    public Dictionary<string, Geometry> MetroDict = new Dictionary<string, Geometry>();
+    public Dictionary<int, Geometry> MetroDict = new Dictionary<int, Geometry>();
     // uses points for the geometry
-    public Dictionary<string, Point> closestMetroDict = new Dictionary<string, Point>();
+    public Dictionary<int, Point> closestMetroDict = new Dictionary<int, Point>();
 
     public MetroStops(string csvMetro)
     {
         MetroDict = CreateMetroCircles(csvMetro);
     }
 
-    private Dictionary<string, Geometry> CreateMetroCircles(string metroPath)
+    private Dictionary<int, Geometry> CreateMetroCircles(string metroPath)
     {
         using (var reader = new StreamReader(metroPath))
         {
@@ -31,10 +31,25 @@ public class MetroStops
                 {
                     Console.WriteLine(ex.ToString());
                 }
+
                 var tempPoint = new Point(Double.Parse(values[1]), Double.Parse(values[2]));
                 var tempCircle = CreateCircleAndCheckPoints(Double.Parse(values[1]), Double.Parse(values[2]), 400);
-                closestMetroDict.Add(values[0],tempPoint);
-                MetroDict.Add(values[0], tempCircle);
+                if (string.Equals(values[0].ToString(), "TRAM1"))
+                {
+                    closestMetroDict.Add(1,tempPoint);
+                    MetroDict.Add(1, tempCircle);
+                }
+                else if (string.Equals(values[0].ToString(), "TRAM2"))
+                {
+                    closestMetroDict.Add(2,tempPoint);
+                    MetroDict.Add(2, tempCircle);
+                }
+                else
+                {
+                    closestMetroDict.Add(int.Parse(values[0]),tempPoint);
+                    MetroDict.Add(int.Parse(values[0]), tempCircle);
+                }
+
             }
         }
         return MetroDict;
@@ -46,11 +61,11 @@ public class MetroStops
     /// <param name="longitude"></param>
     /// <param name="lat"></param>
     /// <returns>List of stationIDs</returns>
-    public List<string> PointInCircle(double latitude, double longitude)
+    public List<int> PointInCircle(double latitude, double longitude)
     {
         Point point = new(longitude, latitude);
-        List<string> inCircles = [];
-        foreach (string key in MetroDict.Keys)
+        List<int> inCircles = [];
+        foreach (int key in MetroDict.Keys)
         {   
             if  (MetroDict[key].Contains(point))
             {
@@ -67,9 +82,9 @@ public class MetroStops
     /// <param name="latitude"></param>
     /// <param name="longitude"></param>
     /// <returns>string: stationID</returns> 
-    public string NearestMetroStop(double latitude, double longitude)
+    public int NearestMetroStop(double latitude, double longitude)
     {        
-        string closestStation = "-1";
+        int closestStation = -1;
         double closestStationDistance = double.MaxValue;
 
         foreach (var key in closestMetroDict.Keys)
@@ -86,7 +101,7 @@ public class MetroStops
         }
 
         if (closestStationDistance < 0.400) return closestStation;
-        return "-1";
+        return -1;
     }
 
 
