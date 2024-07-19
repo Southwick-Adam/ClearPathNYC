@@ -2,12 +2,10 @@ import React from 'react';
 import useStore from '../../store/store';
 import { geojsonToGpx } from '../MapComponent/MapHelper/geojsonHelpers';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
-import { InfoCircle } from 'react-bootstrap-icons'; // Import Bootstrap Icons
 import './ExportButton.css';
 
 const ExportButton = () => {
   const route = useStore(state => state.route);
-  const isNightMode = useStore(state => state.isNightMode); // Import isNightMode state
 
   const handleExport = () => {
     if (!route) {
@@ -33,24 +31,15 @@ const ExportButton = () => {
 
   return (
     <div className="export-button-container">
-      <div>
-      <button 
-        onClick={handleExport} 
-        className="export-button" 
-        disabled={!route} // Disable the button if no route
-      >
-        Export to GPX
-      </button>
-      </div>
-      <div>
-        <OverlayTrigger placement="top" overlay={renderTooltip}>
-          <InfoCircle
-            className={`info-icon ${isNightMode ? 'night' : 'day'}`}
-            size={20} // Adjust size as needed
-          />
-        </OverlayTrigger>
-      </div>
-
+      <OverlayTrigger placement="top" overlay={renderTooltip}>
+        <button
+          onClick={handleExport}
+          className="export-button"
+          disabled={!route} // Disable the button if no route
+        >
+          Export to GPX
+        </button>
+      </OverlayTrigger>
     </div>
   );
 };

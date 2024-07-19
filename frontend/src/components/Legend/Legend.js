@@ -5,7 +5,7 @@ import { OverlayTrigger, Tooltip, Button } from 'react-bootstrap';
 
 function Legend({ onToggleLayer, layerVisibility, presentLayers }) {
   const [isOpen, setIsOpen] = useState(false);
-  const { isNightMode, route } = useStore();
+  const { isNightMode, route, isColorBlindMode } = useStore(); // Include isColorBlindMode in the destructure
   const [buttonText, setButtonText] = useState({
     parks: 'Hide',
     poi: 'Hide',
@@ -95,14 +95,18 @@ function Legend({ onToggleLayer, layerVisibility, presentLayers }) {
     return button;
   };
 
+  const greenPinSrc = isColorBlindMode
+    ? require('../../assets/images/green_CB.png')
+    : require('../../assets/images/pin_green.png');
+
   return (
     <div className={`legend ${isOpen ? 'open' : ''} ${isNightMode ? 'night' : 'day'}`}>
       <button className={`btn btn-primary toggle-btn-legend ${isNightMode ? 'night' : 'day'}`} onClick={toggleLegend}>
         {isOpen ? '▶' : '◀'}
       </button>
       <div className="legend-content">
-    <ul>
-        <li>
+        <ul>
+          <li>
             <img src={require('../../assets/images/PTP_A_flat.png')} alt="Point to Point starting location" />
             Start Location
           </li>
@@ -113,61 +117,80 @@ function Legend({ onToggleLayer, layerVisibility, presentLayers }) {
           <li>
             <img src={require('../../assets/images/Waypoint_flat.png')} alt="Waypoint Marker" />
             Waypoint
-        </li>
-        <li>
+          </li>
+          <li>
             <img src={require('../../assets/images/Park_flat.png')} alt="Park" />
             Park
             <div className="button-container">
-                {renderToggleButton('parks')}
+              {renderToggleButton('parks')}
             </div>
-        </li>
-        <li>
+          </li>
+          <li>
             <img src={require('../../assets/images/PoI_flat.png')} alt="Point of Interest" />
             Point of Interest
             <div className="button-container">
-                {renderToggleButton('poi')}
+              {renderToggleButton('poi')}
             </div>
-        </li>
-        <li>
+          </li>
+          <li>
             <img src={require('../../assets/images/Noise_flat.png')} alt="Noise Warning" />
             Noise Warning
             <div className="button-container">
-                {renderDisableableButton('noise')}
+              {renderDisableableButton('noise')}
             </div>
-        </li>
-        <li>
+          </li>
+          <li>
             <img src={require('../../assets/images/Bin_flat.png')} alt="Trash Warning" />
             Trash Warning
             <div className="button-container">
-                {renderDisableableButton('trash')}
+              {renderDisableableButton('trash')}
             </div>
-        </li>
-        <li>
+          </li>
+          <li>
             <img src={require('../../assets/images/Road_Warning_flat.png')} alt="Street Condition Warning" />
             Street Condition Warning
             <div className="button-container">
-                {renderDisableableButton('other')}
+              {renderDisableableButton('other')}
             </div>
-        </li>
-        <li>
+          </li>
+          <li>
             <img src={require('../../assets/images/Warning_flat.png')} alt="Multiple Warnings" />
             Multiple Warnings
             <div className="button-container">
-                {renderDisableableButton('multipleWarnings')}
+              {renderDisableableButton('multipleWarnings')}
             </div>
-        </li>
-        <li className="pin-container">
+          </li>
+          <li>
             <img src={require('../../assets/images/pin_blue.png')} alt="Blue Pin" />
-            <img src={require('../../assets/images/pin_green.png')} alt="Green Pin" />
-            {/* <img src={require('../../assets/images/pin_yellow.png')} alt="Yellow Pin" /> */}
+            Point of Interest
+          </li>
+          <li>
+            <img src={greenPinSrc} alt="Green Pin" />
+            Parks
+          </li>
+          <li>
             <img src={require('../../assets/images/pin_orange.png')} alt="Orange Pin" />
+            Frequent 311 Warning
+          </li>
+          <li>
             <img src={require('../../assets/images/pin_red.png')} alt="Red Pin" />
-        </li>
-        <li>Pin colour indicates level of volume, with red being the greatest.</li>
-        <li>Blue and Green pins represent items of interest to the user.</li>
-    </ul>
-</div>
-
+            Severe 311 Warning
+          </li>
+        </ul>
+        <div className="legend-bar-container">
+        <span className="legend-bar-title">Route Coloring</span>
+          <div className="legend-bar">
+          <div className={`legend-bar-segment ${isColorBlindMode ? 'purple' : 'green'}`}></div>
+            <div className="legend-bar-segment orange"></div>
+            <div className="legend-bar-segment red"></div>
+          </div>
+          <div className="legend-bar-labels">
+            <span className="legend-bar-label">Quiet</span>
+            <span className="legend-bar-label">Medium</span>
+            <span className="legend-bar-label">Busy</span>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

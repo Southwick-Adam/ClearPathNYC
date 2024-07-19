@@ -3,7 +3,7 @@ import './MapComponent.css';
 import { MAPBOX_TOKEN, MAPBOX_DAY_STYLE_URL, MAPBOX_NIGHT_STYLE_URL } from '../../config.js';
 import mapboxgl from 'mapbox-gl';
 import PropTypes from 'prop-types';
-import { addRouteMarkers, addRouteToMap, zoomToRoute, clearRoute } from './MapHelper/routeHelpers.js';
+import { addRouteMarkers, addRouteToMap, zoomToRoute, clearRoute,updateRouteColors } from './MapHelper/routeHelpers.js';
 import { addMapFeatures, clearMapFeatures, toggleLayerVisibility } from './MapHelper/markerHelpers.js';
 import useStore from '../../store/store.js';
 import mapUnfoldVid from '../../assets/videos/mapunfolding.mp4';
@@ -11,6 +11,7 @@ import simulateFetchParks from '../../assets/geodata/parks.js';
 import fetchInitialPOI from '../../assets/geodata/initialPOI.js';
 import floraImage from '../../assets/images/flora.png';
 import poiImage from '../../assets/images/POI_marker_blue.png';
+import floraImageCB from '../../assets/images/flora_CB.png';
 import noiseHighImage from '../../assets/images/orange_volume.png';
 import noiseVeryHighImage from '../../assets/images/high_volume.png';
 import garbageHighImage from '../../assets/images/rubbish_orange.png';
@@ -18,7 +19,7 @@ import otherHighImage from '../../assets/images/Road_Warning_orange.png';
 import multiHighImage from '../../assets/images/orange_warning.png';
 import multiVeryHighImage from '../../assets/images/red_warning.png';
 import { convertToGeoJSON } from './MapHelper/geojsonHelpers.js';
-import { add311Markers, plotRoutePOI, add311Multiple } from './MapHelper/markerHelpers.js';
+import { add311Markers, plotRoutePOI, add311Multiple,reloadParkFeature } from './MapHelper/markerHelpers.js';
 import fetchNoise311 from '../../assets/geodata/fetchNoise311.js';
 import fetchGarbage311 from '../../assets/geodata/fetchGarbage311.js';
 import fetchOther311 from '../../assets/geodata/fetchOther311.js';
@@ -38,7 +39,7 @@ function MapComponent({ route, startGeocoderRef, endGeocoderRef, geocoderRefs, p
   const {
     setStartCord, setEndCord, setWaypointAndIncrease,
     waypointCord1, waypointCord2, waypointCord3, waypointCord4, waypointCord5,
-    visibleWaypoints, isNightMode
+    visibleWaypoints, isNightMode, isColorBlindMode
   } = useStore();
 
   const reverseGeocode = async (lng, lat) => {
@@ -80,66 +81,68 @@ function MapComponent({ route, startGeocoderRef, endGeocoderRef, geocoderRefs, p
     return { layerCopy, sourceCopy, imageCopy };
   };
 
-  const restoreLayersAndSources = (map, layerCopy, sourceCopy, imageCopy) => {
-    Object.keys(sourceCopy).forEach((sourceId) => {
-      if (!map.getSource(sourceId)) {
-        map.addSource(sourceId, sourceCopy[sourceId]);
-      }
-    });
+const restoreLayersAndSources = (map, layerCopy, sourceCopy, imageCopy) => {
+  const isColorBlindMode = useStore.getState().isColorBlindMode;
 
-    layerCopy.forEach((layer) => {
-      if (!map.getLayer(layer.id)) {
-        map.addLayer(layer);
-      }
-    });
+  Object.keys(sourceCopy).forEach((sourceId) => {
+    if (!map.getSource(sourceId)) {
+      map.addSource(sourceId, sourceCopy[sourceId]);
+    }
+  });
 
-    imageCopy.forEach((image) => {
-      if (!map.hasImage(image.id)) {
-        // Manually load images
-        if (image.id === 'flora-marker') {
-          map.loadImage(floraImage, (error, img) => {
-            if (error) throw error;
-            map.addImage('flora-marker', img);
-          });
-        } else if (image.id === 'poi-marker') {
-          map.loadImage(poiImage, (error, img) => {
-            if (error) throw error;
-            map.addImage('poi-marker', img);
-          });
-        } else if (image.id === 'noise-high-marker') {
-          map.loadImage(noiseHighImage, (error, img) => {
-            if (error) throw error;
-            map.addImage('noise-high-marker', img);
-          });
-        } else if (image.id === 'noise-veryhigh-marker') {
-          map.loadImage(noiseVeryHighImage, (error, img) => {
-            if (error) throw error;
-            map.addImage('noise-veryhigh-marker', img);
-          });
-        } else if (image.id === 'garbage-high-marker') {
-          map.loadImage(garbageHighImage, (error, img) => {
-            if (error) throw error;
-            map.addImage('garbage-high-marker', img);
-          });
-        } else if (image.id === 'other-high-marker') {
-          map.loadImage(otherHighImage, (error, img) => {
-            if (error) throw error;
-            map.addImage('other-high-marker', img);
-          });
-        } else if (image.id === 'multi-high-marker') {
-          map.loadImage(multiHighImage, (error, img) => {
-            if (error) throw error;
-            map.addImage('multi-high-marker', img);
-          });
-        } else if (image.id === 'multi-veryhigh-marker') {
-          map.loadImage(multiVeryHighImage, (error, img) => {
-            if (error) throw error;
-            map.addImage('multi-veryhigh-marker', img);
-          });
-        }
+  layerCopy.forEach((layer) => {
+    if (!map.getLayer(layer.id)) {
+      map.addLayer(layer);
+    }
+  });
+
+  imageCopy.forEach((image) => {
+    if (!map.hasImage(image.id)) {
+      if (image.id === 'flora-marker') {
+        map.loadImage(isColorBlindMode ? floraImageCB : floraImage, (error, img) => {
+          if (error) throw error;
+          map.addImage('flora-marker', img);
+        });
+      } else if (image.id === 'poi-marker') {
+        map.loadImage(poiImage, (error, img) => {
+          if (error) throw error;
+          map.addImage('poi-marker', img);
+        });
+      } else if (image.id === 'noise-high-marker') {
+        map.loadImage(noiseHighImage, (error, img) => {
+          if (error) throw error;
+          map.addImage('noise-high-marker', img);
+        });
+      } else if (image.id === 'noise-veryhigh-marker') {
+        map.loadImage(noiseVeryHighImage, (error, img) => {
+          if (error) throw error;
+          map.addImage('noise-veryhigh-marker', img);
+        });
+      } else if (image.id === 'garbage-high-marker') {
+        map.loadImage(garbageHighImage, (error, img) => {
+          if (error) throw error;
+          map.addImage('garbage-high-marker', img);
+        });
+      } else if (image.id === 'other-high-marker') {
+        map.loadImage(otherHighImage, (error, img) => {
+          if (error) throw error;
+          map.addImage('other-high-marker', img);
+        });
+      } else if (image.id === 'multi-high-marker') {
+        map.loadImage(multiHighImage, (error, img) => {
+          if (error) throw error;
+          map.addImage('multi-high-marker', img);
+        });
+      } else if (image.id === 'multi-veryhigh-marker') {
+        map.loadImage(multiVeryHighImage, (error, img) => {
+          if (error) throw error;
+          map.addImage('multi-veryhigh-marker', img);
+        });
       }
-    });
-  };
+    }
+  });
+};
+
 
   useEffect(() => {
     if (mapRef.current) return;
@@ -245,6 +248,18 @@ function MapComponent({ route, startGeocoderRef, endGeocoderRef, geocoderRefs, p
       restoreLayersAndSources(mapRef.current, layerCopy, sourceCopy, imageCopy);
     });
   }, [isNightMode]);
+
+  useEffect(() => {
+    if (mapRef.current && isMapLoadedRef.current) {
+      reloadParkFeature(mapRef);
+    }
+  }, [isColorBlindMode]);
+
+  useEffect(() => {
+    if (mapRef.current && isMapLoadedRef.current) {
+      updateRouteColors(mapRef);
+    }
+  }, [isColorBlindMode]);
 
   useEffect(() => {
     if (!mapRef.current || !isMapLoadedRef.current) return;

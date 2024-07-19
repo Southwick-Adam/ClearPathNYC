@@ -1,0 +1,63 @@
+.cb_button_container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 5px;
+    height: 46px; /* Ensure same height for all button containers */
+  }
+  
+  .toggle_cb_mode {
+    height: 100%; /* Ensure buttons take up the full height of their containers */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+  padding: 10px;
+  width: 87px;
+  position: relative;
+  background: linear-gradient(to bottom, white, lightgrey);
+  }
+  
+  .toggle_cb_mode.color-blind {
+    background: linear-gradient(to bottom, white, grey);
+    color: black;
+  }
+  
+  .toggle_cb_mode.normal {
+    background: linear-gradient(to bottom, white, lightgrey);
+    color: black;
+  }
+  
+
+.cb_button_image {
+  width: 24px; 
+  height: 24px; 
+  margin:8px;
+  position: absolute; /* Add absolute positioning */
+  left: 10px; /* Adjust left position as needed */
+}
+.cb_button_container {
+  display: flex;
+  align-items: center;
+
+}
+
+
+.cb_button_image {
+  width: 24px;
+  height: 24px;
+  margin-right: 8px;
+}
+
+.cb_button_text {
+  font-size: 16px;
+  font-weight: bold;
+  color: black;
+  margin-left: 40px; 
+}
+
+

@@ -73,7 +73,6 @@
 .legend-content ul li {
     display: flex;
     align-items: center;
-    justify-content: space-between;
     padding-bottom: 10px;
 }
 
@@ -160,3 +159,49 @@
   }
 
 
+  .legend-bar-container {
+    margin-top: 20px;
+  }
+  
+  .legend-bar {
+    display: flex;
+    height: 20px;
+  }
+  
+  .legend-bar-segment {
+    flex: 1;
+  }
+  
+  .legend-bar-segment.green {
+    background-color: #198754;
+  }
+
+  .legend-bar-segment.purple {
+    background-color: #62309C;
+  }
+  
+  .legend-bar-segment.orange {
+    background-color: orange;
+  }
+  
+  .legend-bar-segment.red {
+    background-color: #FF0000;
+  }
+  
+  .legend-bar-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 5px;
+  }
+  
+  .legend-bar-label {
+    font-size: 12px;
+    font-weight: bold;
+  }
+
+  .legend-bar-title{
+    display:flex;
+    justify-content: center;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }

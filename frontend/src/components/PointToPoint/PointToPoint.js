@@ -11,7 +11,8 @@ function PointToPoint({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoder
     startCord, endCord, isQuiet, includeWaypoints, visibleWaypoints,
     waypointCord1, waypointCord2, waypointCord3, waypointCord4, waypointCord5,
     setStartCord, setEndCord, setIsQuiet, setIncludeWaypoints, setVisibleWaypoints,
-    setWaypointCord1, setWaypointCord2, setWaypointCord3, setWaypointCord4, setWaypointCord5, resetWaypointCord
+    setWaypointCord1, setWaypointCord2, setWaypointCord3, setWaypointCord4, setWaypointCord5, resetWaypointCord,
+    isColorBlindMode
   } = useStore();
 
   const [isGoButtonDisabled, setGoButtonDisabled] = useState(true);
@@ -146,7 +147,7 @@ function PointToPoint({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoder
   }
 
   return (
-    <form className="pointtopoint_container" onSubmit={handleSubmit}>
+    <form className={`pointtopoint_container ${isColorBlindMode ? 'color-blind-mode' : ''}`} onSubmit={handleSubmit}>
       <div className="ptp_row">
         <div className="ptp_label">Start</div>
         <LocationFinder setCoordinates={setStartCord} geocoderRef={startGeocoderRef} />

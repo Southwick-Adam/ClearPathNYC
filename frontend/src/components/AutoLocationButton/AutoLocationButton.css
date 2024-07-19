@@ -8,3 +8,11 @@ svg:hover {
     color:#31b678;
     cursor: pointer;
 }
+
+.color-blind-mode svg {
+    color: #9881f5;
+}
+
+.color-blind-mode svg:hover {
+    color: #9151CC;
+}

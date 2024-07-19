@@ -2,10 +2,12 @@ import React, { useRef, useId } from 'react';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './BusyToggleSwitch.css';
+import useStore from '../../store/store';
 
 const BusyToggleSwitch = ({ isQuiet, handleToggleChange }) => {
   const inputRef = useRef(null);
   const uniqueId = useId();
+  const isColorBlindMode = useStore((state) => state.isColorBlindMode);
 
   const renderTooltip = (props) => (
     <Tooltip id="toggle-tooltip" {...props}>
@@ -14,7 +16,7 @@ const BusyToggleSwitch = ({ isQuiet, handleToggleChange }) => {
   );
 
   return (
-    <div className="toggle-switch-container">
+    <div className={`toggle-switch-container ${isColorBlindMode ? 'color-blind-mode' : ''}`}>
       <span className="toggle-label">Busy</span>
       <div className="toggle-switch">
         <input

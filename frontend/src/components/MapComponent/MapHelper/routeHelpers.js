@@ -7,6 +7,7 @@ import * as turf from '@turf/turf';
 
 export function addRouteToMap(mapRef) {
   const route = useStore.getState().route;
+  const isColorBlindMode = useStore.getState().isColorBlindMode;
 
   if (!route) {
     console.error('No route found in store.');
@@ -40,7 +41,7 @@ export function addRouteToMap(mapRef) {
     const lineGradient = ['interpolate', ['linear'], ['line-progress']];
     for (let i = 0; i < quietnessScore.length; i++) {
       const progress = i / (quietnessScore.length - 1);
-      const color = getColorForQuietness(quietnessScore[i]);
+      const color = getColorForQuietness(quietnessScore[i], isColorBlindMode);
       lineGradient.push(progress, color);
     }
 
@@ -63,11 +64,19 @@ export function addRouteToMap(mapRef) {
 }
 
 // Function to map quietness score to a color based on predefined ranges
-function getColorForQuietness(score) {
-  if (score >= 4) return '#FF0000'; // Red for scores 4-5
-  if (score >= 2 && score <= 3) return 'orange';  // Orange for scores 2-3
-  if (score <= 1) return '#189e01'; // Green for scores 0-1
+function getColorForQuietness(score, isColorBlindMode) {
+  if (isColorBlindMode) {
+    if (score >= 4) return '#FF0000'; // Red for scores 4-5
+    if (score >= 2 && score <= 3) return 'orange'; // Orange for scores 2-3
+    if (score <= 1) return '#62309C'; // Purple for scores 0-1
+  } else {
+    if (score >= 4) return '#FF0000'; // Red for scores 4-5
+    if (score >= 2 && score <= 3) return 'orange'; // Orange for scores 2-3
+    if (score <= 1) return '#189e01'; // Green for scores 0-1
+  }
 }
+
+
 
 function addRouteTooltips(mapRef, coordinates, quietnessScore) {
   const segmentLengths = {};
@@ -298,5 +307,30 @@ export function clearRoute(mapRef) {
   }
   if (mapRef.current.getLayer('end-marker')) {
     mapRef.current.removeLayer('end-marker');
+  }
+}
+
+
+export function updateRouteColors(mapRef) {
+  const route = useStore.getState().route;
+  const isColorBlindMode = useStore.getState().isColorBlindMode;
+
+  if (!route) {
+    console.error('No route found in store.');
+    return;
+  }
+
+  const quietnessScore = route.features[0].properties.quietness_score;
+
+  // Prepare the line gradient stops based on quietness score
+  const lineGradient = ['interpolate', ['linear'], ['line-progress']];
+  for (let i = 0; i < quietnessScore.length; i++) {
+    const progress = i / (quietnessScore.length - 1);
+    const color = getColorForQuietness(quietnessScore[i], isColorBlindMode);
+    lineGradient.push(progress, color);
+  }
+
+  if (mapRef.current.getLayer('route')) {
+    mapRef.current.setPaintProperty('route', 'line-gradient', lineGradient);
   }
 }

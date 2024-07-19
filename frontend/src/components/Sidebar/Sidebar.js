@@ -5,6 +5,7 @@ import Loop from '../Loop/Loop.js';
 import PointToPoint from '../PointToPoint/PointToPoint.js';
 import NightModeButton from '../NightModeButton/NightModeButton.js';
 import ExportButton from '../ExportButton/ExportButton.js';
+import CBButton from '../CBButton/CBButton.js';
 
 function Sidebar({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoderRefs }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -78,6 +79,7 @@ function Sidebar({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoderRefs 
           </div>
         </div>
         <div className='night-export-container'>
+          <CBButton />
           <NightModeButton />
           <ExportButton />
         </div>
