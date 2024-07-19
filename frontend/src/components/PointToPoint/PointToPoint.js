@@ -119,23 +119,28 @@ function PointToPoint({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoder
       const tempCoord = waypointStates[index + 1].coordinates;
       waypointStates[index + 1].setCoordinates(waypointStates[index].coordinates);
       waypointStates[index].setCoordinates(tempCoord);
-
+  
       if (geocoderRefs[index].current && geocoderRefs[index + 1].current) {
-        const currentInput = geocoderRefs[index].current._inputEl.value;
-        const nextInput = geocoderRefs[index + 1].current._inputEl.value;
-
-        geocoderRefs[index].current.setInput(nextInput);
-        geocoderRefs[index + 1].setInput(currentInput);
-
-        if (!currentInput.trim()) {
+        const currentInput = geocoderRefs[index].current._inputEl?.value || '';
+        const nextInput = geocoderRefs[index + 1].current._inputEl?.value || '';
+  
+        if (geocoderRefs[index].current.setInput) {
+          geocoderRefs[index].current.setInput(nextInput);
+        }
+        if (geocoderRefs[index + 1].current.setInput) {
+          geocoderRefs[index + 1].current.setInput(currentInput);
+        }
+  
+        if (!currentInput.trim() && geocoderRefs[index + 1].current) {
           hideSuggestions(geocoderRefs[index + 1].current);
         }
-        if (!nextInput.trim()) {
+        if (!nextInput.trim() && geocoderRefs[index].current) {
           hideSuggestions(geocoderRefs[index].current);
         }
       }
     }
   }
+  
 
   function hideSuggestions(geocoder) {
     if (geocoder._container) {

@@ -51,6 +51,13 @@
     border-color: #f9faf3;
 }
 
+.toggle-btn-legend.color-blind {
+    color: #62309C;
+  }
+
+.toggle-btn-legend.color-blind:hover {
+color: #62309C;
+}
 .legend-content {
     font-style: normal;
     padding: 20px;
@@ -116,6 +123,18 @@
     color: #31b678;
 }
 
+.toggle-btn-legend.night.color-blind:hover {
+    background-color: #444a5c;
+    border-color: #444a5c;
+    color: #62309C;
+}
+
+.toggle-btn-legend.day.color-blind:hover {
+    background-color: #e7e4e4;
+    border-color: #e7e4e4;
+    color: #62309C;
+}
+
 .container_title {
     color: rgb(224, 221, 221);
 }
@@ -152,11 +171,11 @@
     border-color: #198754;
 }
 
-.btn-primary {
+/* .btn-primary {
     --bs-btn-active-bg: #31b678;
     --bs-btn-active-border-color: #31b678;
 
-  }
+  } */
 
 
   .legend-bar-container {
