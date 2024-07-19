@@ -4,7 +4,7 @@ using NetTopologySuite.Geometries.Utilities;
 
 class TaxiZones
 {
-    Dictionary<string, Geometry> TaxiDict = [];
+    Dictionary<int, Geometry> TaxiDict = [];
     NetTopologySuite.IO.GeoJsonReader reader = new();
     public TaxiZones(string taxiData)
     {
@@ -19,7 +19,7 @@ class TaxiZones
     /// </summary>
     /// <param name="data">GeoJSON file as string</param>
     /// <returns></returns>
-    public Dictionary<string, Geometry> ParseGeoShapes(string data)
+    public Dictionary<int, Geometry> ParseGeoShapes(string data)
         {
             var featureCollection = reader.Read<FeatureCollection>(data);
 
@@ -27,16 +27,16 @@ class TaxiZones
             {
                 try
                 {
-                    string? locationIDStr = feature.Attributes["location_id"] as string;
+                    int? locationIDStr = int.Parse(feature.Attributes["location_id"].ToString());
                     // first feature ensures only Manhattan are saved, 
                     // second screens out Governors, Ellis and Librerty Island
                     if (feature.Attributes["borough"].Equals("Manhattan") 
-                    && locationIDStr != "103")
+                    && locationIDStr != 103)
                     {
                         var geometry = Extract(feature).FirstOrDefault();
                         if (geometry != null)
                         {
-                            TaxiDict.Add((string)feature.Attributes["location_id"], geometry);
+                            TaxiDict.Add(int.Parse(feature.Attributes["location_id"].ToString()), geometry);
                         }
                     }
                 }
@@ -70,16 +70,16 @@ class TaxiZones
     /// <param name="lat"></param>
     /// <param name="longitude"></param>
     /// <returns>boolean</returns>
-    public string PointInTaxiZone(double longitude, double lat)
+    public int PointInTaxiZone(double longitude, double lat)
     {
         Point point = new(lat, longitude);
-        foreach (string key in TaxiDict.Keys)
+        foreach (int key in TaxiDict.Keys)
         {
             if  (TaxiDict[key].Contains(point))
             {
                 return key;
             }
         }
-        return "-1";
+        return -1;
     }
 }
