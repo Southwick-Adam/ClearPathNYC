@@ -40,10 +40,11 @@ public class MapNode
         {
             double distance = this.NodeDistance(node);
             byte direction = this.BearingByte(node);
+            byte direction2 = node.BearingByte(this);
             Random rnd = new();
             int quietScore = rnd.Next(0,11);
 
-            NodeInfo nodeInfo = new(distance, direction, quietScore);
+            NodeInfo nodeInfo = new(distance, direction, direction2, quietScore);
             
             verticesInfo.Add(node.ID, nodeInfo);
             vertices.Add(node.ID);

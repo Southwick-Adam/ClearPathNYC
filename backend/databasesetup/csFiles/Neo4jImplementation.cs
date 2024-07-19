@@ -31,7 +31,6 @@ public class Neo4jImplementation : IDisposable
         ON CREATE SET 
             n.longitude = $longitude, 
             n.latitude = $latitude, 
-            n.nodeidstring = $nodeIDString,
             n.taxizone = $taxizone,
             n.metrozone = $metrozone,
             n.roadrank = $roadrank,
@@ -48,8 +47,6 @@ public class Neo4jImplementation : IDisposable
                 n.threeoneone = $threeoneone
         RETURN n;";
 
-        var nodeIDString = node.ID.ToString();
-
         // Handle MetroZones as a comma-separated string or default to "0"
         string metroInfo = node.MetroZones != null ? string.Join(",", node.MetroZones) : "0";
 
@@ -59,7 +56,6 @@ public class Neo4jImplementation : IDisposable
             {"ID", node.ID},
             {"latitude", node.Latitude},
             {"longitude", node.Longitude},
-            {"nodeIDString", nodeIDString},
             {"taxizone", node.TaxiZone},
             {"metrozone", metroInfo},
             {"roadrank", node.RoadRank},
@@ -107,7 +103,7 @@ public class Neo4jImplementation : IDisposable
         MERGE (a)-[r1:PATH]->(b)
         ON CREATE SET r1.distance = $distance, r1.direction = $direction, r1.quietscore = $quietscore
         MERGE (b)-[r2:PATH]->(a)
-        ON CREATE SET r2.distance = $distance, r2.direction = $direction, r2.quietscore = $quietscore
+        ON CREATE SET r2.distance = $distance, r2.direction = $direction2, r2.quietscore = $quietscore
         RETURN a, b, r1, r2";
 
         NodeInfo nodeInfo = (NodeInfo)node.verticesInfo[neighbor.ID];
@@ -118,6 +114,7 @@ public class Neo4jImplementation : IDisposable
             {"ID2", neighbor.ID},
             {"distance", nodeInfo.Distance},
             {"direction", nodeInfo.Direction},
+            {"direction2", nodeInfo.DirectionReverse},
             {"quietscore", nodeInfo.QuietScore}
         };
 
