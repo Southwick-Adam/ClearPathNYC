@@ -28,7 +28,6 @@ namespace aspBuild.Data
 
         private async Task CheckTime(object? state)
         {
-            Console.WriteLine("CHECK TIME");
             if (_blockOverlap) {
                 return;
             }
@@ -42,9 +41,9 @@ namespace aspBuild.Data
 
         private async Task ExecuteTask()
         {
-            Console.WriteLine("TIME CHECK: DO UPDATE");
+            Console.WriteLine("START UPDATE");
             await _updateDatabase.RunUpdate();
-            Console.WriteLine("DONE WITH UPDATE");
+            Console.WriteLine("FINISHED UPDATE");
             _blockOverlap = false;
         }
 
