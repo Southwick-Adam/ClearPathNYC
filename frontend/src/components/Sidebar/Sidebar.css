@@ -36,7 +36,7 @@
   transition: left 1s ease; /* Slower transition duration */
   z-index: 1000;
   border-radius: 0 20px 20px 0;
-  color: rgb(0, 0, 0);
+  color: rgb(102, 98, 98);
 }
 
 .sidebar.open {
@@ -157,7 +157,7 @@
 .container_title.day {
   font-size: 32px;
   font-weight: bold;
-  color: rgb(0, 0, 0);
+  color: (102, 98, 98);
 }
 
 .sidebar_logo img {

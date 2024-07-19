@@ -43,7 +43,7 @@ function WeatherPanel({ weather }) {
           {temp_f}°F
         </div>
         <div className='wind'>
-          Condition: {condition.text}
+          {condition.text}
         </div>
       </div>
 

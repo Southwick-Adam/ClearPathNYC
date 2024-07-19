@@ -46,9 +46,6 @@
   .waypoint:nth-child(4) {z-index: 6;}
   .waypoint:nth-child(5) {z-index: 5;}
 
-  .checkbox{
-    background-color: #198754;
-  }
 
   .upDownWrapper{
     flex-direction: column;

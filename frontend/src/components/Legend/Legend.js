@@ -98,7 +98,7 @@ function Legend({ onToggleLayer, layerVisibility, presentLayers }) {
   return (
     <div className={`legend ${isOpen ? 'open' : ''} ${isNightMode ? 'night' : 'day'}`}>
       <button className={`btn btn-primary toggle-btn-legend ${isNightMode ? 'night' : 'day'}`} onClick={toggleLegend}>
-        {isOpen ? '◀' : '▶'}
+        {isOpen ? '▶' : '◀'}
       </button>
       <div className="legend-content">
     <ul>

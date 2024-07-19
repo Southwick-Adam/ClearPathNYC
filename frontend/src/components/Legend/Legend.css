@@ -1,8 +1,8 @@
 .legend {
     position: fixed;
     top: 0;
-    right: -350px; /* Start hidden off-screen */
-    width: 350px;
+    right: -305px; /* Start hidden off-screen */
+    width: 305px;
     top: 20%;
     height: 45%;
     background-color: #4b4f5c;
