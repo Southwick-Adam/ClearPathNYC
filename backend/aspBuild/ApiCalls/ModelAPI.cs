@@ -20,7 +20,7 @@ namespace aspBuild.ApiCalls
             var response = await _httpClient.GetAsync(url);
             response.EnsureSuccessStatusCode();
             var content = await response.Content.ReadAsStringAsync();
-            Console.WriteLine("Succes with ", url);
+            Console.WriteLine($"Succes fetching data from {url}");
             File.WriteAllText(filePath, content);
             }
             catch (HttpRequestException ex)

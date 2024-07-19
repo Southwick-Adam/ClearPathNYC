@@ -17,7 +17,7 @@ namespace aspBuild.Data
         }
 
         // Adds the relationship to NodeA on the Path to NodeB
-        public async Task UpdateNodeRelationship(long NodeIDA, long NodeIDB, double quietscore, string taxiZone)
+        public async Task UpdateNodeRelationship(long NodeIDA, long NodeIDB, double quietscore, int taxiZone)
         {
             string query = @"
             MATCH (a:nodes {nodeid: $nodeida, taxizone: $taxizonea})-[r:PATH]->(b:nodes {nodeid:$nodeidb})
@@ -64,7 +64,7 @@ namespace aspBuild.Data
 
 
         // Queries the Neo4j database
-        public async Task<List<NodeToNode>> GetNodeInfoForUpdate(string taxizone)
+        public async Task<List<NodeToNode>> GetNodeInfoForUpdate(int taxizone)
         {
             List<NodeToNode> returnList = new List<NodeToNode>();
 

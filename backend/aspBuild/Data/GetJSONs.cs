@@ -13,7 +13,7 @@ namespace aspBuild.Data
             if (string.Equals(type, "taxi"))
             {
                 List<JSONObjectTaxi>? ListJSONValues = JsonConvert.DeserializeObject<List<JSONObjectTaxi>>(json);
-                dict.Add("-1", 3);
+                dict.Add(-1, 3);
                 foreach (var item in ListJSONValues)
                 {
                     if (item != null && item.LocationID != null)
