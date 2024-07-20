@@ -6,7 +6,7 @@ import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 
 function Legend({ onToggleLayer, layerVisibility, presentLayers }) {
   const [isOpen, setIsOpen] = useState(false);
-  const { isNightMode, route, isColorBlindMode } = useStore(); // Include isColorBlindMode in the destructure
+  const { isNightMode, route, isColorBlindMode } = useStore();
 
   useEffect(() => {
     const legendTimer = setTimeout(() => {
@@ -26,7 +26,7 @@ function Legend({ onToggleLayer, layerVisibility, presentLayers }) {
     if (presentLayers.poi) {
       onToggleLayer('poi', true);
     }
-  }, []); // Empty dependency array to run only once on mount
+  }, [presentLayers, onToggleLayer]); // Add dependencies to re-run when presentLayers changes
 
   function toggleLegend() {
     setIsOpen(!isOpen);
@@ -37,13 +37,13 @@ function Legend({ onToggleLayer, layerVisibility, presentLayers }) {
   }
 
   const handleButtonClick = (layerName) => {
-    onToggleLayer(layerName, !presentLayers[layerName]);
+    onToggleLayer(layerName, !layerVisibility[layerName]);
   };
 
   const renderToggleButton = (layerName) => {
     return (
       <ViewLayerToggle
-        isChecked={presentLayers[layerName]}
+        isChecked={layerVisibility[layerName]}
         onToggle={() => handleButtonClick(layerName)}
         tooltipText={`Toggle ${layerName}`}
         className={`toggle-${layerName}`} // Add a className prop based on the layerName
@@ -52,14 +52,14 @@ function Legend({ onToggleLayer, layerVisibility, presentLayers }) {
   };
 
   const renderDisableableButton = (layerName) => {
-    const isDisabled = !route || !presentLayers[layerName];
+    const isDisabled = !presentLayers[layerName];
     const button = (
       <ViewLayerToggle
-        isChecked={presentLayers[layerName]}
+        isChecked={layerVisibility[layerName]}
         onToggle={() => handleButtonClick(layerName)}
         tooltipText={!route ? 'View after finding a route' : 'None found near the route'}
-        isDisabled={isDisabled} // Pass the isDisabled prop
-        className={`toggle-${layerName}`} // Add a className prop based on the layerName
+        isDisabled={isDisabled}
+        className={`toggle-${layerName}`}
       />
     );
     const tooltipText = !route
@@ -125,28 +125,28 @@ function Legend({ onToggleLayer, layerVisibility, presentLayers }) {
             <img src={require('../../assets/images/Noise_flat.png')} alt="Noise Warning" />
             Noise Warning
             <div className="button-container">
-              {renderDisableableButton('noise')}
+              {presentLayers.noise ? renderToggleButton('noise') : renderDisableableButton('noise')}
             </div>
           </li>
           <li>
             <img src={require('../../assets/images/Bin_flat.png')} alt="Trash Warning" />
             Trash Warning
             <div className="button-container">
-              {renderDisableableButton('trash')}
+              {presentLayers.trash ? renderToggleButton('trash') : renderDisableableButton('trash')}
             </div>
           </li>
           <li>
             <img src={require('../../assets/images/Road_Warning_flat.png')} alt="Street Condition Warning" />
             Street Condition Warning
             <div className="button-container">
-              {renderDisableableButton('other')}
+              {presentLayers.other ? renderToggleButton('other') : renderDisableableButton('other')}
             </div>
           </li>
           <li>
             <img src={require('../../assets/images/Warning_flat.png')} alt="Multiple Warnings" />
             Multiple Warnings
             <div className="button-container">
-              {renderDisableableButton('multipleWarnings')}
+              {presentLayers.multipleWarnings ? renderToggleButton('multipleWarnings') : renderDisableableButton('multipleWarnings')}
             </div>
           </li>
           <li>
