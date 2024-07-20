@@ -41,10 +41,6 @@ function App() {
       ...prevVisibility,
       [layer]: isVisible,
     }));
-    setPresentLayers((prevLayers) => ({
-      ...prevLayers,
-      [layer]: isVisible,
-    }));
   };
 
   async function handleFormSubmit(formType, formData) {
@@ -108,6 +104,19 @@ function App() {
   useEffect(() => {
     fetchWeatherData();
   }, []);
+
+   // Sync layerVisibility with presentLayers after route is generated
+   useEffect(() => {
+    if (route) {
+      const updatedVisibility = { ...layerVisibility };
+      Object.keys(presentLayers).forEach((layer) => {
+        if (presentLayers[layer]) {
+          updatedVisibility[layer] = true;
+        }
+      });
+      setLayerVisibility(updatedVisibility);
+    }
+  }, [route, presentLayers]); // Update visibility when route or presentLayers change
 
   const epaIndex = weather ? weather.current.air_quality['us-epa-index'] : null;
 

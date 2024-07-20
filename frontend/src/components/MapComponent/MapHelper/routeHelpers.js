@@ -9,6 +9,11 @@ export function addRouteToMap(mapRef) {
   const route = useStore.getState().route;
   const isColorBlindMode = useStore.getState().isColorBlindMode;
 
+  const existingPopups = document.getElementsByClassName('mapboxgl-popup');
+    while (existingPopups.length > 0) {
+      existingPopups[0].remove();
+    }
+
   if (!route) {
     console.error('No route found in store.');
     return;
@@ -59,7 +64,6 @@ export function addRouteToMap(mapRef) {
       },
     });
 
-    // addRouteTooltips(mapRef, coordinates, quietnessScore);
   }
 }
 
