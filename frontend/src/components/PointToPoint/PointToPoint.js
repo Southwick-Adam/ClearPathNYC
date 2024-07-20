@@ -11,7 +11,8 @@ function PointToPoint({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoder
     startCord, endCord, isQuiet, includeWaypoints, visibleWaypoints,
     waypointCord1, waypointCord2, waypointCord3, waypointCord4, waypointCord5,
     setStartCord, setEndCord, setIsQuiet, setIncludeWaypoints, setVisibleWaypoints,
-    setWaypointCord1, setWaypointCord2, setWaypointCord3, setWaypointCord4, setWaypointCord5, resetWaypointCord
+    setWaypointCord1, setWaypointCord2, setWaypointCord3, setWaypointCord4, setWaypointCord5, resetWaypointCord,
+    isColorBlindMode
   } = useStore();
 
   const [isGoButtonDisabled, setGoButtonDisabled] = useState(true);
@@ -118,23 +119,28 @@ function PointToPoint({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoder
       const tempCoord = waypointStates[index + 1].coordinates;
       waypointStates[index + 1].setCoordinates(waypointStates[index].coordinates);
       waypointStates[index].setCoordinates(tempCoord);
-
+  
       if (geocoderRefs[index].current && geocoderRefs[index + 1].current) {
-        const currentInput = geocoderRefs[index].current._inputEl.value;
-        const nextInput = geocoderRefs[index + 1].current._inputEl.value;
-
-        geocoderRefs[index].current.setInput(nextInput);
-        geocoderRefs[index + 1].setInput(currentInput);
-
-        if (!currentInput.trim()) {
+        const currentInput = geocoderRefs[index].current._inputEl?.value || '';
+        const nextInput = geocoderRefs[index + 1].current._inputEl?.value || '';
+  
+        if (geocoderRefs[index].current.setInput) {
+          geocoderRefs[index].current.setInput(nextInput);
+        }
+        if (geocoderRefs[index + 1].current.setInput) {
+          geocoderRefs[index + 1].current.setInput(currentInput);
+        }
+  
+        if (!currentInput.trim() && geocoderRefs[index + 1].current) {
           hideSuggestions(geocoderRefs[index + 1].current);
         }
-        if (!nextInput.trim()) {
+        if (!nextInput.trim() && geocoderRefs[index].current) {
           hideSuggestions(geocoderRefs[index].current);
         }
       }
     }
   }
+  
 
   function hideSuggestions(geocoder) {
     if (geocoder._container) {
@@ -146,7 +152,7 @@ function PointToPoint({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoder
   }
 
   return (
-    <form className="pointtopoint_container" onSubmit={handleSubmit}>
+    <form className={`pointtopoint_container ${isColorBlindMode ? 'color-blind-mode' : ''}`} onSubmit={handleSubmit}>
       <div className="ptp_row">
         <div className="ptp_label">Start</div>
         <LocationFinder setCoordinates={setStartCord} geocoderRef={startGeocoderRef} />

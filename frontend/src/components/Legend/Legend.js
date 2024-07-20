@@ -1,19 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import './Legend.css';
 import useStore from '../../store/store';
-import { OverlayTrigger, Tooltip, Button } from 'react-bootstrap';
+import ViewLayerToggle from '../ViewLayerToggle/ViewLayerToggle';
+import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 
 function Legend({ onToggleLayer, layerVisibility, presentLayers }) {
   const [isOpen, setIsOpen] = useState(false);
-  const { isNightMode, route } = useStore();
-  const [buttonText, setButtonText] = useState({
-    parks: 'Hide',
-    poi: 'Hide',
-    noise: 'View',
-    trash: 'View',
-    multipleWarnings: 'View',
-    other: 'View'
-  });
+  const { isNightMode, route, isColorBlindMode } = useStore(); // Include isColorBlindMode in the destructure
 
   useEffect(() => {
     const legendTimer = setTimeout(() => {
@@ -26,16 +19,14 @@ function Legend({ onToggleLayer, layerVisibility, presentLayers }) {
   }, []);
 
   useEffect(() => {
-    if (route) {
-      setButtonText((prevText) => ({
-        ...prevText,
-        noise: presentLayers.noise ? 'Hide' : 'View',
-        trash: presentLayers.trash ? 'Hide' : 'View',
-        multipleWarnings: presentLayers.multipleWarnings ? 'Hide' : 'View',
-        other: presentLayers.other ? 'Hide' : 'View' // Ensure 'other' is handled similarly
-      }));
+    // Initially set parks and poi to true
+    if (presentLayers.parks) {
+      onToggleLayer('parks', true);
     }
-  }, [route, presentLayers]);
+    if (presentLayers.poi) {
+      onToggleLayer('poi', true);
+    }
+  }, []); // Empty dependency array to run only once on mount
 
   function toggleLegend() {
     setIsOpen(!isOpen);
@@ -46,36 +37,31 @@ function Legend({ onToggleLayer, layerVisibility, presentLayers }) {
   }
 
   const handleButtonClick = (layerName) => {
-    setButtonText((prevText) => ({
-      ...prevText,
-      [layerName]: prevText[layerName] === 'Hide' ? 'View' : 'Hide'
-    }));
-    onToggleLayer(layerName);
+    onToggleLayer(layerName, !presentLayers[layerName]);
   };
 
   const renderToggleButton = (layerName) => {
     return (
-      <Button
-        onClick={() => handleButtonClick(layerName)}
-        className="toggle-button"
-      >
-        {buttonText[layerName]}
-      </Button>
+      <ViewLayerToggle
+        isChecked={presentLayers[layerName]}
+        onToggle={() => handleButtonClick(layerName)}
+        tooltipText={`Toggle ${layerName}`}
+        className={`toggle-${layerName}`} // Add a className prop based on the layerName
+      />
     );
   };
 
   const renderDisableableButton = (layerName) => {
     const isDisabled = !route || !presentLayers[layerName];
     const button = (
-      <Button
-        onClick={() => handleButtonClick(layerName)}
-        disabled={isDisabled}
-        className={`toggle-button ${isDisabled ? 'disabled' : ''}`}
-      >
-        {buttonText[layerName]}
-      </Button>
+      <ViewLayerToggle
+        isChecked={presentLayers[layerName]}
+        onToggle={() => handleButtonClick(layerName)}
+        tooltipText={!route ? 'View after finding a route' : 'None found near the route'}
+        isDisabled={isDisabled} // Pass the isDisabled prop
+        className={`toggle-${layerName}`} // Add a className prop based on the layerName
+      />
     );
-
     const tooltipText = !route
       ? 'View after finding a route'
       : 'None found near the route';
@@ -95,14 +81,21 @@ function Legend({ onToggleLayer, layerVisibility, presentLayers }) {
     return button;
   };
 
+  const greenPinSrc = isColorBlindMode
+    ? require('../../assets/images/green_CB.png')
+    : require('../../assets/images/pin_green.png');
+
   return (
     <div className={`legend ${isOpen ? 'open' : ''} ${isNightMode ? 'night' : 'day'}`}>
-      <button className={`btn btn-primary toggle-btn-legend ${isNightMode ? 'night' : 'day'}`} onClick={toggleLegend}>
+      <button
+        className={`btn btn-primary toggle-btn-legend ${isNightMode ? 'night' : 'day'} ${isColorBlindMode ? 'color-blind' : ''}`}
+        onClick={toggleLegend}
+      >
         {isOpen ? '▶' : '◀'}
       </button>
       <div className="legend-content">
-    <ul>
-        <li>
+        <ul>
+          <li>
             <img src={require('../../assets/images/PTP_A_flat.png')} alt="Point to Point starting location" />
             Start Location
           </li>
@@ -113,61 +106,80 @@ function Legend({ onToggleLayer, layerVisibility, presentLayers }) {
           <li>
             <img src={require('../../assets/images/Waypoint_flat.png')} alt="Waypoint Marker" />
             Waypoint
-        </li>
-        <li>
+          </li>
+          <li>
             <img src={require('../../assets/images/Park_flat.png')} alt="Park" />
             Park
             <div className="button-container">
-                {renderToggleButton('parks')}
+              {renderToggleButton('parks')}
             </div>
-        </li>
-        <li>
+          </li>
+          <li>
             <img src={require('../../assets/images/PoI_flat.png')} alt="Point of Interest" />
             Point of Interest
             <div className="button-container">
-                {renderToggleButton('poi')}
+              {renderToggleButton('poi')}
             </div>
-        </li>
-        <li>
+          </li>
+          <li>
             <img src={require('../../assets/images/Noise_flat.png')} alt="Noise Warning" />
             Noise Warning
             <div className="button-container">
-                {renderDisableableButton('noise')}
+              {renderDisableableButton('noise')}
             </div>
-        </li>
-        <li>
+          </li>
+          <li>
             <img src={require('../../assets/images/Bin_flat.png')} alt="Trash Warning" />
             Trash Warning
             <div className="button-container">
-                {renderDisableableButton('trash')}
+              {renderDisableableButton('trash')}
             </div>
-        </li>
-        <li>
+          </li>
+          <li>
             <img src={require('../../assets/images/Road_Warning_flat.png')} alt="Street Condition Warning" />
             Street Condition Warning
             <div className="button-container">
-                {renderDisableableButton('other')}
+              {renderDisableableButton('other')}
             </div>
-        </li>
-        <li>
+          </li>
+          <li>
             <img src={require('../../assets/images/Warning_flat.png')} alt="Multiple Warnings" />
             Multiple Warnings
             <div className="button-container">
-                {renderDisableableButton('multipleWarnings')}
+              {renderDisableableButton('multipleWarnings')}
             </div>
-        </li>
-        <li className="pin-container">
+          </li>
+          <li>
             <img src={require('../../assets/images/pin_blue.png')} alt="Blue Pin" />
-            <img src={require('../../assets/images/pin_green.png')} alt="Green Pin" />
-            {/* <img src={require('../../assets/images/pin_yellow.png')} alt="Yellow Pin" /> */}
+            Point of Interest
+          </li>
+          <li>
+            <img src={greenPinSrc} alt="Green Pin" />
+            Parks
+          </li>
+          <li>
             <img src={require('../../assets/images/pin_orange.png')} alt="Orange Pin" />
+            Frequent 311 Warning
+          </li>
+          <li>
             <img src={require('../../assets/images/pin_red.png')} alt="Red Pin" />
-        </li>
-        <li>Pin colour indicates level of volume, with red being the greatest.</li>
-        <li>Blue and Green pins represent items of interest to the user.</li>
-    </ul>
-</div>
-
+            Severe 311 Warning
+          </li>
+        </ul>
+        <div className="legend-bar-container">
+        <span className="legend-bar-title">Route Coloring</span>
+          <div className="legend-bar">
+          <div className={`legend-bar-segment ${isColorBlindMode ? 'purple' : 'green'}`}></div>
+            <div className="legend-bar-segment orange"></div>
+            <div className="legend-bar-segment red"></div>
+          </div>
+          <div className="legend-bar-labels">
+            <span className="legend-bar-label">Quiet</span>
+            <span className="legend-bar-label">Medium</span>
+            <span className="legend-bar-label">Busy</span>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

@@ -69,6 +69,19 @@
   color: #198754;
 }
 
+.toggle-btn.color-blind.day {
+  color: #62309C;
+}
+
+.toggle-btn.color-blind.night {
+  color: #62309C;
+}
+
+.toggle-btn.color-blind.day:hover,
+.toggle-btn.color-blind.night:hover {
+  color: #62309C;
+}
+
 .toggle-btn.day {
   position: absolute;
   top: calc(50vh - 100px);
@@ -181,4 +194,10 @@
   position: absolute;
   left: 30px;
   bottom: 115px;
-}
+  align-items: center;
+  gap: 10px;}
+
+
+
+
+

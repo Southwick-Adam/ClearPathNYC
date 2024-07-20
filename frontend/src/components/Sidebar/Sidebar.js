@@ -5,12 +5,13 @@ import Loop from '../Loop/Loop.js';
 import PointToPoint from '../PointToPoint/PointToPoint.js';
 import NightModeButton from '../NightModeButton/NightModeButton.js';
 import ExportButton from '../ExportButton/ExportButton.js';
+import CBButton from '../CBButton/CBButton.js';
 
 function Sidebar({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoderRefs }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoopOpen, setLoopOpen] = useState(false);
   const [isPtPOpen, setPtPOpen] = useState(false);
-  const { isNightMode } = useStore();
+  const { isNightMode, isColorBlindMode } = useStore();
 
   useEffect(() => {
     const sidebarTimer = setTimeout(() => {
@@ -45,7 +46,10 @@ function Sidebar({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoderRefs 
 
   return (
     <div className={`sidebar ${isOpen ? 'open' : ''} ${isNightMode ? 'night' : 'day'}`}>
-      <button className={`btn btn-primary toggle-btn ${isNightMode ? 'night' : 'day'}`} onClick={toggleSidebar}>
+      <button
+        className={`btn btn-primary toggle-btn ${isNightMode ? 'night' : 'day'} ${isColorBlindMode ? 'color-blind' : ''}`}
+        onClick={toggleSidebar}
+      >
         {isOpen ? '◀' : '▶'}
       </button>
       <div className="sidebar-content">
@@ -78,6 +82,7 @@ function Sidebar({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoderRefs 
           </div>
         </div>
         <div className='night-export-container'>
+          <CBButton />
           <NightModeButton />
           <ExportButton />
         </div>

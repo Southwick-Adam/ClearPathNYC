@@ -3,6 +3,9 @@ import $ from 'jquery';
 import ReactDOM from 'react-dom';
 import PopupContent from '../../PopupContent/PopupContent';
 import poijson from '../../../assets/geodata/171_POIs.json'
+import useStore from '../../../store/store';
+import floraImage from '../../../assets/images/flora.png';
+import floraCBImage from '../../../assets/images/flora_CB.png';
 
 
 
@@ -460,6 +463,42 @@ export function addMapFeatures(mapRef, helpers) {
   });
 }
 
+
+export function reloadParkFeature(mapRef) {
+  const isColorBlindMode = useStore.getState().isColorBlindMode;
+
+  const clusterColors = isColorBlindMode
+    ? ['#62309C', '#4B0082', '#2E0854'] // Example colors for color-blind mode
+    : ['#4CAF50', '#388E3C', '#2E7D32'];
+
+  if (mapRef.current.getLayer('clusters')) {
+    mapRef.current.setPaintProperty('clusters', 'circle-color', [
+      'step',
+      ['get', 'point_count'],
+      clusterColors[0],
+      100,
+      clusterColors[1],
+      750,
+      clusterColors[2]
+    ]);
+  }
+
+  // Reload markers based on color-blind mode
+  const floraMarkerImage = isColorBlindMode ? floraCBImage : floraImage;
+
+  if (mapRef.current.hasImage('flora-marker')) {
+    mapRef.current.removeImage('flora-marker');
+  }
+  mapRef.current.loadImage(floraMarkerImage, (error, image) => {
+    if (error) throw error;
+    mapRef.current.addImage('flora-marker', image);
+  });
+
+  // Update the unclustered-point layer with the new icon image
+  if (mapRef.current.getLayer('unclustered-point')) {
+    mapRef.current.setLayoutProperty('unclustered-point', 'icon-image', 'flora-marker');
+  }
+}
 export function toggleLayerVisibility(mapRef, layerVisibility) {
   const visibilityMap = {
     parks: ['clusters', 'cluster-count', 'unclustered-point'],
