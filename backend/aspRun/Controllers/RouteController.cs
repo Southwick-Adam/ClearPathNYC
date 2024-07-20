@@ -99,7 +99,6 @@ namespace aspRun.Controllers
         [HttpGet("loop")]
         public async Task<IActionResult> Loop([FromQuery] List<double> coordinate, [FromQuery] double distance, [FromQuery] bool quiet)
         {
-            Console.WriteLine($"Coordinates: {coordinate}");
 
             if (coordinate == null || coordinate.Count < 2)
             {
@@ -110,9 +109,10 @@ namespace aspRun.Controllers
             double latitude = coordinate[1];
             string result;
 
+            Console.WriteLine($"Coordinates: {longitude}, {latitude}");
             try
             {
-                // result = await _neo4jService.Loop(latitude, longitude, distance, quiet);                
+                result = await _neo4jService.Loop(latitude, longitude, distance, quiet);                
             }
             catch (Exception ex)
             {

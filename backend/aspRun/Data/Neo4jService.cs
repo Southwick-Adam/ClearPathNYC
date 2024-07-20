@@ -1,4 +1,5 @@
 using System;
+using System.Text;
 using Microsoft.Extensions.Options;
 using Neo4j.Driver;
 
@@ -178,7 +179,7 @@ namespace aspRun.Data
                 sourceNode: source,
                 targetNode: target,
                 relationshipWeightProperty: 'quietscore',
-                k: 3
+                k: 2
             })
             YIELD nodeIds, costs
             RETURN 
@@ -372,30 +373,68 @@ namespace aspRun.Data
         {
             Random random = new();
             double totalDistance = 0;
+            int attempt = 0;
 
             var distanceHit = false;
-            var distanceDivider = 6;
-            double nextLong;
-            double nextLat;
-            while (distanceHit)
+
+            var shapeSides = 4;
+            double modifier = 0;
+   
+            double startDirection = random.Next(0, 360);
+            double startDirectionSave = startDirection;
+            double internalAngle = 360 / shapeSides;
+            while (!distanceHit)
             {
-                int startDirection = random.Next(0, 360);
-                var (lat1, lon1) = GeoUtils.PointInGivenDirection(latitude, longitude, distance / 6, startDirection);
-                var (coordString1, quietString1, totalDist1) = await LoopRun(latitude, longitude, lat1, lon1);
-                if (totalDist1 < distance / 4 && totalDist1 > distance / 6) 
-                { 
-                    distanceHit = true; 
-                    totalDistance += totalDist1; 
-                    nextLong = lon1;
-                    nextLat = lat1;
+
+                List<double> Lats = [];
+                List<double> Longs = [];
+                Lats.Add(latitude);
+                Longs.Add(longitude);
+
+                for (int i = 0; i < shapeSides-1; i++)
+                {
+                    Console.WriteLine(startDirection);
+                    var (lat1, lon1) = GeoUtils.PointInGivenDirection(latitude, longitude, distance / (shapeSides + modifier), startDirection);                
+                    Lats.Add(lat1);
+                    Longs.Add(lon1);
+                    startDirection += internalAngle;
+                    startDirection %= 360;
+                    latitude = lat1;
+                    longitude = lon1;
                 }
-                else if (totalDist1 < distance / 4) { distanceDivider -= 1; }
-                else { distanceDivider += 1; }
+
+                Lats.Add(Lats[0]);
+                Longs.Add(Longs[0]);
+
+                for (int i = 1; i < Lats.Count; i++)
+                {
+                    Console.WriteLine($"{Longs[i]}, {Lats[i]}");
+                }
+
+                StringBuilder coordinates = new();
+                StringBuilder quietscore = new();
+                for (int i = 0; i < shapeSides; i++)
+                {
+                    var (coordString, quietString, dist) = await LoopRun(Lats[i], Longs[i], Lats[i+1], Longs[i+1]);
+                    coordinates.Append(coordString);
+                    quietscore.Append(quietString);
+                    totalDistance += dist;
+                }
+
+                Console.WriteLine($"Total Distance: {totalDistance}, attempt: {attempt}");
+
+                if (totalDistance > (distance * 1.2) && totalDistance < (distance *.9))
+                {
+                    distanceHit = true;
+                }
+                else if (totalDistance > distance * 1.2) { modifier += 0.25;}
+                else { modifier -= .17;}
+                totalDistance = 0;
+                startDirection = startDirectionSave;
+                if (attempt > 5){distanceHit = true;}
+                attempt += 1;
             }
-
-
-
-
+        
             return "";
         }
 
@@ -403,6 +442,7 @@ namespace aspRun.Data
         {
             var nodea = await FindNode(latitude, longitude);
             var nodeb = await FindNode(finLatitude, finLongitude);
+            Console.WriteLine($"Looprun: {nodea}, {nodeb}");
 
             string djkistrasPath = @"
             MATCH (source:nodes{nodeid:$nodea}), (dest:nodes{nodeid: $nodeb})
@@ -436,6 +476,7 @@ namespace aspRun.Data
             route.GenerateCoordinatesString();
             route.GenerateQuietScoresString();
             double distance = route.totalDistance;
+            Console.WriteLine($"In looprun: {distance}");
 
             return (route.CoordinatesString, route.CostsString, distance);
         }

@@ -47,7 +47,11 @@ namespace aspRun.Data
                 finalQuietScore.Add(Math.Round(costsLocal[i] / distances [i]));
             }
             CostsString = string.Join(", ", finalQuietScore);
-            distances.ForEach(x => totalDistance += x);
+            foreach (var dist in distances)
+            {
+                totalDistance += dist;
+            }
+            Console.WriteLine($"In routeProcessor: {totalDistance}");
         }
     }
 
