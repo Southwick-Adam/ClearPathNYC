@@ -141,7 +141,7 @@ namespace aspRun.Data
         }
 
         // Used to find a path from a given Latitude/Longitude to another Latitude/Longitude
-        public async Task<List<string>> AStar(double StartLat, double StartLong, double FinishLat, double FinishLong)
+        public async Task<List<List<string>>> AStar(double StartLat, double StartLong, double FinishLat, double FinishLong)
         {
             long start = await this.FindNode(StartLat, StartLong);
             long destination = await this.FindNode(FinishLat, FinishLong);
@@ -174,12 +174,11 @@ namespace aspRun.Data
 
             var Query = @"
             MATCH (source: nodes{nodeid: $start}), (target: nodes{nodeid: $dest})
-            CALL gds.shortestPath.astar.stream('NYC1', {
+            CALL gds.shortestPath.yens.stream('NYC1', {
                 sourceNode: source,
                 targetNode: target,
-                latitudeProperty: 'latitude',
-                longitudeProperty: 'longitude',
-                relationshipWeightProperty: 'quietscore'
+                relationshipWeightProperty: 'quietscore',
+                k: 3
             })
             YIELD nodeIds, costs
             RETURN 
@@ -211,13 +210,17 @@ namespace aspRun.Data
                 routeResult = await this.RunQuery(Query, Params);
             }
             Console.WriteLine(routeResult);
-            var result = routeResult.First();
+            
+            List<List<string>> finalList = [];
+            foreach (var result in routeResult)
+            {
+                var route = RouteMapper.Map(result);
+                route.GenerateCoordinatesString();
+                route.GenerateQuietScoresString();
+                finalList.Add([route.CoordinatesString, route.CostsString]);
+            }
 
-            var route = RouteMapper.Map(result);
-            route.GenerateCoordinatesString();
-            route.GenerateQuietScoresString();
-
-            return [route.CoordinatesString, route.CostsString];
+            return finalList;
         }
 
         public async Task<List<string>> AStarLoud(double StartLat, double StartLong, double FinishLat, double FinishLong)
@@ -300,39 +303,56 @@ namespace aspRun.Data
         }
 
         // Used to return a GeoJSON format
-        public string GeoJSON(string coordinates, string loopOrP2P, string isLoop, string elevation, string quietScore)
+        public string GeoJSON(List<string> coordinatesList, string loopOrP2P, string isLoop, List<string> elevationsList, List<string> quietScoresList)
         {
+            var features = new List<string>();
+            Console.WriteLine(coordinatesList.Count);
+            Console.WriteLine(quietScoresList.Count);
 
-            string GeoJSON = $@"
-        {{
-            ""type"": ""FeatureCollection"",
-            ""features"": [
+
+            for (int i = 0; i < coordinatesList.Count; i++)
+            {
+                string coordinates = coordinatesList[i];
+                string quietScore = quietScoresList[i];
+
+                string feature = $@"
+                {{
+                    ""type"": ""Feature"",
+                    ""geometry"": {{
+                        ""type"": ""LineString"",
+                        ""coordinates"": [
+                            {coordinates}
+                        ]
+                    }},
+                    ""properties"": {{
+                        ""name"": ""{loopOrP2P}"",
+                        ""isLoop"": {isLoop},
+                        ""elevation"": [],
+                        ""quietness_score"": [{quietScore}]
+                    }}
+                }}";
+
+                features.Add(feature);
+            }
+
+            string featuresJson = string.Join(",", features);
+
+            string geoJson = $@"
             {{
-                ""type"": ""Feature"",
-                ""geometry"": {{
-                    ""type"": ""LineString"",
-                    ""coordinates"": [
-                        {coordinates}
-                    ]
-                }},
-                ""properties"": {{
-                    ""name"": ""{loopOrP2P}"",
-                    ""isLoop"": {isLoop},
-                    ""elevation"": [{elevation}],
-                    ""quietness_score"": [{quietScore}]
-                }}
-            }}
-            ]
-        }}
-        ";
-            return GeoJSON;
+                ""type"": ""FeatureCollection"",
+                ""features"": [
+                    {featuresJson}
+                ]
+            }}";
+
+            return geoJson;
         }
 
         public async Task AddLoudScore()
         {
             var query = "MATCH ()-[r:PATH]->() SET r.loudscore = -r.quietscore;";
             var parameters = new Dictionary<string, object>();
-             await using var session = _driver.AsyncSession(o => o.WithDatabase(_database));
+            await using var session = _driver.AsyncSession(o => o.WithDatabase(_database));
 
             await session.ExecuteWriteAsync(
                 async tx =>
@@ -351,14 +371,73 @@ namespace aspRun.Data
         public async Task<string> Loop(double latitude, double longitude, double distance, bool quiet)
         {
             Random random = new();
+            double totalDistance = 0;
 
-            int startDirection = random.Next(0,360);
-            
+            var distanceHit = false;
+            var distanceDivider = 6;
+            double nextLong;
+            double nextLat;
+            while (distanceHit)
+            {
+                int startDirection = random.Next(0, 360);
+                var (lat1, lon1) = GeoUtils.PointInGivenDirection(latitude, longitude, distance / 6, startDirection);
+                var (coordString1, quietString1, totalDist1) = await LoopRun(latitude, longitude, lat1, lon1);
+                if (totalDist1 < distance / 4 && totalDist1 > distance / 6) 
+                { 
+                    distanceHit = true; 
+                    totalDistance += totalDist1; 
+                    nextLong = lon1;
+                    nextLat = lat1;
+                }
+                else if (totalDist1 < distance / 4) { distanceDivider -= 1; }
+                else { distanceDivider += 1; }
+            }
 
 
 
 
-            throw new NotImplementedException();
+            return "";
+        }
+
+        private async Task<(string coordinateString, string QuietscoreString, double totalDistance)> LoopRun(double latitude, double longitude, double finLatitude, double finLongitude)
+        {
+            var nodea = await FindNode(latitude, longitude);
+            var nodeb = await FindNode(finLatitude, finLongitude);
+
+            string djkistrasPath = @"
+            MATCH (source:nodes{nodeid:$nodea}), (dest:nodes{nodeid: $nodeb})
+            CALL gds.shortestPath.dijkstra.stream(
+                'NYC1',
+                {
+                    sourceNode:source,
+                    targetNodes:dest,
+                    relationshipWeightProperty: 'quietscore'
+                }
+            )
+            YIELD index, sourceNode, targetNode, totalCost, nodeIds, costs, path
+            RETURN
+                [nodeId IN nodeIds | gds.util.asNode(nodeId).nodeid] AS nodeNames,
+                [nodeId IN nodeIds | gds.util.asNode(nodeId).latitude] AS nodeLat,
+                [nodeId IN nodeIds | gds.util.asNode(nodeId).longitude] AS nodeLong,
+                costs
+            ";
+
+            Dictionary<string, object> parameters = new()
+            {
+                {"nodea", nodea},
+                {"nodeb", nodeb}
+            };
+
+            var routeResult = await RunQuery(djkistrasPath, parameters);
+
+            var result = routeResult.First();
+
+            var route = RouteMapper.Map(result);
+            route.GenerateCoordinatesString();
+            route.GenerateQuietScoresString();
+            double distance = route.totalDistance;
+
+            return (route.CoordinatesString, route.CostsString, distance);
         }
     }
 }

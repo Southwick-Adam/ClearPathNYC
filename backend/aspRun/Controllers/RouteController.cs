@@ -6,7 +6,7 @@ namespace aspRun.Controllers
 {
     [Route("route")]
     [ApiController]
-    
+
     public class RouteController : Controller
     {
         private readonly Neo4jService _neo4jService;
@@ -19,6 +19,7 @@ namespace aspRun.Controllers
         [HttpGet("p2p")]
         public async Task<IActionResult> NodeToNode([FromQuery] List<double> coord1, [FromQuery] List<double> coord2, [FromQuery] bool quiet)
         {
+            int yensAmount = 3;
             if (coord1 == null || coord1.Count < 2 || coord2 == null || coord2.Count < 2)
             {
                 return BadRequest("Invalid coordinates list. Each list should contain at least two coordinate pairs.");
@@ -32,53 +33,74 @@ namespace aspRun.Controllers
                 Console.WriteLine(coord);
             }
 
-            var finalCoordinates = new StringBuilder();
-            var finalCosts = new StringBuilder();
+            List<StringBuilder> finalCoordinatesStringBuilder = [];
+            List<StringBuilder> finalCostsStringbuilder = [];
+            for (var i = 0; i < yensAmount; i++)
+            {
+                finalCoordinatesStringBuilder.Add(new StringBuilder());
+                finalCostsStringbuilder.Add(new StringBuilder());
+
+            }
+
 
             try
             {
                 for (var i = 1; i < coord1.Count; i++)
                 {
-                    List<string> result;
+                    List<List<string>> results;
 
                     if (quiet)
                     {
-                        result = await _neo4jService.AStar(coord1[i - 1], coord2[i - 1], coord1[i], coord2[i]);
+                        results = await _neo4jService.AStar(coord1[i - 1], coord2[i - 1], coord1[i], coord2[i]);
                     }
                     else
                     {
-                        result = await _neo4jService.AStarLoud(coord1[i - 1], coord2[i - 1], coord1[i], coord2[i]);
+                        results = await _neo4jService.AStar(coord1[i - 1], coord2[i - 1], coord1[i], coord2[i]);
                     }
 
-                    if (finalCoordinates.Length > 0)
-                    {
-                        finalCoordinates.Append(", ");
-                    }
-                    finalCoordinates.Append(result[0]);
+                    Console.WriteLine(results.Count);
 
-                    if (finalCosts.Length > 0)
+                    for (int j = 0; j < results.Count; j++)
                     {
-                        finalCosts.Append(", ");
+                        if (finalCoordinatesStringBuilder[j].Length > 0)
+                        {
+                            finalCoordinatesStringBuilder[j].Append(", ");
+                        }
+                        finalCoordinatesStringBuilder[j].Append(results[j][0]);
+
+                        if (finalCostsStringbuilder[j].Length > 0)
+                        {
+                            finalCostsStringbuilder[j].Append(", ");
+                        }
+                        finalCostsStringbuilder[j].Append(results[j][1]);
                     }
-                    finalCosts.Append(result[1]);
                 }
             }
             catch (Exception ex)
             {
                 return StatusCode(500, $"An error occurred while connecting to the Neo4j database: {ex.Message}");
             }
+            Console.WriteLine("MAde it to here");
 
-            var geoJson = _neo4jService.GeoJSON(finalCoordinates.ToString(), "P2P", "false", "[]", finalCosts.ToString());
+            List<string> listCoordinates = [];
+            List<string> listQuietscores = [];
+            for (var i = 0; i < finalCoordinatesStringBuilder.Count; i++)
+            {
+                listCoordinates.Add(finalCoordinatesStringBuilder[i].ToString());
+                listQuietscores.Add(finalCostsStringbuilder[i].ToString());
+            }
+
+            var geoJson = _neo4jService.GeoJSON(listCoordinates, "P2P", "false", [], listQuietscores);
             return Ok(geoJson);
         }
 
 
-        
+
         [HttpGet("loop")]
         public async Task<IActionResult> Loop([FromQuery] List<double> coordinate, [FromQuery] double distance, [FromQuery] bool quiet)
         {
             Console.WriteLine($"Coordinates: {coordinate}");
-            
+
             if (coordinate == null || coordinate.Count < 2)
             {
                 return BadRequest("Coordinates must contain at least two elements.");
@@ -90,7 +112,7 @@ namespace aspRun.Controllers
 
             try
             {
-                result = await _neo4jService.Loop(latitude, longitude, distance, quiet);                
+                // result = await _neo4jService.Loop(latitude, longitude, distance, quiet);                
             }
             catch (Exception ex)
             {

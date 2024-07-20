@@ -11,6 +11,7 @@ namespace aspRun.Data
         public List<double> Costs { get; set; }
         public string CoordinatesString { get; set; }
         public string CostsString { get; set; }
+        public double totalDistance { get; set; }
 
         public Route()
         {
@@ -46,6 +47,7 @@ namespace aspRun.Data
                 finalQuietScore.Add(Math.Round(costsLocal[i] / distances [i]));
             }
             CostsString = string.Join(", ", finalQuietScore);
+            distances.ForEach(x => totalDistance += x);
         }
     }
 
