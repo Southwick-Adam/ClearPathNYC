@@ -65,6 +65,7 @@ const useStore = create((set, get) => ({
   isColorBlindMode: false,
   toggleColorBlindMode: () => set((state) => ({ isColorBlindMode: !state.isColorBlindMode })),
   setColorBlindMode: (isColorBlind) => set({ isColorBlindMode: isColorBlind }),
+
 }));
 
 export default useStore;

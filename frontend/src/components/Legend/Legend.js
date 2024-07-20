@@ -1,19 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import './Legend.css';
 import useStore from '../../store/store';
-import { OverlayTrigger, Tooltip, Button } from 'react-bootstrap';
+import ViewLayerToggle from '../ViewLayerToggle/ViewLayerToggle';
+import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 
 function Legend({ onToggleLayer, layerVisibility, presentLayers }) {
   const [isOpen, setIsOpen] = useState(false);
   const { isNightMode, route, isColorBlindMode } = useStore(); // Include isColorBlindMode in the destructure
-  const [buttonText, setButtonText] = useState({
-    parks: 'Hide',
-    poi: 'Hide',
-    noise: 'View',
-    trash: 'View',
-    multipleWarnings: 'View',
-    other: 'View'
-  });
 
   useEffect(() => {
     const legendTimer = setTimeout(() => {
@@ -26,16 +19,14 @@ function Legend({ onToggleLayer, layerVisibility, presentLayers }) {
   }, []);
 
   useEffect(() => {
-    if (route) {
-      setButtonText((prevText) => ({
-        ...prevText,
-        noise: presentLayers.noise ? 'Hide' : 'View',
-        trash: presentLayers.trash ? 'Hide' : 'View',
-        multipleWarnings: presentLayers.multipleWarnings ? 'Hide' : 'View',
-        other: presentLayers.other ? 'Hide' : 'View' // Ensure 'other' is handled similarly
-      }));
+    // Initially set parks and poi to true
+    if (presentLayers.parks) {
+      onToggleLayer('parks', true);
     }
-  }, [route, presentLayers]);
+    if (presentLayers.poi) {
+      onToggleLayer('poi', true);
+    }
+  }, []); // Empty dependency array to run only once on mount
 
   function toggleLegend() {
     setIsOpen(!isOpen);
@@ -46,36 +37,31 @@ function Legend({ onToggleLayer, layerVisibility, presentLayers }) {
   }
 
   const handleButtonClick = (layerName) => {
-    setButtonText((prevText) => ({
-      ...prevText,
-      [layerName]: prevText[layerName] === 'Hide' ? 'View' : 'Hide'
-    }));
-    onToggleLayer(layerName);
+    onToggleLayer(layerName, !presentLayers[layerName]);
   };
 
   const renderToggleButton = (layerName) => {
     return (
-      <Button
-        onClick={() => handleButtonClick(layerName)}
-        className="toggle-button"
-      >
-        {buttonText[layerName]}
-      </Button>
+      <ViewLayerToggle
+        isChecked={presentLayers[layerName]}
+        onToggle={() => handleButtonClick(layerName)}
+        tooltipText={`Toggle ${layerName}`}
+        className={`toggle-${layerName}`} // Add a className prop based on the layerName
+      />
     );
   };
 
   const renderDisableableButton = (layerName) => {
     const isDisabled = !route || !presentLayers[layerName];
     const button = (
-      <Button
-        onClick={() => handleButtonClick(layerName)}
-        disabled={isDisabled}
-        className={`toggle-button ${isDisabled ? 'disabled' : ''}`}
-      >
-        {buttonText[layerName]}
-      </Button>
+      <ViewLayerToggle
+        isChecked={presentLayers[layerName]}
+        onToggle={() => handleButtonClick(layerName)}
+        tooltipText={!route ? 'View after finding a route' : 'None found near the route'}
+        isDisabled={isDisabled} // Pass the isDisabled prop
+        className={`toggle-${layerName}`} // Add a className prop based on the layerName
+      />
     );
-
     const tooltipText = !route
       ? 'View after finding a route'
       : 'None found near the route';

@@ -14,6 +14,8 @@ function App() {
   const [weather, setWeather] = useState(null);
   const [playVideo, setPlayVideo] = useState(false);
   const [presentLayers, setPresentLayers] = useState({
+    parks: true,
+    poi: true,
     noise: false,
     trash: false,
     multipleWarnings: false,
@@ -28,16 +30,20 @@ function App() {
   const [layerVisibility, setLayerVisibility] = useState({
     parks: true,
     poi: true,
-    noise: true,
-    trash: true,
-    multipleWarnings: true,
-    other: true
+    noise: false,
+    trash: false,
+    multipleWarnings: false,
+    other: false,
   });
 
-  const toggleLayerVisibility = (layer) => {
+  const toggleLayerVisibility = (layer, isVisible) => {
     setLayerVisibility((prevVisibility) => ({
       ...prevVisibility,
-      [layer]: !prevVisibility[layer],
+      [layer]: isVisible,
+    }));
+    setPresentLayers((prevLayers) => ({
+      ...prevLayers,
+      [layer]: isVisible,
     }));
   };
 
@@ -63,7 +69,7 @@ function App() {
     });
     params.append('quiet', isQuiet); // Add the quiet parameter
   
-    const requestUrl = `/route?${params.toString()}`;
+    const requestUrl = `http://localhost:5056/route?${params.toString()}`;
     console.log('Request URL:', requestUrl);
   
     try {
@@ -83,7 +89,7 @@ function App() {
   }
 
   async function fetchWeatherData() {
-    const apiUrl = '/weather';
+    const apiUrl = 'http://localhost:5056/weather';
     try {
       const response = await fetch(apiUrl, {
         method: 'GET',
