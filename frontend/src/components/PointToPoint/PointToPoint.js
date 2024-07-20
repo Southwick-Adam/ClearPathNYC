@@ -190,6 +190,7 @@ function PointToPoint({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoder
             type='checkbox'
             checked={includeWaypoints}
             onChange={() => setIncludeWaypoints(!includeWaypoints)}
+            className='includ-text'
           />
           Include Waypoints
         </label>

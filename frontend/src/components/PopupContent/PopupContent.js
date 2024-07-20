@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import './PopupContent.css';
 import useStore from '../../store/store';
 
-function PopupContent({ coordinates, name, setStartCord, setEndCord, setWaypointAndIncrease, updateStartInput, updateEndInput, updateWaypointInput, geocoderRefs }) {
+function PopupContent({ coordinates, name, setStartCord, setEndCord, setWaypointAndIncrease, updateStartInput, updateEndInput, updateWaypointInput, geocoderRefs, closePopup }) {
   const enableWaypoints = useStore((state) => state.enableWaypoints); // Get the setter from the store
 
   return (
@@ -13,17 +13,20 @@ function PopupContent({ coordinates, name, setStartCord, setEndCord, setWaypoint
         <button className="btn btn-primary btn-sm" onClick={async () => {
             setStartCord(coordinates);
             await updateStartInput(coordinates);
+            closePopup(); // Close popup
         }}>Set Start</button>
         <button className="btn btn-primary btn-sm" onClick={async () => {
             setEndCord(coordinates);
             await updateEndInput(coordinates);
+            closePopup(); // Close popup
         }}>Set End</button>
         <button className="btn btn-primary btn-sm" onClick={async () => {
             enableWaypoints(); // Ensure includeWaypoints is true
             const index = setWaypointAndIncrease(coordinates);
             if (index !== -1 && index < 5) {
-            await updateWaypointInput(index, coordinates);
+              await updateWaypointInput(index, coordinates);
             }
+            closePopup(); // Close popup
         }}>Set Waypoint</button>
       </div>
     </div>
@@ -39,7 +42,8 @@ PopupContent.propTypes = {
   updateStartInput: PropTypes.func.isRequired,
   updateEndInput: PropTypes.func.isRequired,
   updateWaypointInput: PropTypes.func.isRequired,
-  geocoderRefs: PropTypes.array.isRequired
+  geocoderRefs: PropTypes.array.isRequired,
+  closePopup: PropTypes.func.isRequired // Add this line
 };
 
 export default PopupContent;

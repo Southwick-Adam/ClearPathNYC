@@ -18,15 +18,6 @@ function Legend({ onToggleLayer, layerVisibility, presentLayers }) {
     };
   }, []);
 
-  useEffect(() => {
-    // Initially set parks and poi to true
-    if (presentLayers.parks) {
-      onToggleLayer('parks', true);
-    }
-    if (presentLayers.poi) {
-      onToggleLayer('poi', true);
-    }
-  }, [presentLayers, onToggleLayer]); // Add dependencies to re-run when presentLayers changes
 
   function toggleLegend() {
     setIsOpen(!isOpen);

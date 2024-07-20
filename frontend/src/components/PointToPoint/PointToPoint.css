@@ -137,3 +137,7 @@
 .color-blind-mode .include_waypoints input[type="checkbox"] {
   accent-color: #9881f5;
 }
+
+.includ-text{
+  margin-right: 8px;
+}
