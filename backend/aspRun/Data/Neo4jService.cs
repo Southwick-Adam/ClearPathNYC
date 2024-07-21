@@ -67,8 +67,8 @@ namespace aspRun.Data
 
             var parameters = new Dictionary<string, object>
             {
-                {"Lat", Long},
-                {"Long", Lat}
+                {"Lat", Lat},
+                {"Long", Long}
             };
 
             List<IRecord> records = await this.RunQuery(query, parameters);
@@ -378,7 +378,7 @@ namespace aspRun.Data
             var distanceHit = false;
 
             var shapeSides = 4;
-            double modifier = 0;
+            double modifier = 2;
    
             double startDirection = random.Next(0, 360);
             double startDirectionSave = startDirection;
@@ -395,6 +395,7 @@ namespace aspRun.Data
                 {
                     Console.WriteLine(startDirection);
                     var (lat1, lon1) = GeoUtils.PointInGivenDirection(latitude, longitude, distance / (shapeSides + modifier), startDirection);                
+                    
                     Lats.Add(lat1);
                     Longs.Add(lon1);
                     startDirection += internalAngle;
@@ -423,7 +424,7 @@ namespace aspRun.Data
 
                 Console.WriteLine($"Total Distance: {totalDistance}, attempt: {attempt}");
 
-                if (totalDistance > (distance * 1.2) && totalDistance < (distance *.9))
+                if (totalDistance < (distance * 1.2) && totalDistance > (distance *.9))
                 {
                     distanceHit = true;
                 }
@@ -440,18 +441,20 @@ namespace aspRun.Data
 
         private async Task<(string coordinateString, string QuietscoreString, double totalDistance)> LoopRun(double latitude, double longitude, double finLatitude, double finLongitude)
         {
-            var nodea = await FindNode(latitude, longitude);
-            var nodeb = await FindNode(finLatitude, finLongitude);
+            var nodea = await FindNode(longitude, latitude);
+            var nodeb = await FindNode(finLongitude, finLatitude);
             Console.WriteLine($"Looprun: {nodea}, {nodeb}");
 
             string djkistrasPath = @"
             MATCH (source:nodes{nodeid:$nodea}), (dest:nodes{nodeid: $nodeb})
-            CALL gds.shortestPath.dijkstra.stream(
+            CALL gds.shortestPath.astar.stream(
                 'NYC1',
                 {
                     sourceNode:source,
-                    targetNodes:dest,
-                    relationshipWeightProperty: 'quietscore'
+                    targetNode:dest,
+                    relationshipWeightProperty: 'quietscore',
+                    longitudeProperty: 'longitude',
+                    latitudeProperty: 'latitude'
                 }
             )
             YIELD index, sourceNode, targetNode, totalCost, nodeIds, costs, path
