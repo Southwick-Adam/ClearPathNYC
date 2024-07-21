@@ -142,7 +142,7 @@ namespace aspRun.Data
         }
 
         // Used to find a path from a given Latitude/Longitude to another Latitude/Longitude
-        public async Task<List<List<string>>> AStar(double StartLat, double StartLong, double FinishLat, double FinishLong)
+        public async Task<List<List<string>>> Yens(double StartLat, double StartLong, double FinishLat, double FinishLong)
         {
             long start = await this.FindNode(StartLat, StartLong);
             long destination = await this.FindNode(FinishLat, FinishLong);
@@ -304,7 +304,7 @@ namespace aspRun.Data
         }
 
         // Used to return a GeoJSON format
-        public string GeoJSON(List<string> coordinatesList, string loopOrP2P, string isLoop, List<string> elevationsList, List<string> quietScoresList)
+        public string GeoJSONMulti(List<string> coordinatesList, string loopOrP2P, string isLoop, List<string> elevationsList, List<string> quietScoresList)
         {
             var features = new List<string>();
             Console.WriteLine(coordinatesList.Count);

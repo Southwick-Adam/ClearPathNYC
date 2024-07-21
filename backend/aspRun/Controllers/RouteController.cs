@@ -16,7 +16,7 @@ namespace aspRun.Controllers
             _neo4jService = neo4jService;
         }
 
-        [HttpGet("p2p")]
+        [HttpGet("multip2p")]
         public async Task<IActionResult> NodeToNode([FromQuery] List<double> coord1, [FromQuery] List<double> coord2, [FromQuery] bool quiet)
         {
             int yensAmount = 3;
@@ -51,11 +51,11 @@ namespace aspRun.Controllers
 
                     if (quiet)
                     {
-                        results = await _neo4jService.AStar(coord1[i - 1], coord2[i - 1], coord1[i], coord2[i]);
+                        results = await _neo4jService.Yens(coord1[i - 1], coord2[i - 1], coord1[i], coord2[i]);
                     }
                     else
                     {
-                        results = await _neo4jService.AStar(coord1[i - 1], coord2[i - 1], coord1[i], coord2[i]);
+                        results = await _neo4jService.Yens(coord1[i - 1], coord2[i - 1], coord1[i], coord2[i]);
                     }
 
                     Console.WriteLine(results.Count);
@@ -90,7 +90,7 @@ namespace aspRun.Controllers
                 listQuietscores.Add(finalCostsStringbuilder[i].ToString());
             }
 
-            var geoJson = _neo4jService.GeoJSON(listCoordinates, "P2P", "false", [], listQuietscores);
+            var geoJson = _neo4jService.GeoJSONMulti(listCoordinates, "P2P", "false", [], listQuietscores);
             return Ok(geoJson);
         }
 
