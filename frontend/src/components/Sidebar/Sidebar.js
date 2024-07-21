@@ -31,10 +31,12 @@ function Sidebar({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoderRefs 
   function toggleSidebar() {
     setIsOpen(!isOpen);
   }
+
   function toggleLoop() {
     setLoopOpen(!isLoopOpen);
     setPtPOpen(false);
   }
+
   function togglePtP() {
     setPtPOpen(!isPtPOpen);
     setLoopOpen(false);
@@ -52,8 +54,9 @@ function Sidebar({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoderRefs 
       >
         {isOpen ? '◀' : '▶'}
       </button>
-      <div className="sidebar-content">
-        {/* <div className='loop_wrapper'>
+      <div className="sidebar-content-wrapper">
+        <div className="sidebar-content">
+          {/* <div className='loop_wrapper'>
           <div className='toggle_title_row' id='loop_toggle_title_row'> 
             <button className='btn' onClick={toggleLoop}>
               {isLoopOpen ? '▼' : '▶'}
@@ -64,35 +67,35 @@ function Sidebar({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoderRefs 
             <Loop onFormSubmit={onFormSubmit} />
           </div>
         </div> */}
-        <div className='ptp_wrapper'>
-          <div className='toggle_title_row'>
-            <button className='btn' onClick={togglePtP}>
-              {isPtPOpen ? '▼' : '▶'}
-            </button>
-            <div className={`container_title ${isNightMode ? 'night' : 'day'}`}>Find A Route</div>
-          </div>
-          <div className={`ptp_box ${isPtPOpen ? 'open' : 'closed'}`}>
-            <PointToPoint
-              onFormSubmit={onFormSubmit}
-              startGeocoderRef={startGeocoderRef}
-              endGeocoderRef={endGeocoderRef}
-              geocoderRefs={geocoderRefs}
-              hideSidebar={hideSidebar}  // Pass hideSidebar function to PointToPoint
-            />
+          <div className='ptp_wrapper'>
+            <div className='toggle_title_row'>
+              <button className='btn' onClick={togglePtP}>
+                {isPtPOpen ? '▼' : '▶'}
+              </button>
+              <div className={`container_title ${isNightMode ? 'night' : 'day'}`}>Find A Route</div>
+            </div>
+            <div className={`ptp_box ${isPtPOpen ? 'open' : 'closed'}`}>
+              <PointToPoint
+                onFormSubmit={onFormSubmit}
+                startGeocoderRef={startGeocoderRef}
+                endGeocoderRef={endGeocoderRef}
+                geocoderRefs={geocoderRefs}
+                hideSidebar={hideSidebar} // Pass hideSidebar function to PointToPoint
+              />
+            </div>
           </div>
         </div>
         <div className="sidebar_footer">
-          {<div className='night-export-container'>
+          <div className='night-export-container'>
             <CBButton />
             <NightModeButton />
             <ExportButton />
-          </div>}
-          {<div className="sidebar_logo">
+          </div>
+          <div className="sidebar_logo">
             <img src={require('../../assets/images/ClearPath_logo.png')} alt="ClearPath NYC logo monochrome" />
-          </div>}
+          </div>
         </div>
       </div>
-
     </div>
   );
 }
