@@ -81,15 +81,18 @@ function Sidebar({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoderRefs 
             />
           </div>
         </div>
-        <div className='night-export-container'>
-          <CBButton />
-          <NightModeButton />
-          <ExportButton />
-        </div>
-        <div className="sidebar_logo">
-          <img src={require('../../assets/images/ClearPath_logo.png')} alt="ClearPath NYC logo monochrome" />
+        <div className="sidebar_footer">
+          {<div className='night-export-container'>
+            <CBButton />
+            <NightModeButton />
+            <ExportButton />
+          </div>}
+          {<div className="sidebar_logo">
+            <img src={require('../../assets/images/ClearPath_logo.png')} alt="ClearPath NYC logo monochrome" />
+          </div>}
         </div>
       </div>
+
     </div>
   );
 }

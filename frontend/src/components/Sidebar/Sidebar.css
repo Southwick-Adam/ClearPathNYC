@@ -96,8 +96,19 @@
 }
 
 .sidebar-content {
+  position: block;
   padding: 20px;
+  margin-bottom: 50px; /* Add margin to create space for the sidebar footer */
 }
+
+.sidebar_footer {
+  position: block;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 170px; /* Adjust the height as needed */
+}
+
 
 .busy_go_row {
   flex-direction: row;
