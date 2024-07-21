@@ -141,7 +141,14 @@ namespace aspRun.Data
             Console.WriteLine($"CheckGraph: {output.First()["exists"]}");
         }
 
-        // Used to find a path from a given Latitude/Longitude to another Latitude/Longitude
+        /// <summary>
+        /// Used for the multi point to point route finding
+        /// </summary>
+        /// <param name="StartLat"></param>
+        /// <param name="StartLong"></param>
+        /// <param name="FinishLat"></param>
+        /// <param name="FinishLong"></param>
+        /// <returns></returns>
         public async Task<List<List<string>>> Yens(double StartLat, double StartLong, double FinishLat, double FinishLong)
         {
             long start = await this.FindNode(StartLat, StartLong);
@@ -223,6 +230,87 @@ namespace aspRun.Data
 
             return finalList;
         }
+
+
+        public async Task<List<string>> AStar(double StartLat, double StartLong, double FinishLat, double FinishLong)
+        {
+            long start = await this.FindNode(StartLat, StartLong);
+            long destination = await this.FindNode(FinishLat, FinishLong);
+
+            Console.WriteLine($"Start: {start}");
+            Console.WriteLine($"Fin: {destination}");
+
+            // graph is a temporary structure stored in Main Memory for faster queries
+            var CheckGraph = @"
+            CALL gds.graph.exists('NYC1')
+            YIELD exists
+            RETURN exists
+        ";
+
+            var StartGraph = @"
+            CALL gds.graph.project(
+            'NYC1',
+            {
+                nodes: {
+                label: 'nodes',
+                properties: ['latitude', 'longitude']
+                }
+            },
+            {
+                PATH: {
+                properties: ['distance', 'quietscore']
+                }
+            });
+        ";
+
+            var Query = @"
+            MATCH (source: nodes{nodeid: $start}), (target: nodes{nodeid: $dest})
+            CALL gds.shortestPath.astar.stream('NYC1', {
+                sourceNode: source,
+                targetNode: target,
+                latitudeProperty: 'latitude',
+                longitudeProperty: 'longitude',
+                relationshipWeightProperty: 'quietscore'
+            })
+            YIELD nodeIds, costs
+            RETURN 
+                [nodeId IN nodeIds | gds.util.asNode(nodeId).nodeid] AS nodeNames,
+                [nodeId IN nodeIds | gds.util.asNode(nodeId).latitude] AS nodeLat,
+                [nodeId IN nodeIds | gds.util.asNode(nodeId).longitude] AS nodeLong,
+                costs
+        ";
+
+            var Params = new Dictionary<string, object>
+        {
+            {"start", start},
+            {"dest", destination}
+        };
+
+            // check that the temp database is set up using CheckGraph
+            var graphResult = await this.RunQuery(CheckGraph, []);
+            bool graph = (bool)graphResult.First()["exists"];
+            Console.WriteLine($"Graph T/F: {graph}");
+
+            List<IRecord> routeResult;
+            if (graph)
+            {
+                routeResult = await this.RunQuery(Query, Params);
+            }
+            else
+            {
+                await this.RunQuery(StartGraph, []);
+                routeResult = await this.RunQuery(Query, Params);
+            }
+            Console.WriteLine(routeResult);
+            var result = routeResult.First();
+
+            var route = RouteMapper.Map(result);
+            route.GenerateCoordinatesString();
+            route.GenerateQuietScoresString();
+
+            return [route.CoordinatesString, route.CostsString];
+        }
+
 
         public async Task<List<string>> AStarLoud(double StartLat, double StartLong, double FinishLat, double FinishLong)
         {
@@ -311,7 +399,7 @@ namespace aspRun.Data
             Console.WriteLine(quietScoresList.Count);
 
 
-            for (int i = 0; i < coordinatesList.Count; i++)
+            for (int i = 0; i < coordinatesList.Count-1; i++)
             {
                 string coordinates = coordinatesList[i];
                 string quietScore = quietScoresList[i];
@@ -347,6 +435,35 @@ namespace aspRun.Data
             }}";
 
             return geoJson;
+        }
+
+
+        public string GeoJSON(string coordinates, string loopOrP2P, string isLoop, string elevation, string quietScore)
+        {
+
+            string GeoJSON = $@"
+        {{
+            ""type"": ""FeatureCollection"",
+            ""features"": [
+            {{
+                ""type"": ""Feature"",
+                ""geometry"": {{
+                    ""type"": ""LineString"",
+                    ""coordinates"": [
+                        {coordinates}
+                    ]
+                }},
+                ""properties"": {{
+                    ""name"": ""{loopOrP2P}"",
+                    ""isLoop"": {isLoop},
+                    ""elevation"": [{elevation}],
+                    ""quietness_score"": [{quietScore}]
+                }}
+            }}
+            ]
+        }}
+        ";
+            return GeoJSON;
         }
 
         public async Task AddLoudScore()

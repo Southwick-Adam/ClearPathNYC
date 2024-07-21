@@ -26,17 +26,18 @@ namespace aspRun.Data
         public void GenerateCoordinatesString()
         {
             var coordinates = NodeLongs.Zip(NodeLats, (lat, lng) => new[] { lat, lng });
-            CoordinatesString = string.Join(",\n ", coordinates.Select(coord => $"[{coord[1]}, {coord[0]}]"));
+            CoordinatesString = string.Join(",\n ", coordinates.Select(coord => $"[{coord[0]}, {coord[1]}]"));
         }
 
         public void GenerateQuietScoresString()
         {
             List<double> distances = [];
             List<double> costsLocal = [];
-            // distances.Add(0);
-            // costsLocal.Add(0);
             for (var i = 1; i < NodeLats.Count; i++)
             {
+                // Console.WriteLine($"Lat,Long, Lat1 Long1 : {NodeLats[i-1]}, {NodeLongs[i-1]},{ NodeLats[i]}, {NodeLongs[i]}");
+                // Console.WriteLine(HaversineCalculator.CalculateDistance(NodeLats[i-1], NodeLongs[i-1], NodeLats[i], NodeLongs[i]));
+                // Console.WriteLine($"Costs: {Costs[i]-Costs[i-1]}");
                 distances.Add(HaversineCalculator.CalculateDistance(NodeLats[i-1], NodeLongs[i-1], NodeLats[i], NodeLongs[i]));
                 costsLocal.Add(Costs[i]-Costs[i-1]);
             }
@@ -44,6 +45,7 @@ namespace aspRun.Data
             List<double> finalQuietScore = [];
             for (var i = 0; i < distances.Count; i++)
             {
+                Console.WriteLine($"{costsLocal[i]}, {distances[i]}, {Math.Round(costsLocal[i] / distances [i])}");
                 finalQuietScore.Add(Math.Round(costsLocal[i] / distances [i]));
             }
             CostsString = string.Join(", ", finalQuietScore);
