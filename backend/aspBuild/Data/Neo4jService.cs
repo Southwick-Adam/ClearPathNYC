@@ -17,18 +17,20 @@ namespace aspBuild.Data
         }
 
         // Adds the relationship to NodeA on the Path to NodeB
-        public async Task UpdateNodeRelationship(long NodeIDA, long NodeIDB, double quietscore, int taxiZone)
+        public async Task UpdateNodeRelationship(long NodeIDA, long NodeIDB, double quietscore, int taxiZone, double loudscore)
         {
             string query = @"
             MATCH (a:nodes {nodeid: $nodeida, taxizone: $taxizonea})-[r:PATH]->(b:nodes {nodeid:$nodeidb})
-            SET r.quietscore = $quietscore";
+            SET r.quietscore = $quietscore
+            SET r.loudscore = $loudscore";
 
             var parameters = new Dictionary<string, object>
             {
                 {"nodeida", NodeIDA},
                 {"nodeidb", NodeIDB},
                 {"quietscore", quietscore},
-                {"taxizonea", taxiZone}
+                {"taxizonea", taxiZone},
+                {"loudscore", loudscore}
             };
 
             await using var session = _driver.AsyncSession(o => o.WithDatabase(_database));
@@ -103,8 +105,6 @@ namespace aspBuild.Data
         public async Task PreRunQueries()
         {
             List<string> prerunQueries = [];
-            prerunQueries.Add(@"MATCH (n:nodes) WHERE n.metrozone = 'TRAM2' SET n.metrozone = '2' RETURN n;");
-            prerunQueries.Add(@"MATCH (n:nodes) WHERE n.metrozone = 'TRAM1' SET n.metrozone = '1' RETURN n;");
             prerunQueries.Add(@"CREATE CONSTRAINT nodeid_unique IF NOT EXISTS FOR (n:nodes) REQUIRE n.nodeid IS UNIQUE;");
             prerunQueries.Add(@"CREATE INDEX nodeid_taxizone_index IF NOT EXISTS FOR (n:nodes) ON (n.nodeid, n.taxizone);");
 
