@@ -62,6 +62,10 @@ const useStore = create((set, get) => ({
   setNightMode: (isNight) => set({ isNightMode: isNight }),
   route: null,
   setRoute: (route) => set({ route }),
+  isColorBlindMode: false,
+  toggleColorBlindMode: () => set((state) => ({ isColorBlindMode: !state.isColorBlindMode })),
+  setColorBlindMode: (isColorBlind) => set({ isColorBlindMode: isColorBlind }),
+
 }));
 
 export default useStore;

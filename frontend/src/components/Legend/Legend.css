@@ -1,8 +1,8 @@
 .legend {
     position: fixed;
     top: 0;
-    right: -350px; /* Start hidden off-screen */
-    width: 350px;
+    right: -305px; /* Start hidden off-screen */
+    width: 305px;
     top: 20%;
     height: 45%;
     background-color: #4b4f5c;
@@ -51,6 +51,13 @@
     border-color: #f9faf3;
 }
 
+.toggle-btn-legend.color-blind {
+    color: #62309C;
+  }
+
+.toggle-btn-legend.color-blind:hover {
+    color: #9151cc;
+}
 .legend-content {
     font-style: normal;
     padding: 20px;
@@ -73,7 +80,6 @@
 .legend-content ul li {
     display: flex;
     align-items: center;
-    justify-content: space-between;
     padding-bottom: 10px;
 }
 
@@ -117,13 +123,20 @@
     color: #31b678;
 }
 
-.container_title {
-    color: rgb(224, 221, 221);
+.toggle-btn-legend.night.color-blind:hover {
+    background-color: #444a5c;
+    border-color: #444a5c;
+    color: #62309C;
 }
 
-/* After MVP: Remove this id styling once the loop functionality is ready */
-#loop_toggle_title_row {
-    display: none;
+.toggle-btn-legend.day.color-blind:hover {
+    background-color: #e7e4e4;
+    border-color: #e7e4e4;
+    color: #62309C;
+}
+
+.container_title {
+    color: rgb(224, 221, 221);
 }
 
 .disabled-button {
@@ -153,10 +166,56 @@
     border-color: #198754;
 }
 
-.btn-primary {
+/* .btn-primary {
     --bs-btn-active-bg: #31b678;
     --bs-btn-active-border-color: #31b678;
 
+  } */
+
+
+  .legend-bar-container {
+    margin-top: 20px;
+  }
+  
+  .legend-bar {
+    display: flex;
+    height: 20px;
+  }
+  
+  .legend-bar-segment {
+    flex: 1;
+  }
+  
+  .legend-bar-segment.green {
+    background-color: #198754;
   }
 
+  .legend-bar-segment.purple {
+    background-color: #62309C;
+  }
+  
+  .legend-bar-segment.orange {
+    background-color: orange;
+  }
+  
+  .legend-bar-segment.red {
+    background-color: #FF0000;
+  }
+  
+  .legend-bar-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 5px;
+  }
+  
+  .legend-bar-label {
+    font-size: 12px;
+    font-weight: bold;
+  }
 
+  .legend-bar-title{
+    display:flex;
+    justify-content: center;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }

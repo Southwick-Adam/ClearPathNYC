@@ -2,38 +2,41 @@
   display: flex; /* Use flexbox */
   align-items: center;
   margin: 10px 0;
-  padding: 10px;
+  height: 46px; /* Ensure same height for all button containers */
+  margin: 5px;
 }
 
 .export-button {
   padding: 10px;
-  font-size: 16px;
-  background-color: orange;
+  background: linear-gradient(to bottom, orange, rgb(213, 70, 3));
   border: none;
-  cursor: pointer;
   border-radius: 5px;
-  border: 1px black solid;
-  margin-right: 10px; /* Add margin to the right to space from the icon */
   width: auto; /* Adjust width to auto */
+  color: rgb(241, 235, 235);
+  height: 100%; /* Ensure buttons take up the full height of their containers */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+  font-weight: bold;
+}
+
+.export-button:hover{
+  background: linear-gradient(to bottom, rgb(255, 179, 0) rgb(213, 70, 3));
   color: white;
 }
 
 .export-button:disabled {
   background-color: grey;
   cursor: not-allowed;
-  color: white;
+  background: linear-gradient(to bottom, white, lightgrey);
   padding: 10px;
+  color: darkgray;
+  font-weight: bold;
+  
 }
 
-.info-icon.day {
-  color: black; /* Black for day mode */
-}
 
-.info-icon.night {
-  color: white; /* White for night mode */
-}
-
-.info-icon {
-  cursor: pointer;
-  width: 20px;
-}

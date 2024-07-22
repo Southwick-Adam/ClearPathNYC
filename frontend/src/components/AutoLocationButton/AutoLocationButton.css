@@ -8,3 +8,28 @@ svg:hover {
     color:#31b678;
     cursor: pointer;
 }
+
+
+.color-blind-mode .night-mode svg {
+    color: #9881f5;
+}
+
+.color-blind-mode svg {
+    color: #9881f5;
+}
+
+.color-blind-mode svg:hover {
+    color: #9151CC;
+}
+
+.color-blind-mode .night-mode svg:hover {
+    color: #9151CC; /* Slightly darker hover color for night mode */
+}
+
+.night-mode svg {
+    color: #31b678; /* Light color for night mode */
+}
+
+.night-mode svg:hover {
+    color: #198754; /* Slightly darker hover color for night mode */
+}

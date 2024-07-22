@@ -1,51 +1,596 @@
 {
-"type": "FeatureCollection",
-"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
-"features": [
-{ "type": "Feature", "properties": { "name": "TIMES SQUARE" }, "geometry": { "type": "Point", "coordinates": [ -73.985833, 40.7575 ] } },
-{ "type": "Feature", "properties": { "name": "PULITZER FOUNTAIN" }, "geometry": { "type": "Point", "coordinates": [ -73.973617785913049, 40.764031165553661 ] } },
-{ "type": "Feature", "properties": { "name": "AMERICAN MUSEUM OF NATURAL HISTORY" }, "geometry": { "type": "Point", "coordinates": [ -73.97355951962615, 40.781064857340674 ] } },
-{ "type": "Feature", "properties": { "name": "FLATIRON BUILDING" }, "geometry": { "type": "Point", "coordinates": [ -73.989641326960552, 40.741074049854525 ] } },
-{ "type": "Feature", "properties": { "name": "EMPIRE STATE BUILDING" }, "geometry": { "type": "Point", "coordinates": [ -73.985322454067003, 40.748429273760841 ] } },
-{ "type": "Feature", "properties": { "name": "MUSEUM OF MODERN ART (MOMA)" }, "geometry": { "type": "Point", "coordinates": [ -73.977129572075171, 40.761158327025406 ] } },
-{ "type": "Feature", "properties": { "name": "MADAME TUSSAUD'S WAX MUSEUM" }, "geometry": { "type": "Point", "coordinates": [ -73.988789981536996, 40.75636941919543 ] } },
-{ "type": "Feature", "properties": { "name": "HAYDEN PLANETARIUM" }, "geometry": { "type": "Point", "coordinates": [ -73.973237265511401, 40.781561235901613 ] } },
-{ "type": "Feature", "properties": { "name": "HERALD SQUARE" }, "geometry": { "type": "Point", "coordinates": [ -73.987678551360361, 40.75024011190613 ] } },
-{ "type": "Feature", "properties": { "name": "NEW YORK STOCK EXCHANGE" }, "geometry": { "type": "Point", "coordinates": [ -74.011138002231476, 40.707181532731795 ] } },
-{ "type": "Feature", "properties": { "name": "RADIO CITY MUSIC HALL" }, "geometry": { "type": "Point", "coordinates": [ -73.979950894078854, 40.760021449546841 ] } },
-{ "type": "Feature", "properties": { "name": "MET CLOISTERS" }, "geometry": { "type": "Point", "coordinates": [ -73.931864408206593, 40.864854524788306 ] } },
-{ "type": "Feature", "properties": { "name": "NY TIMES NEWSPAPER" }, "geometry": { "type": "Point", "coordinates": [ -73.990025739024617, 40.756173443862167 ] } },
-{ "type": "Feature", "properties": { "name": "METROPOLITAN MUSEUM OF ART" }, "geometry": { "type": "Point", "coordinates": [ -73.963672385109263, 40.778823429280934 ] } },
-{ "type": "Feature", "properties": { "name": "SAINT PATRICK'S CATHEDRAL" }, "geometry": { "type": "Point", "coordinates": [ -73.975980752525359, 40.758479718920455 ] } },
-{ "type": "Feature", "properties": { "name": "SAKS FIFTH AVENUE MIDTOWN EAST" }, "geometry": { "type": "Point", "coordinates": [ -73.977027000477975, 40.758077535751994 ] } },
-{ "type": "Feature", "properties": { "name": "JUILLIARD THEATER" }, "geometry": { "type": "Point", "coordinates": [ -73.982690653924379, 40.773459739040376 ] } },
-{ "type": "Feature", "properties": { "name": "APOLLO THEATRE" }, "geometry": { "type": "Point", "coordinates": [ -73.950061579226173, 40.810012365320993 ] } },
-{ "type": "Feature", "properties": { "name": "FORT FISH" }, "geometry": { "type": "Point", "coordinates": [ -73.954211658718336, 40.795358217299814 ] } },
-{ "type": "Feature", "properties": { "name": "MORGAN LIBRARY & MUSEUM" }, "geometry": { "type": "Point", "coordinates": [ -73.981587771584813, 40.749118486468596 ] } },
-{ "type": "Feature", "properties": { "name": "CARNEGIE HALL" }, "geometry": { "type": "Point", "coordinates": [ -73.979969182418841, 40.7650093870921 ] } },
-{ "type": "Feature", "properties": { "name": "SOLOMON R GUGGENHEIM MUSEUM" }, "geometry": { "type": "Point", "coordinates": [ -73.959001781003522, 40.78296497985697 ] } },
-{ "type": "Feature", "properties": { "name": "ST PATRICKS OLD CATHEDRAL" }, "geometry": { "type": "Point", "coordinates": [ -73.995353859323117, 40.723604977325756 ] } },
-{ "type": "Feature", "properties": { "name": "COMCAST BUILDING" }, "geometry": { "type": "Point", "coordinates": [ -73.978930604918048, 40.758997538437598 ] } },
-{ "type": "Feature", "properties": { "name": "RIPLEYS BELIEVE IT OR NOT" }, "geometry": { "type": "Point", "coordinates": [ -73.988924379487543, 40.756571506852566 ] } },
-{ "type": "Feature", "properties": { "name": "9/11 MEMORIAL & MUSEUM" }, "geometry": { "type": "Point", "coordinates": [ -74.012657410249318, 40.711420302694137 ] } },
-{ "type": "Feature", "properties": { "name": "PUBLIC THEATER" }, "geometry": { "type": "Point", "coordinates": [ -73.991709397317493, 40.729069076721274 ] } },
-{ "type": "Feature", "properties": { "name": "MUSEUM OF SEX" }, "geometry": { "type": "Point", "coordinates": [ -73.987414699282809, 40.744065414573946 ] } },
-{ "type": "Feature", "properties": { "name": "GRAND CENTRAL LIBRARY" }, "geometry": { "type": "Point", "coordinates": [ -73.973537775450851, 40.753932093674507 ] } },
-{ "type": "Feature", "properties": { "name": "DANDELION FOUNTAIN" }, "geometry": { "type": "Point", "coordinates": [ -73.978729869746658, 40.762628361736006 ] } },
-{ "type": "Feature", "properties": { "name": "WHITNEY MUSEUM OF AMERICAN ART" }, "geometry": { "type": "Point", "coordinates": [ -74.009158938401811, 40.739544943319892 ] } },
-{ "type": "Feature", "properties": { "name": "TOWERS OF THE WALDORF ASTORIA" }, "geometry": { "type": "Point", "coordinates": [ -73.972975252676761, 40.756549478352014 ] } },
-{ "type": "Feature", "properties": { "name": "ATLAS STATUE" }, "geometry": { "type": "Point", "coordinates": [ -73.977188330340184, 40.758936943527672 ] } },
-{ "type": "Feature", "properties": { "name": "THE SPHERE SCULPTURE" }, "geometry": { "type": "Point", "coordinates": [ -74.017145646549139, 40.703904346228484 ] } },
-{ "type": "Feature", "properties": { "name": "GIOVANNI DA VERRAZZANO MONUMENT" }, "geometry": { "type": "Point", "coordinates": [ -74.016381850072975, 40.704372402023772 ] } },
-{ "type": "Feature", "properties": { "name": "NATIONAL SHAKESPEARE COMPANY" }, "geometry": { "type": "Point", "coordinates": [ -73.988879470595251, 40.761990611580153 ] } },
-{ "type": "Feature", "properties": { "name": "NATIONAL JAZZ MUSEUM IN HARLEM" }, "geometry": { "type": "Point", "coordinates": [ -73.943078455822558, 40.809918158996453 ] } },
-{ "type": "Feature", "properties": { "name": "JOAN OF ARC MONUMENT" }, "geometry": { "type": "Point", "coordinates": [ -73.976474430195552, 40.79411000279157 ] } },
-{ "type": "Feature", "properties": { "name": "STEINWAY HALL" }, "geometry": { "type": "Point", "coordinates": [ -73.983712668406724, 40.755965058402779 ] } },
-{ "type": "Feature", "properties": { "name": "HUDSON YARDS" }, "geometry": { "type": "Point", "coordinates": [ -74.002212213162295, 40.753791628087278 ] } },
-{ "type": "Feature", "properties": { "name": "EDGE OBSERVATION DECK" }, "geometry": { "type": "Point", "coordinates": [ -74.000210134993452, 40.753827663042387 ] } },
-{ "type": "Feature", "properties": { "name": "BENJAMIN FRANKLIN STATUE" }, "geometry": { "type": "Point", "coordinates": [ -74.005886044580649, 40.7118189625578 ] } },
-{ "type": "Feature", "properties": { "name": "HOOPER FOUNTAIN" }, "geometry": { "type": "Point", "coordinates": [ -73.939962065874781, 40.830179490146456 ] } },
-{ "type": "Feature", "properties": { "name": "MUSEUM OF ICE CREAM" }, "geometry": { "type": "Point", "coordinates": [ -73.997856200763565, 40.723826027226664 ] } },
-{ "type": "Feature", "properties": { "name": "TRIUMPH OF THE HUMAN SPIRIT STATUE" }, "geometry": { "type": "Point", "coordinates": [ -74.002895035256628, 40.714434789405651 ] } }
-]
+  "type": "FeatureCollection",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Times Square"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -73.985833,
+          40.7575
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Pulitzer Fountain"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -73.97361778591305,
+          40.76403116555366
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "American Museum Of Natural History"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -73.97355951962615,
+          40.781064857340674
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Flatiron Building"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -73.98964132696055,
+          40.741074049854525
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Empire State Building"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -73.985322454067,
+          40.74842927376084
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Museum Of Modern Art (moma)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -73.97712957207517,
+          40.761158327025406
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Madame Tussaud's Wax Museum"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -73.988789981537,
+          40.75636941919543
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Hayden Planetarium"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -73.9732372655114,
+          40.78156123590161
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Herald Square"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -73.98767855136036,
+          40.75024011190613
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "New York Stock Exchange"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -74.01113800223148,
+          40.707181532731795
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Radio City Music Hall"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -73.97995089407885,
+          40.76002144954684
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Met Cloisters"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -73.9318644082066,
+          40.864854524788306
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Ny Times Newspaper"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -73.99002573902462,
+          40.75617344386217
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Metropolitan Museum Of Art"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -73.96367238510926,
+          40.77882342928093
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Saint Patrick's Cathedral"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -73.97598075252536,
+          40.758479718920455
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Saks Fifth Avenue Midtown East"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -73.97702700047797,
+          40.758077535751994
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Juilliard Theater"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -73.98269065392438,
+          40.773459739040376
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Apollo Theatre"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -73.95006157922617,
+          40.81001236532099
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Fort Fish"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -73.95421165871834,
+          40.795358217299814
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Morgan Library & Museum"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -73.98158777158481,
+          40.749118486468596
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Carnegie Hall"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -73.97996918241884,
+          40.7650093870921
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Solomon R Guggenheim Museum"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -73.95900178100352,
+          40.78296497985697
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "St Patricks Old Cathedral"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -73.99535385932312,
+          40.723604977325756
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Comcast Building"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -73.97893060491805,
+          40.7589975384376
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Ripleys Believe It Or Not"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -73.98892437948754,
+          40.756571506852566
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "9/11 Memorial & Museum"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -74.01265741024932,
+          40.71142030269414
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Public Theater"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -73.99170939731749,
+          40.729069076721274
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Museum Of Sex"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -73.98741469928281,
+          40.744065414573946
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Grand Central Library"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -73.97353777545085,
+          40.75393209367451
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Dandelion Fountain"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -73.97872986974666,
+          40.762628361736006
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Whitney Museum Of American Art"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -74.00915893840181,
+          40.73954494331989
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Towers Of The Waldorf Astoria"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -73.97297525267676,
+          40.756549478352014
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Atlas Statue"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -73.97718833034018,
+          40.75893694352767
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "The Sphere Sculpture"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -74.01714564654914,
+          40.703904346228484
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Giovanni Da Verrazzano Monument"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -74.01638185007297,
+          40.70437240202377
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "National Shakespeare Company"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -73.98887947059525,
+          40.76199061158015
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "National Jazz Museum In Harlem"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -73.94307845582256,
+          40.80991815899645
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Joan Of Arc Monument"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -73.97647443019555,
+          40.79411000279157
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Steinway Hall"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -73.98371266840672,
+          40.75596505840278
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Hudson Yards"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -74.0022122131623,
+          40.75379162808728
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Edge Observation Deck"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -74.00021013499345,
+          40.75382766304239
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Benjamin Franklin Statue"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -74.00588604458065,
+          40.7118189625578
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Hooper Fountain"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -73.93996206587478,
+          40.830179490146456
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Museum Of Ice Cream"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -73.99785620076356,
+          40.723826027226664
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Triumph Of The Human Spirit Statue"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -74.00289503525663,
+          40.71443478940565
+        ]
+      }
+    }
+  ]
 }

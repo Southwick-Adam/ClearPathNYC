@@ -1,8 +1,13 @@
 import React from 'react';
 import { Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
+import useStore from '../../store/store';
 import './GoButton.css';
 
 const GoButton = ({ disabled }) => {
+  const isColorBlindMode = useStore(state => state.isColorBlindMode);
+
+  const buttonClass = `go_button ${disabled ? 'disabled' : ''} ${isColorBlindMode ? 'color-blind' : ''}`;
+
   if (disabled) {
     return (
       <OverlayTrigger
@@ -10,7 +15,7 @@ const GoButton = ({ disabled }) => {
         overlay={<Tooltip id="tooltip-disabled">Please fill all input fields first</Tooltip>}
       >
         <span className="d-inline-block">
-          <Button type="submit" className={`go_button ${disabled ? 'disabled' : ''}`} disabled={disabled}>
+          <Button type="submit" className={buttonClass} disabled={disabled}>
             GO!
           </Button>
         </span>
@@ -18,7 +23,7 @@ const GoButton = ({ disabled }) => {
     );
   } else {
     return (
-      <Button type="submit" className="go_button" disabled={disabled}>
+      <Button type="submit" className={buttonClass} disabled={disabled}>
         GO!
       </Button>
     );
@@ -26,3 +31,4 @@ const GoButton = ({ disabled }) => {
 };
 
 export default GoButton;
+
