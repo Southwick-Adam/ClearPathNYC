@@ -105,24 +105,7 @@ namespace aspRun.Data
             },
             {
                 PATH: {
-                properties: ['distance', 'quietscore']
-                }
-            });";
-            await RunQuery(StartGraph, []);
-
-            await AddLoudScore();
-            StartGraph = @"
-            CALL gds.graph.project(
-            'NYC1Loud',
-            {
-                nodes: {
-                label: 'nodes',
-                properties: ['latitude', 'longitude']
-                }
-            },
-            {
-                PATH: {
-                properties: ['distance', 'loudscore']
+                properties: ['distance', 'quietscore', 'loudscore']
                 }
             });";
             await RunQuery(StartGraph, []);
@@ -149,7 +132,7 @@ namespace aspRun.Data
         /// <param name="FinishLat"></param>
         /// <param name="FinishLong"></param>
         /// <returns></returns>
-        public async Task<List<List<string>>> Yens(double StartLat, double StartLong, double FinishLat, double FinishLong)
+        public async Task<List<List<string>>> Yens(double StartLat, double StartLong, double FinishLat, double FinishLong, bool quiet)
         {
             long start = await this.FindNode(StartLat, StartLong);
             long destination = await this.FindNode(FinishLat, FinishLong);
@@ -162,45 +145,33 @@ namespace aspRun.Data
             CALL gds.graph.exists('NYC1')
             YIELD exists
             RETURN exists
-        ";
+            ";
 
-            var StartGraph = @"
-            CALL gds.graph.project(
-            'NYC1',
-            {
-                nodes: {
-                label: 'nodes',
-                properties: ['latitude', 'longitude']
-                }
-            },
-            {
-                PATH: {
-                properties: ['distance', 'quietscore']
-                }
-            });
-        ";
+            string quietness;
+            if (quiet) { quietness= "quietscore";}
+            else { quietness = "loudscore";}
 
-            var Query = @"
-            MATCH (source: nodes{nodeid: $start}), (target: nodes{nodeid: $dest})
-            CALL gds.shortestPath.yens.stream('NYC1', {
+            var Query = $@"
+            MATCH (source: nodes{{nodeid: $start}}), (target: nodes{{nodeid: $dest}})
+            CALL gds.shortestPath.yens.stream('NYC1', {{
                 sourceNode: source,
                 targetNode: target,
-                relationshipWeightProperty: 'quietscore',
+                relationshipWeightProperty: '{quietness}',
                 k: 2
-            })
+            }})
             YIELD nodeIds, costs
             RETURN 
                 [nodeId IN nodeIds | gds.util.asNode(nodeId).nodeid] AS nodeNames,
                 [nodeId IN nodeIds | gds.util.asNode(nodeId).latitude] AS nodeLat,
                 [nodeId IN nodeIds | gds.util.asNode(nodeId).longitude] AS nodeLong,
                 costs
-        ";
+            ";
 
             var Params = new Dictionary<string, object>
-        {
-            {"start", start},
-            {"dest", destination}
-        };
+            {
+                {"start", start},
+                {"dest", destination}
+            };
 
             // check that the temp database is set up using CheckGraph
             var graphResult = await this.RunQuery(CheckGraph, []);
@@ -214,17 +185,18 @@ namespace aspRun.Data
             }
             else
             {
-                await this.RunQuery(StartGraph, []);
+                await StartGraph();
                 routeResult = await this.RunQuery(Query, Params);
             }
             Console.WriteLine(routeResult);
-            
+
             List<List<string>> finalList = [];
             foreach (var result in routeResult)
             {
                 var route = RouteMapper.Map(result);
                 route.GenerateCoordinatesString();
-                route.GenerateQuietScoresString();
+                if (quiet) { route.GenerateQuietScoresString(); }
+                else { route.GenerateLoudScoreString(); }
                 finalList.Add([route.CoordinatesString, route.CostsString]);
             }
 
@@ -232,7 +204,7 @@ namespace aspRun.Data
         }
 
 
-        public async Task<List<string>> AStar(double StartLat, double StartLong, double FinishLat, double FinishLong)
+        public async Task<List<string>> AStar(double StartLat, double StartLong, double FinishLat, double FinishLong, bool quiet)
         {
             long start = await this.FindNode(StartLat, StartLong);
             long destination = await this.FindNode(FinishLat, FinishLong);
@@ -245,46 +217,34 @@ namespace aspRun.Data
             CALL gds.graph.exists('NYC1')
             YIELD exists
             RETURN exists
-        ";
+            ";
 
-            var StartGraph = @"
-            CALL gds.graph.project(
-            'NYC1',
-            {
-                nodes: {
-                label: 'nodes',
-                properties: ['latitude', 'longitude']
-                }
-            },
-            {
-                PATH: {
-                properties: ['distance', 'quietscore']
-                }
-            });
-        ";
+            string quietness;
+            if (quiet) { quietness= "quietscore";}
+            else { quietness = "loudscore";}
 
-            var Query = @"
-            MATCH (source: nodes{nodeid: $start}), (target: nodes{nodeid: $dest})
-            CALL gds.shortestPath.astar.stream('NYC1', {
+            var Query = $@"
+            MATCH (source: nodes{{nodeid: $start}}), (target: nodes{{nodeid: $dest}})
+            CALL gds.shortestPath.astar.stream('NYC1', {{
                 sourceNode: source,
                 targetNode: target,
                 latitudeProperty: 'latitude',
                 longitudeProperty: 'longitude',
-                relationshipWeightProperty: 'quietscore'
-            })
+                relationshipWeightProperty: '{quietness}'
+            }})
             YIELD nodeIds, costs
             RETURN 
                 [nodeId IN nodeIds | gds.util.asNode(nodeId).nodeid] AS nodeNames,
                 [nodeId IN nodeIds | gds.util.asNode(nodeId).latitude] AS nodeLat,
                 [nodeId IN nodeIds | gds.util.asNode(nodeId).longitude] AS nodeLong,
                 costs
-        ";
+            ";
 
             var Params = new Dictionary<string, object>
-        {
-            {"start", start},
-            {"dest", destination}
-        };
+            {
+                {"start", start},
+                {"dest", destination}
+            };
 
             // check that the temp database is set up using CheckGraph
             var graphResult = await this.RunQuery(CheckGraph, []);
@@ -298,98 +258,22 @@ namespace aspRun.Data
             }
             else
             {
-                await this.RunQuery(StartGraph, []);
+                await StartGraph();
                 routeResult = await this.RunQuery(Query, Params);
             }
+
             Console.WriteLine(routeResult);
             var result = routeResult.First();
 
             var route = RouteMapper.Map(result);
             route.GenerateCoordinatesString();
-            route.GenerateQuietScoresString();
+            if (quiet) { route.GenerateQuietScoresString(); }
+            else { route.GenerateLoudScoreString(); }
+
 
             return [route.CoordinatesString, route.CostsString];
         }
 
-
-        public async Task<List<string>> AStarLoud(double StartLat, double StartLong, double FinishLat, double FinishLong)
-        {
-            long start = await this.FindNode(StartLat, StartLong);
-            long destination = await this.FindNode(FinishLat, FinishLong);
-
-            Console.WriteLine($"Start: {start}");
-            Console.WriteLine($"Fin: {destination}");
-
-            // graph is a temporary structure stored in Main Memory for faster queries
-            var CheckGraph = @"
-            CALL gds.graph.exists('NYC1Loud')
-            YIELD exists
-            RETURN exists
-        ";
-
-            var StartGraph = @"
-            CALL gds.graph.project(
-            'NYC1Loud',
-            {
-                nodes: {
-                label: 'nodes',
-                properties: ['latitude', 'longitude']
-                }
-            },
-            {
-                PATH: {
-                properties: ['distance', 'loudscore']
-                }
-            });
-        ";
-
-            var Query = @"
-            MATCH (source: nodes{nodeid: $start}), (target: nodes{nodeid: $dest})
-            CALL gds.shortestPath.astar.stream('NYC1', {
-                sourceNode: source,
-                targetNode: target,
-                latitudeProperty: 'latitude',
-                longitudeProperty: 'longitude',
-                relationshipWeightProperty: 'distance'
-            })
-            YIELD nodeIds, costs
-            RETURN 
-                [nodeId IN nodeIds | gds.util.asNode(nodeId).nodeid] AS nodeNames,
-                [nodeId IN nodeIds | gds.util.asNode(nodeId).latitude] AS nodeLat,
-                [nodeId IN nodeIds | gds.util.asNode(nodeId).longitude] AS nodeLong,
-                costs
-        ";
-
-            var Params = new Dictionary<string, object>
-        {
-            {"start", start},
-            {"dest", destination}
-        };
-
-            // check that the temp database is set up using CheckGraph
-            var graphResult = await this.RunQuery(CheckGraph, []);
-            bool graph = (bool)graphResult.First()["exists"];
-            Console.WriteLine($"Graph T/F: {graph}");
-
-            List<IRecord> routeResult;
-            if (graph)
-            {
-                routeResult = await this.RunQuery(Query, Params);
-            }
-            else
-            {
-                await this.RunQuery(StartGraph, []);
-                routeResult = await this.RunQuery(Query, Params);
-            }
-            Console.WriteLine(routeResult);
-            var result = routeResult.First();
-
-            var route = RouteMapper.Map(result);
-            route.GenerateCoordinatesString();
-            route.GenerateQuietScoresString();
-
-            return [route.CoordinatesString, route.CostsString];
-        }
 
         // Used to return a GeoJSON format
         public string GeoJSONMulti(List<string> coordinatesList, string loopOrP2P, string isLoop, List<string> elevationsList, List<string> quietScoresList)
@@ -399,7 +283,7 @@ namespace aspRun.Data
             Console.WriteLine(quietScoresList.Count);
 
 
-            for (int i = 0; i < coordinatesList.Count-1; i++)
+            for (int i = 0; i < coordinatesList.Count - 1; i++)
             {
                 string coordinates = coordinatesList[i];
                 string quietScore = quietScoresList[i];
@@ -466,19 +350,19 @@ namespace aspRun.Data
             return GeoJSON;
         }
 
-        public async Task AddLoudScore()
-        {
-            var query = "MATCH ()-[r:PATH]->() SET r.loudscore = -r.quietscore;";
-            var parameters = new Dictionary<string, object>();
-            await using var session = _driver.AsyncSession(o => o.WithDatabase(_database));
+        // public async Task AddLoudScore()
+        // {
+        //     var query = "MATCH ()-[r:PATH]->() SET r.loudscore = -r.quietscore;";
+        //     var parameters = new Dictionary<string, object>();
+        //     await using var session = _driver.AsyncSession(o => o.WithDatabase(_database));
 
-            await session.ExecuteWriteAsync(
-                async tx =>
-            {
-                await tx.RunAsync(query, parameters);
-            });
-            Console.WriteLine("Loud score added");
-        }
+        //     await session.ExecuteWriteAsync(
+        //         async tx =>
+        //     {
+        //         await tx.RunAsync(query, parameters);
+        //     });
+        //     Console.WriteLine("Loud score added");
+        // }
 
         public async Task DisposeAsync()
         //Disposes of session
@@ -496,7 +380,7 @@ namespace aspRun.Data
 
             var shapeSides = 10;
             double modifier = 2;
-   
+
             double startDirection = random.Next(0, 360);
             double startDirectionSave = startDirection;
             double internalAngle = 360 / shapeSides;
@@ -507,11 +391,11 @@ namespace aspRun.Data
                 Lats.Add(latitude);
                 Longs.Add(longitude);
 
-                for (int i = 0; i < shapeSides-1; i++)
+                for (int i = 0; i < shapeSides - 1; i++)
                 {
                     Console.WriteLine(startDirection);
-                    var (lat1, lon1) = GeoUtils.PointInGivenDirection(latitude, longitude, distance / (shapeSides + modifier), startDirection);                
-                    
+                    var (lat1, lon1) = GeoUtils.PointInGivenDirection(latitude, longitude, distance / (shapeSides + modifier), startDirection);
+
                     Lats.Add(lat1);
                     Longs.Add(lon1);
                     startDirection += internalAngle;
@@ -532,7 +416,7 @@ namespace aspRun.Data
                 StringBuilder quietscore = new();
                 for (int i = 0; i < shapeSides; i++)
                 {
-                    var (coordString, quietString, dist) = await LoopRun(Lats[i], Longs[i], Lats[i+1], Longs[i+1]);
+                    var (coordString, quietString, dist) = await LoopRun(Lats[i], Longs[i], Lats[i + 1], Longs[i + 1], quiet);
                     coordinates.Append(coordString);
                     quietscore.Append(quietString);
                     totalDistance += dist;
@@ -540,16 +424,16 @@ namespace aspRun.Data
 
                 Console.WriteLine($"Total Distance: {totalDistance}, attempt: {attempt}");
 
-                if (totalDistance < (distance * 1.2) && totalDistance > (distance *.9))
+                if (totalDistance < (distance * 1.2) && totalDistance > (distance * .9))
                 {
                     distanceHit = true;
-                    return GeoJSON(coordinates.ToString(),"Loop", "true", "[]", quietscore.ToString());
+                    return GeoJSON(coordinates.ToString(), "Loop", "true", "[]", quietscore.ToString());
                 }
-                else if (totalDistance > distance * 1.2) { modifier += 1.25;}
-                else { modifier -= 1;}
+                else if (totalDistance > distance * 1.2) { modifier += 1.25; }
+                else { modifier -= 1; }
                 totalDistance = 0;
                 startDirection = startDirectionSave;
-                if (attempt > 5){distanceHit = true;}
+                if (attempt > 10) { distanceHit = true; }
                 attempt += 1;
             }
 
@@ -557,23 +441,26 @@ namespace aspRun.Data
             return "";
         }
 
-        private async Task<(string coordinateString, string QuietscoreString, double totalDistance)> LoopRun(double latitude, double longitude, double finLatitude, double finLongitude)
+        private async Task<(string coordinateString, string QuietscoreString, double totalDistance)> LoopRun(double latitude, double longitude, double finLatitude, double finLongitude, bool quiet)
         {
             var nodea = await FindNode(latitude, longitude);
             var nodeb = await FindNode(finLatitude, finLongitude);
             Console.WriteLine($"Looprun: {nodea}, {nodeb}");
+            string quietness;
+            if (quiet) { quietness= "quietscore";}
+            else { quietness = "loudscore";}
 
-            string djkistrasPath = @"
-            MATCH (source:nodes{nodeid:$nodea}), (dest:nodes{nodeid: $nodeb})
+            string astarPath = $@"
+            MATCH (source:nodes{{nodeid:$nodea}}), (dest:nodes{{nodeid: $nodeb}})
             CALL gds.shortestPath.astar.stream(
                 'NYC1',
-                {
+                {{
                     sourceNode:source,
                     targetNode:dest,
-                    relationshipWeightProperty: 'quietscore',
+                    relationshipWeightProperty: '{quietness}',
                     longitudeProperty: 'longitude',
                     latitudeProperty: 'latitude'
-                }
+                }}
             )
             YIELD index, sourceNode, targetNode, totalCost, nodeIds, costs, path
             RETURN
@@ -589,13 +476,15 @@ namespace aspRun.Data
                 {"nodeb", nodeb}
             };
 
-            var routeResult = await RunQuery(djkistrasPath, parameters);
+            var routeResult = await RunQuery(astarPath, parameters);
 
             var result = routeResult.First();
 
             var route = RouteMapper.Map(result);
             route.GenerateCoordinatesString();
-            route.GenerateQuietScoresString();
+            if (quiet) { route.GenerateQuietScoresString(); }
+            else { route.GenerateLoudScoreString(); }
+
             double distance = route.totalDistance;
             Console.WriteLine($"In looprun: {distance}");
 

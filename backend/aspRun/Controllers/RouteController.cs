@@ -42,14 +42,7 @@ namespace aspRun.Controllers
                 {
                     List<string> result;
 
-                    if (quiet)
-                    {
-                        result = await _neo4jService.AStar(coord1[i - 1], coord2[i - 1], coord1[i], coord2[i]);
-                    }
-                    else
-                    {
-                        result = await _neo4jService.AStarLoud(coord1[i - 1], coord2[i - 1], coord1[i], coord2[i]);
-                    }
+                    result = await _neo4jService.AStar(coord1[i - 1], coord2[i - 1], coord1[i], coord2[i], quiet);
 
                     if (finalCoordinates.Length > 0)
                     {
@@ -107,15 +100,7 @@ namespace aspRun.Controllers
                 {
                     List<List<string>> results;
 
-                    if (quiet)
-                    {
-                        results = await _neo4jService.Yens(coord1[i - 1], coord2[i - 1], coord1[i], coord2[i]);
-                    }
-                    else
-                    {
-                        results = await _neo4jService.Yens(coord1[i - 1], coord2[i - 1], coord1[i], coord2[i]);
-                    }
-
+                    results = await _neo4jService.Yens(coord1[i - 1], coord2[i - 1], coord1[i], coord2[i], quiet);
 
                     for (int j = 0; j < results.Count; j++)
                     {

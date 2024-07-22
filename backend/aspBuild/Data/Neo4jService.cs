@@ -17,18 +17,20 @@ namespace aspBuild.Data
         }
 
         // Adds the relationship to NodeA on the Path to NodeB
-        public async Task UpdateNodeRelationship(long NodeIDA, long NodeIDB, double quietscore, int taxiZone)
+        public async Task UpdateNodeRelationship(long NodeIDA, long NodeIDB, double quietscore, int taxiZone, double loudscore)
         {
             string query = @"
             MATCH (a:nodes {nodeid: $nodeida, taxizone: $taxizonea})-[r:PATH]->(b:nodes {nodeid:$nodeidb})
-            SET r.quietscore = $quietscore";
+            SET r.quietscore = $quietscore
+            SET r.loudscore = $loudscore";
 
             var parameters = new Dictionary<string, object>
             {
                 {"nodeida", NodeIDA},
                 {"nodeidb", NodeIDB},
                 {"quietscore", quietscore},
-                {"taxizonea", taxiZone}
+                {"taxizonea", taxiZone},
+                {"loudscore", loudscore}
             };
 
             await using var session = _driver.AsyncSession(o => o.WithDatabase(_database));
