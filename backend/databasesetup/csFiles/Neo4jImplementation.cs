@@ -394,6 +394,17 @@ public class Neo4jImplementation : IDisposable
 
     }
 
+    public async Task WriteQuery(string query)
+    {
+        await using var session = _driver.AsyncSession(o => o.WithDatabase(Database));
+
+            await session.ExecuteWriteAsync(
+                async tx =>
+            {
+                await tx.RunAsync(query);
+            });
+    }
+
     public void Dispose()
     {
         _driver?.Dispose();
