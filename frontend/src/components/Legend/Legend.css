@@ -139,11 +139,6 @@
     color: rgb(224, 221, 221);
 }
 
-/* After MVP: Remove this id styling once the loop functionality is ready */
-#loop_toggle_title_row {
-    display: none;
-}
-
 .disabled-button {
     background-color: #d3d3d3;
     color: #a9a9a9;
