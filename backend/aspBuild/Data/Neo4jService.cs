@@ -103,8 +103,6 @@ namespace aspBuild.Data
         public async Task PreRunQueries()
         {
             List<string> prerunQueries = [];
-            prerunQueries.Add(@"MATCH (n:nodes) WHERE n.metrozone = 'TRAM2' SET n.metrozone = '2' RETURN n;");
-            prerunQueries.Add(@"MATCH (n:nodes) WHERE n.metrozone = 'TRAM1' SET n.metrozone = '1' RETURN n;");
             prerunQueries.Add(@"CREATE CONSTRAINT nodeid_unique IF NOT EXISTS FOR (n:nodes) REQUIRE n.nodeid IS UNIQUE;");
             prerunQueries.Add(@"CREATE INDEX nodeid_taxizone_index IF NOT EXISTS FOR (n:nodes) ON (n.nodeid, n.taxizone);");
 
