@@ -124,10 +124,10 @@ foreach (var segment in AllSegments)
 
 
 // // Code used to test various pieces of the MapNode
-// string uri = "bolt://localhost:7687";
-// string user = "neo4j";
-// string password = "password";
-// Neo4jImplementation driver = new Neo4jImplementation(uri, user, password);
+string uri = "bolt://localhost:7687";
+string user = "neo4j";
+string password = "password";
+Neo4jImplementation driver = new Neo4jImplementation(uri, user, password);
 
 // string query = "MATCH (n:nodes) WHERE n.park = true RETURN n.nodeid;";
 // await driver.CreateJSON(query, "ParkNodes.txt");
@@ -147,10 +147,29 @@ foreach (var segment in AllSegments)
 // var info = await driver.FindNode(-73.984515, 40.7721);
 // Console.WriteLine(info);
 
-// Testing for the AStar algorithm
-// var route = await driver.AStar(-73.9765722702507, 40.760172956128876, -73.97940744715005,40.75360517905028); 
-// Console.WriteLine($"Output from route: {route}");
-
 // used to time the function - fun fact: it takes ages.
+
+string delNodesQuery = @"
+MATCH (n:nodes)-[r:PATH]->()
+WITH n, COUNT(r) AS relCount
+WHERE relCount = 1
+detach delete n";
+string checkNodesQuery = @"
+MATCH (n:nodes)-[r:PATH]->()
+WITH n, COUNT(r) AS relCount
+WHERE relCount = 1
+return n";
+while (true)
+{
+    var result = await driver.RunQuery(checkNodesQuery, []);
+    Console.WriteLine(result);
+    if (result.Count == 0)
+    {
+        Console.WriteLine("In function");
+        break; 
+    }
+    await driver.WriteQuery(delNodesQuery);
+}
+
 stopwatch.Stop();
 Console.WriteLine("Elapsed Time: {0} milliseconds", stopwatch.ElapsedMilliseconds);
