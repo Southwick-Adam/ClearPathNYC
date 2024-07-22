@@ -22,6 +22,7 @@ function App() {
     other: false,
   });
 
+  const loopGeocoderRef = useRef(null);
   const startGeocoderRef = useRef(null);
   const endGeocoderRef = useRef(null);
   const geocoderRefs = [useRef(null), useRef(null), useRef(null), useRef(null), useRef(null)];
@@ -47,7 +48,16 @@ function App() {
     console.log('handleFormSubmit called with formType:', formType);
     console.log(`Form data for ${formType} sent to backend: `, formData);
 
-    const routeData = await fetchRoute(formData);
+    let routeData;
+    if (formType === 'loop') {
+      routeData = await fetchLoopRoute(formData);
+    } else if (formType === 'pointToPoint') {
+      if (formData.isMultiP2P) {
+        routeData = await fetchMultiP2PRoute(formData);
+      } else {
+        routeData = await fetchP2PRoute(formData);
+      }
+    }
 
     if (routeData) {
       console.log('Fetched route data:', routeData);
@@ -55,7 +65,7 @@ function App() {
     }
   }
 
-  async function fetchRoute(formData) {
+  async function fetchP2PRoute(formData) {
     const { coordinates, isQuiet } = formData;
   
     const params = new URLSearchParams();
@@ -65,7 +75,64 @@ function App() {
     });
     params.append('quiet', isQuiet); // Add the quiet parameter
   
-    const requestUrl = `http://localhost:5056/route?${params.toString()}`;
+    const requestUrl = `http://localhost:5056/route/p2p?${params.toString()}`;
+    console.log('Request URL:', requestUrl);
+  
+    try {
+      const response = await fetch(requestUrl);
+      const responseText = await response.text();
+      console.log('Response Text:', responseText);
+      const data = JSON.parse(responseText);
+  
+      // Update the route in the store
+      useStore.getState().setRoute(data);
+  
+      return data;
+    } catch (error) {
+      console.error('Error fetching route:', error);
+      return null;
+    }
+  }
+
+  async function fetchMultiP2PRoute(formData) {
+    const { coordinates, isQuiet } = formData;
+  
+    const params = new URLSearchParams();
+    coordinates.forEach((coord) => {
+      params.append('coord1', parseFloat(coord[1])); // Latitude as double
+      params.append('coord2', parseFloat(coord[0])); // Longitude as double
+    });
+    params.append('quiet', isQuiet); // Add the quiet parameter
+  
+    const requestUrl = `http://localhost:5056/route/multip2p?${params.toString()}`;
+    console.log('Request URL:', requestUrl);
+  
+    try {
+      const response = await fetch(requestUrl);
+      const responseText = await response.text();
+      console.log('Response Text:', responseText);
+      const data = JSON.parse(responseText);
+  
+      // Update the route in the store
+      useStore.getState().setRoute(data);
+  
+      return data;
+    } catch (error) {
+      console.error('Error fetching route:', error);
+      return null;
+    }
+  }
+
+  async function fetchLoopRoute(formData) {
+    const { coordinates, distance, mode } = formData;
+  
+    const params = new URLSearchParams();
+    params.append('coordinate', parseFloat(coordinates[0])); //Flipped here so it's not reversed
+    params.append('coordinate', parseFloat(coordinates[1])); 
+    params.append('distance', distance);
+    params.append('quiet', mode);
+  
+    const requestUrl = `http://localhost:5056/route/loop?${params.toString()}`;
     console.log('Request URL:', requestUrl);
   
     try {
@@ -125,6 +192,7 @@ function App() {
       <SplashScreen setPlayVideo={setPlayVideo} />
       <SmogAlert epaIndex={epaIndex} />
       <Sidebar
+        loopGeocoderRef={loopGeocoderRef}
         onFormSubmit={handleFormSubmit}
         startGeocoderRef={startGeocoderRef}
         endGeocoderRef={endGeocoderRef}
