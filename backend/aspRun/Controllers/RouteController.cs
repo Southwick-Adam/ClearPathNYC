@@ -175,7 +175,8 @@ namespace aspRun.Controllers
                 return StatusCode(500, $"An error occurred while connecting to the Neo4j database: {ex.Message}");
             }
 
-            return Ok(1);
+
+            return Ok(result);
         }
     }
 }

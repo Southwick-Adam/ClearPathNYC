@@ -494,7 +494,7 @@ namespace aspRun.Data
 
             var distanceHit = false;
 
-            var shapeSides = 4;
+            var shapeSides = 10;
             double modifier = 2;
    
             double startDirection = random.Next(0, 360);
@@ -502,7 +502,6 @@ namespace aspRun.Data
             double internalAngle = 360 / shapeSides;
             while (!distanceHit)
             {
-
                 List<double> Lats = [];
                 List<double> Longs = [];
                 Lats.Add(latitude);
@@ -526,7 +525,7 @@ namespace aspRun.Data
 
                 for (int i = 1; i < Lats.Count; i++)
                 {
-                    Console.WriteLine($"{Longs[i]}, {Lats[i]}");
+                    Console.WriteLine($"{Lats[i]}, {Longs[i]}");
                 }
 
                 StringBuilder coordinates = new();
@@ -544,22 +543,24 @@ namespace aspRun.Data
                 if (totalDistance < (distance * 1.2) && totalDistance > (distance *.9))
                 {
                     distanceHit = true;
+                    return GeoJSON(coordinates.ToString(),"Loop", "true", "[]", quietscore.ToString());
                 }
-                else if (totalDistance > distance * 1.2) { modifier += 0.25;}
-                else { modifier -= .17;}
+                else if (totalDistance > distance * 1.2) { modifier += 1.25;}
+                else { modifier -= 1;}
                 totalDistance = 0;
                 startDirection = startDirectionSave;
                 if (attempt > 5){distanceHit = true;}
                 attempt += 1;
             }
-        
+
+            Console.WriteLine("Failed to find loop");
             return "";
         }
 
         private async Task<(string coordinateString, string QuietscoreString, double totalDistance)> LoopRun(double latitude, double longitude, double finLatitude, double finLongitude)
         {
-            var nodea = await FindNode(longitude, latitude);
-            var nodeb = await FindNode(finLongitude, finLatitude);
+            var nodea = await FindNode(latitude, longitude);
+            var nodeb = await FindNode(finLatitude, finLongitude);
             Console.WriteLine($"Looprun: {nodea}, {nodeb}");
 
             string djkistrasPath = @"

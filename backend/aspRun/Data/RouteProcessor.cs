@@ -45,7 +45,7 @@ namespace aspRun.Data
             List<double> finalQuietScore = [];
             for (var i = 0; i < distances.Count; i++)
             {
-                Console.WriteLine($"{costsLocal[i]}, {distances[i]}, {Math.Round(costsLocal[i] / distances [i])}");
+                // Console.WriteLine($"{costsLocal[i]}, {distances[i]}, {Math.Round(costsLocal[i] / distances [i])}");
                 finalQuietScore.Add(Math.Round(costsLocal[i] / distances [i]));
             }
             CostsString = string.Join(", ", finalQuietScore);
