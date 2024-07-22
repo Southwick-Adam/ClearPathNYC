@@ -1,12 +1,12 @@
 using Newtonsoft.Json;
 
-namespace aspBuild.Data 
+namespace aspBuild.Data
 {
     public class GetJSONs
     {
-        public static Dictionary<string, int> GetJSON(string jsonPath, string type)
+        public static Dictionary<int, int> GetJSON(string jsonPath, string type)
         {
-            Dictionary<string, int> dict = [];
+            Dictionary<int, int> dict = [];
 
             string json = File.ReadAllText(jsonPath);
 
@@ -14,27 +14,33 @@ namespace aspBuild.Data
             {
                 List<JSONObjectTaxi>? ListJSONValues = JsonConvert.DeserializeObject<List<JSONObjectTaxi>>(json);
                 dict.Add(-1, 3);
-                foreach (var item in ListJSONValues)
+                if (ListJSONValues != null)
                 {
-                    if (item != null && item.LocationID != null)
+                    foreach (var item in ListJSONValues)
                     {
-                        dict.Add(item.LocationID, ScoreMap(item.Busyness_rank));
+                        if (item != null)
+                        {
+                            dict.Add(item.LocationID, ScoreMap(item.Busyness_rank));
+                        }
                     }
                 }
             }
             if (string.Equals(type, "metro"))
             {
                 List<JSONObjectMetro>? ListJSONValues = JsonConvert.DeserializeObject<List<JSONObjectMetro>>(json);
-                foreach (var item in ListJSONValues)
+                if (ListJSONValues != null)
                 {
-                    if (item != null && item.station_complex_id != null)
+                    foreach (var item in ListJSONValues)
                     {
-                        dict.Add(item.station_complex_id, ScoreMap(item.Busyness_rank));
+                        if (item != null)
+                        {
+                            dict.Add(item.station_complex_id, ScoreMap(item.Busyness_rank));
+                        }
+
                     }
-                    
                 }
             }
-            
+
             return dict;
         }
 
@@ -44,15 +50,15 @@ namespace aspBuild.Data
         }
     }
 
-    public class JSONObjectTaxi 
+    public class JSONObjectTaxi
     {
-        public string LocationID { get; set; } = string.Empty;
+        public int LocationID { get; set; }
         public int Busyness_rank { get; set; }
     }
 
-    public class JSONObjectMetro 
+    public class JSONObjectMetro
     {
-        public string station_complex_id { get; set; } = string.Empty;
+        public int station_complex_id { get; set; }
         public int Busyness_rank { get; set; }
     }
 }
