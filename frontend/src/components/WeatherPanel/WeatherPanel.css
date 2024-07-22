@@ -18,6 +18,8 @@
     z-index: 750;
     box-shadow: 0 0 10px rgba(46, 32, 32, 0.527);
     font-weight: bold;
+    text-align: center;
+    cursor: pointer;
 }
 
 .weather_icon {
@@ -62,6 +64,8 @@
     right: 20px;
     z-index: 750;
     box-shadow: 0 0 10px rgba(46, 32, 32, 0.527);
+    text-align: center;
+    cursor: pointer;
 }
 
 .alert_panel.blue {
@@ -88,4 +92,26 @@
     font-size: 14px;
     margin-left: 10px;
     font-weight: bold;
+}
+
+.weather_panel.minimised {
+    width: 80px;
+    height: 80px;
+    grid-template-areas: "icon";
+    grid-template-columns: auto;
+    gap: 0;
+    padding: 0;
+    font-size: 0;
+    bottom: 35px;
+}
+
+.alert_panel.minimised {
+    width: 40px;
+    height: 40px;
+    grid-template-areas: "icon";
+    grid-template-columns: auto;
+    gap: 0;
+    padding: 0;
+    font-size: 0;
+    bottom: 120px;
 }
