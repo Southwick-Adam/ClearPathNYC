@@ -110,7 +110,6 @@ namespace aspRun.Data
             });";
             await RunQuery(StartGraph, []);
 
-            await AddLoudScore();
             StartGraph = @"
             CALL gds.graph.project(
             'NYC1Loud',
@@ -466,19 +465,19 @@ namespace aspRun.Data
             return GeoJSON;
         }
 
-        public async Task AddLoudScore()
-        {
-            var query = "MATCH ()-[r:PATH]->() SET r.loudscore = -r.quietscore;";
-            var parameters = new Dictionary<string, object>();
-            await using var session = _driver.AsyncSession(o => o.WithDatabase(_database));
+        // public async Task AddLoudScore()
+        // {
+        //     var query = "MATCH ()-[r:PATH]->() SET r.loudscore = -r.quietscore;";
+        //     var parameters = new Dictionary<string, object>();
+        //     await using var session = _driver.AsyncSession(o => o.WithDatabase(_database));
 
-            await session.ExecuteWriteAsync(
-                async tx =>
-            {
-                await tx.RunAsync(query, parameters);
-            });
-            Console.WriteLine("Loud score added");
-        }
+        //     await session.ExecuteWriteAsync(
+        //         async tx =>
+        //     {
+        //         await tx.RunAsync(query, parameters);
+        //     });
+        //     Console.WriteLine("Loud score added");
+        // }
 
         public async Task DisposeAsync()
         //Disposes of session
