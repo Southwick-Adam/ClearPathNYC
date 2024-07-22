@@ -62,12 +62,14 @@ const useStore = create((set, get) => ({
     set(updatedState);
     return waypointIndex;
   },
-  
+
   isNightMode: isNight,
   toggleNightMode: () => set((state) => ({ isNightMode: !state.isNightMode })),
   setNightMode: (isNight) => set({ isNightMode: isNight }),
-  route: null,
-  setRoute: (route) => set({ route }),
+  routes: [],
+  setRoutes: (routes) => set({ routes }),
+  selectedRouteIndex: 0,
+  setSelectedRouteIndex: (index) => set({ selectedRouteIndex: index }),
   isColorBlindMode: false,
   toggleColorBlindMode: () => set((state) => ({ isColorBlindMode: !state.isColorBlindMode })),
   setColorBlindMode: (isColorBlind) => set({ isColorBlindMode: isColorBlind }),
