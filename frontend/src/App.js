@@ -25,7 +25,7 @@ function App() {
   const startGeocoderRef = useRef(null);
   const endGeocoderRef = useRef(null);
   const geocoderRefs = [useRef(null), useRef(null), useRef(null), useRef(null), useRef(null)];
-  const { isNightMode, routes, selectedRouteIndex, setRoutes, setSelectedRouteIndex } = useStore();
+  const { isNightMode, isColorBlindMode, routes, selectedRouteIndex, setRoutes, setSelectedRouteIndex } = useStore();
 
   const [layerVisibility, setLayerVisibility] = useState({
     parks: true,
@@ -195,7 +195,7 @@ function App() {
         endGeocoderRef={endGeocoderRef}
         geocoderRefs={geocoderRefs}
       />
-      <div className="route-tabs">
+      <div className={`route-tabs ${isNightMode ? 'night-mode' : ''} ${isColorBlindMode ? 'color-blind-mode' : ''}`}>
         {routes.length > 1 && (
           <>
             {routes.map((route, index) => (
