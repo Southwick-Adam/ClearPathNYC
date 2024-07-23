@@ -151,7 +151,7 @@ function MapComponent({ route, startGeocoderRef, endGeocoderRef, geocoderRefs, p
       style: isNightMode ? MAPBOX_NIGHT_STYLE_URL : MAPBOX_DAY_STYLE_URL,
       center: [-73.9712, 40.7831],
       zoom: 13,
-      minZoom: 13,
+      minZoom: 11,
       maxZoom: 20,
       accessToken: MAPBOX_TOKEN,
       pitch: 50,
