@@ -7,7 +7,7 @@ import NightModeButton from '../NightModeButton/NightModeButton.js';
 import ExportButton from '../ExportButton/ExportButton.js';
 import CBButton from '../CBButton/CBButton.js';
 
-function Sidebar({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoderRefs }) {
+function Sidebar({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoderRefs,loopGeocoderRef }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoopOpen, setLoopOpen] = useState(false);
   const [isPtPOpen, setPtPOpen] = useState(false);
@@ -64,7 +64,7 @@ function Sidebar({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoderRefs 
             <div className={`container_title ${isNightMode ? 'night' : 'day'}`}>Loop</div>
           </div>
           <div className={`loop_box ${isLoopOpen ? 'open' : 'closed'}`}>
-            <Loop onFormSubmit={onFormSubmit} />
+            <Loop onFormSubmit={onFormSubmit} geocoderRef={loopGeocoderRef} />
           </div>
         </div>
           <div className='ptp_wrapper'>

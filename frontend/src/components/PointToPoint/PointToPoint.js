@@ -8,11 +8,11 @@ import useStore from '../../store/store';
 
 function PointToPoint({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoderRefs, hideSidebar }) {
   const {
-    startCord, endCord, isQuiet, includeWaypoints, visibleWaypoints,
+    startCord, endCord, ptpIsQuiet, includeWaypoints, visibleWaypoints,
     waypointCord1, waypointCord2, waypointCord3, waypointCord4, waypointCord5,
-    setStartCord, setEndCord, setIsQuiet, setIncludeWaypoints, setVisibleWaypoints,
+    setStartCord, setEndCord, togglePtpIsQuiet, setIncludeWaypoints, setVisibleWaypoints,
     setWaypointCord1, setWaypointCord2, setWaypointCord3, setWaypointCord4, setWaypointCord5, resetWaypointCord,
-    isColorBlindMode
+    isColorBlindMode,isMultiP2P, toggleIsMultiP2P
   } = useStore();
 
   const [isGoButtonDisabled, setGoButtonDisabled] = useState(true);
@@ -46,7 +46,7 @@ function PointToPoint({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoder
   }, [startCord, endCord, waypointCord1, waypointCord2, waypointCord3, waypointCord4, waypointCord5, visibleWaypoints]);
 
   function handleToggleChange() {
-    setIsQuiet(!isQuiet);
+    togglePtpIsQuiet();
   }
 
   function handleSubmit(event) {
@@ -59,7 +59,8 @@ function PointToPoint({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoder
     ].filter(coord => coord !== null);
 
     const formData = {
-      isQuiet,
+      isQuiet: ptpIsQuiet,
+      isMultiP2P,
       coordinates,
     };
 
@@ -181,7 +182,7 @@ function PointToPoint({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoder
         <LocationFinder setCoordinates={setEndCord} geocoderRef={endGeocoderRef} />
       </div>
       <div className="busy_go_row">
-        <BusyToggleSwitch isQuiet={isQuiet} handleToggleChange={handleToggleChange} />
+        <BusyToggleSwitch isQuiet={ptpIsQuiet} handleToggleChange={handleToggleChange} />
         <GoButton disabled={isGoButtonDisabled} />
       </div>
       <div className='include_waypoints'>
@@ -193,6 +194,17 @@ function PointToPoint({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoder
             className='includ-text'
           />
           Include Waypoints
+        </label>
+      </div>
+      <div className='include_multiP2P'>
+        <label className={isMultiP2P ? 'checked' : ''}>
+          <input
+            type='checkbox'
+            checked={isMultiP2P}
+            onChange={toggleIsMultiP2P}
+            className='include-multi'
+          />
+          Find MultiRoute
         </label>
       </div>
     </form>
