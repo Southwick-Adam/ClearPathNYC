@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import './Loop.css';
 import DistanceSelector from '../DistanceSelector/DistanceSelector';
 import BusyToggleSwitch from '../BusyToggleSwitch/BusyToggleSwitch';
@@ -10,6 +10,13 @@ function Loop({ onFormSubmit, geocoderRef }) {
   const {
     loopCord, setLoopCord, loopIsQuiet, toggleLoopIsQuiet, loopDistance, setLoopDistance
   } = useStore();
+
+  const [isGoButtonDisabled, setGoButtonDisabled] = useState(true);
+
+  useEffect(() => {
+    const isDisabled = loopCord === null || loopDistance === 0 || !loopDistance;
+    setGoButtonDisabled(isDisabled);
+  }, [loopCord, loopDistance]);
 
   function handleToggleChange() {
     toggleLoopIsQuiet();
@@ -38,8 +45,8 @@ function Loop({ onFormSubmit, geocoderRef }) {
         <DistanceSelector distance={loopDistance} onDistanceChange={handleDistanceChange} />
       </div>
       <div className='busy_go_row'>
-        <BusyToggleSwitch isQuiet={loopIsQuiet} handleToggleChange={handleToggleChange} /> 
-        <GoButton />
+        <BusyToggleSwitch isQuiet={loopIsQuiet} handleToggleChange={handleToggleChange} />
+        <GoButton disabled={isGoButtonDisabled} />
       </div>
     </form>
   );
