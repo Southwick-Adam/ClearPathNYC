@@ -14,18 +14,22 @@ function Sidebar({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoderRefs 
   const { isNightMode, isColorBlindMode } = useStore();
 
   useEffect(() => {
-    const sidebarTimer = setTimeout(() => {
-      setIsOpen(true);
-    }, 3500); // Adjust the delay as needed
 
-    const ptPTimer = setTimeout(() => {
-      setPtPOpen(true);
-    }, 4500); // Adjust the delay as needed to open PtP after sidebar opens
+    if (window.innerWidth > 480) {
 
-    return () => {
-      clearTimeout(sidebarTimer);
-      clearTimeout(ptPTimer);
-    };
+      const sidebarTimer = setTimeout(() => {
+        setIsOpen(true);
+      }, 3500); // Adjust the delay as needed
+
+      const ptPTimer = setTimeout(() => {
+        setPtPOpen(true);
+      }, 4500); // Adjust the delay as needed to open PtP after sidebar opens
+
+      return () => {
+        clearTimeout(sidebarTimer);
+        clearTimeout(ptPTimer);
+      };
+    }
   }, []);
 
   function toggleSidebar() {
