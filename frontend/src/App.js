@@ -124,11 +124,12 @@ function App() {
 
   async function fetchLoopRoute(formData) {
     const { coordinates, distance, mode } = formData;
+    const distanceMeter = distance * 1609.34; //Change miles to meters for backend
 
     const params = new URLSearchParams();
     params.append('coordinate', parseFloat(coordinates[0])); //Flipped here so it's not reversed
     params.append('coordinate', parseFloat(coordinates[1]));
-    params.append('distance', distance);
+    params.append('distance', distanceMeter);
     params.append('quiet', mode);
 
     const requestUrl = `http://localhost:5056/route/loop?${params.toString()}`;
