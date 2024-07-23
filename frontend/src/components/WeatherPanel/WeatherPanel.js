@@ -1,9 +1,16 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import './WeatherPanel.css';
 
 function WeatherPanel({ weather }) {
 
   const [isMinimised, makeMinimised] = useState(false);
+
+  useEffect(() => {
+    if (window.innerWidth < 480) {
+      makeMinimised(true);
+    }
+  }, []);
+
   if (!weather) return null;
 
   const { current, location } = weather;
