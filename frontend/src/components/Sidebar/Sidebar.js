@@ -14,9 +14,7 @@ function Sidebar({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoderRefs 
   const { isNightMode, isColorBlindMode } = useStore();
 
   useEffect(() => {
-
     if (window.innerWidth > 480) {
-
       const sidebarTimer = setTimeout(() => {
         setIsOpen(true);
       }, 3500); // Adjust the delay as needed
