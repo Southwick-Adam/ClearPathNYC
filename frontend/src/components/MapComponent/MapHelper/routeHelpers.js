@@ -213,24 +213,31 @@ export function addRouteMarkers(mapRef, routeData, startMarkerRef, endMarkerRef,
     }
   }
 
-  // Add end marker
-  setTimeout(() => {
-    if (endMarkerRef.current) {
-      endMarkerRef.current.setLngLat(endCoord);
-    } else {
-      const endMarker = document.createElement('div');
-      endMarker.className = 'marker end_marker';
+  // Check to remove any existing endmarkers (if they exist)
+  if (endMarkerRef.current) {
+    endMarkerRef.current.remove();
+    endMarkerRef.current = null;
+  }
+  // Add end marker only if start and end coordinates are different
+  if (startCoord[0] !== endCoord[0] || startCoord[1] !== endCoord[1]) {
+    setTimeout(() => {
+      if (endMarkerRef.current) {
+        endMarkerRef.current.setLngLat(endCoord);
+      } else {
+        const endMarker = document.createElement('div');
+        endMarker.className = 'marker end_marker';
 
-      endMarkerRef.current = new mapboxgl.Marker({
-        element: endMarker,
-        offset: [0, -15]
-      })
-        .setLngLat(endCoord)
-        .addTo(mapRef.current);
+        endMarkerRef.current = new mapboxgl.Marker({
+          element: endMarker,
+          offset: [0, -15]
+        })
+          .setLngLat(endCoord)
+          .addTo(mapRef.current);
 
-      animateMarkers($(endMarker));
-    }
-  }, timeout);
+        animateMarkers($(endMarker));
+      }
+    }, timeout);
+  }
 }
 
 export function zoomToRoute(mapRef, route, helpers) {
@@ -300,11 +307,11 @@ export function clearRoute(mapRef) {
     mapRef.current.removeLayer('route');
     mapRef.current.removeSource('route');
   }
-  if (mapRef.current.getLayer('start-marker')) {
-    mapRef.current.removeLayer('start-marker');
+  if (mapRef.current.getLayer('start_marker')) {
+    mapRef.current.removeLayer('start_marker');
   }
-  if (mapRef.current.getLayer('end-marker')) {
-    mapRef.current.removeLayer('end-marker');
+  if (mapRef.current.getLayer('end_marker')) {
+    mapRef.current.removeLayer('end_marker');
   }
 }
 

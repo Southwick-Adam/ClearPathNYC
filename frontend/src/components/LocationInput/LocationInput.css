@@ -34,12 +34,12 @@
     background-color: rgb(91, 104, 104);
 }
 
-.mapboxgl-ctrl-geocoder--input.night, 
-.night .mapboxgl-ctrl-geocoder--input::placeholder,
-.night .mapboxgl-ctrl-geocoder--input:focus
-{
-    color:rgb(181, 185, 189)
+.location_input_container.night .mapboxgl-ctrl-geocoder--input,
+.location_input_container.night .mapboxgl-ctrl-geocoder--input::placeholder,
+.location_input_container.night .mapboxgl-ctrl-geocoder--input:focus {
+    color: rgb(181, 185, 189);
 }
+
 
 .mapboxgl-ctrl-geocoder--button:hover
 {
