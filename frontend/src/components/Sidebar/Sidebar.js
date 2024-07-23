@@ -7,11 +7,17 @@ import NightModeButton from '../NightModeButton/NightModeButton.js';
 import ExportButton from '../ExportButton/ExportButton.js';
 import CBButton from '../CBButton/CBButton.js';
 
-function Sidebar({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoderRefs,loopGeocoderRef }) {
+function Sidebar({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoderRefs, loopGeocoderRef }) {
+  const { 
+    isNightMode, 
+    isColorBlindMode, 
+    isLoopOpen, 
+    isPtPOpen, 
+    setIsLoopOpen, 
+    setIsPtPOpen 
+  } = useStore();
+
   const [isOpen, setIsOpen] = useState(false);
-  const [isLoopOpen, setLoopOpen] = useState(false);
-  const [isPtPOpen, setPtPOpen] = useState(false);
-  const { isNightMode, isColorBlindMode } = useStore();
 
   useEffect(() => {
     if (window.innerWidth > 480) {
@@ -20,7 +26,7 @@ function Sidebar({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoderRefs,
       }, 3500); // Adjust the delay as needed
 
       const ptPTimer = setTimeout(() => {
-        setPtPOpen(true);
+        setIsPtPOpen(true);
       }, 4500); // Adjust the delay as needed to open PtP after sidebar opens
 
       return () => {
@@ -35,13 +41,13 @@ function Sidebar({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoderRefs,
   }
 
   function toggleLoop() {
-    setLoopOpen(!isLoopOpen);
-    setPtPOpen(false);
+    setIsLoopOpen(!isLoopOpen);
+    setIsPtPOpen(isLoopOpen); // Ensure PtP state is opposite to Loop
   }
 
   function togglePtP() {
-    setPtPOpen(!isPtPOpen);
-    setLoopOpen(false);
+    setIsPtPOpen(!isPtPOpen);
+    setIsLoopOpen(isPtPOpen); // Ensure Loop state is opposite to PtP
   }
 
   function hideSidebar() {
@@ -59,16 +65,16 @@ function Sidebar({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoderRefs,
       <div className="sidebar-content-wrapper">
         <div className="sidebar-content">
           <div className='loop_wrapper'>
-          <div className='toggle_title_row' id='loop_toggle_title_row'> 
-            <button className='btn' onClick={toggleLoop}>
-              {isLoopOpen ? '▼' : '▶'}
-            </button>
-            <div className={`container_title ${isNightMode ? 'night' : 'day'}`}>Loop</div>
+            <div className='toggle_title_row' id='loop_toggle_title_row'> 
+              <button className='btn' onClick={toggleLoop}>
+                {isLoopOpen ? '▼' : '▶'}
+              </button>
+              <div className={`container_title ${isNightMode ? 'night' : 'day'}`}>Loop</div>
+            </div>
+            <div className={`loop_box ${isLoopOpen ? 'open' : 'closed'}`}>
+              <Loop onFormSubmit={onFormSubmit} geocoderRef={loopGeocoderRef} />
+            </div>
           </div>
-          <div className={`loop_box ${isLoopOpen ? 'open' : 'closed'}`}>
-            <Loop onFormSubmit={onFormSubmit} geocoderRef={loopGeocoderRef} />
-          </div>
-        </div>
           <div className='ptp_wrapper'>
             <div className='toggle_title_row'>
               <button className='btn' onClick={togglePtP}>
