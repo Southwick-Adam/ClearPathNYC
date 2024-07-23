@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import './PopupContent.css';
 import useStore from '../../store/store';
 
-function PopupContent({ coordinates, name, setStartCord, setEndCord, setWaypointAndIncrease, updateStartInput, updateEndInput, updateWaypointInput, geocoderRefs, closePopup }) {
+function PopupContent({ coordinates, name, setLoopCord, setStartCord, setEndCord, setWaypointAndIncrease, updateLoopStartInput,updateStartInput, updateEndInput, updateWaypointInput, geocoderRefs, closePopup }) {
   const { enableWaypoints, isLoopOpen, isPtPOpen } = useStore((state) => ({
     enableWaypoints: state.enableWaypoints,
     isLoopOpen: state.isLoopOpen,
@@ -36,9 +36,11 @@ function PopupContent({ coordinates, name, setStartCord, setEndCord, setWaypoint
             }}>Set Waypoint</button>
           </>
         ) : (
-          <button className="btn btn-primary btn-sm" onClick={() => {
-              // Functionality for SetLoopStart
-          }}>SetLoopStart</button>
+          <button className="btn btn-primary btn-sm" onClick={async () => {
+            setLoopCord(coordinates);
+            await updateLoopStartInput(coordinates);
+            closePopup(); // Close popup
+          }}>Set Loop Start</button>
         )}
       </div>
     </div>

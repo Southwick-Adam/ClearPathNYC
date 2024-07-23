@@ -212,6 +212,7 @@ function App() {
       </div>
       <MapComponent
         route={routes[selectedRouteIndex]} // Pass the selected route
+        loopGeocoderRef={loopGeocoderRef}
         startGeocoderRef={startGeocoderRef}
         endGeocoderRef={endGeocoderRef}
         geocoderRefs={geocoderRefs}
