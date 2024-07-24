@@ -178,7 +178,14 @@ function PointToPoint({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoder
           />
         ))}
         {visibleWaypoints < 5 && (
-          <div className='add_wrapper'><button type='button' className="btn btn-outline-success btn-sm addbtn" onClick={handleAddWaypoint}>+</button></div>
+          <div className='add_wrapper'>
+            <OverlayTrigger
+              placement="top"
+              overlay={<Tooltip id="tooltip-add">Add Waypoint</Tooltip>}
+            >
+              <button type='button' className="btn btn-outline-success btn-sm addbtn" onClick={handleAddWaypoint}>+</button>
+            </OverlayTrigger>
+          </div>
         )}
       </div>
       <div className="ptp_row">

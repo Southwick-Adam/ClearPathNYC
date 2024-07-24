@@ -56,8 +56,14 @@
 .addbtn {
   width: 50px;
   height: 45px;
-  font-size: 20px;
   align-items: left;
+  font-size: 30px;
+  font-weight: bold;
+  border: none;
+}
+
+.add_wrapper > .addbtn{
+  padding: 0px;
 }
 
 .upbtn {
@@ -68,6 +74,8 @@
   justify-content: center;
   color: #198754;
   border-color: #198754;
+  border: none;
+  font-size: 16px;
 }
 
 .upbtn:hover {
@@ -84,6 +92,9 @@
   justify-content: center;
   color: #198754;
   border-color: #198754;
+  border: none;
+  font-size: 15px;
+
 }
 
 .downbtn:hover {
@@ -95,7 +106,9 @@
 .removebtn {
   height: 42px;
   width: 36px;
+  font-size: 20px;
   margin-left: 7px;
+  border: none;
 }
 
 /* geocoder z-index bug fix */
