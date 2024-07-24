@@ -50,3 +50,15 @@ input[type=number]::-webkit-inner-spin-button {
   right: 0;
   height: 100%;
 }
+.dist_label{
+  font-size: 20px;
+  font-weight: bold;
+  padding-right: 3px;
+  margin-right: 5px;
+  min-width: 55.56px;
+  text-align: center;
+}
+
+.loop_container > .busy_go_row {
+  margin-right: 16px;
+}

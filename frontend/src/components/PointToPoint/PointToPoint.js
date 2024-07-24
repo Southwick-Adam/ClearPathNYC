@@ -92,6 +92,9 @@ function PointToPoint({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoder
     }
     resetWaypointCord(visibleWaypoints); // Clear the last waypoint input
     setVisibleWaypoints(visibleWaypoints - 1);
+    if (visibleWaypoints - 1 === 0) {
+      setIncludeWaypoints(false);
+    }
   }
 
   function handleMoveWaypointUp(index) {
@@ -175,7 +178,7 @@ function PointToPoint({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoder
           />
         ))}
         {visibleWaypoints < 5 && (
-          <button type='button' className="btn btn-outline-success btn-lg d-block mx-auto addbtn" onClick={handleAddWaypoint}>+</button>
+          <div className='add_wrapper'><button type='button' className="btn btn-outline-success btn-sm addbtn" onClick={handleAddWaypoint}>+</button></div>
         )}
       </div>
       <div className="ptp_row">

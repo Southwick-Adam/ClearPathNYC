@@ -39,9 +39,14 @@ function Loop({ onFormSubmit, geocoderRef }) {
   return (
     <form className="loop_container" onSubmit={handleSubmit}>
       <div>
+      <div className="ptp_row">
+        <div className="ptp_label">Start</div>
         <LocationFinder setCoordinates={setLoopCord} geocoderRef={geocoderRef} />
       </div>
+        
+      </div>
       <div className="loop_distance_selector">
+        <div className="dist_label">Dist</div>
         <DistanceSelector distance={loopDistance} onDistanceChange={handleDistanceChange} />
       </div>
       <div className='busy_go_row'>
