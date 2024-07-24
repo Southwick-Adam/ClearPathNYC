@@ -528,13 +528,36 @@ namespace aspRun.Data
                 {"nodeb", nodeb}
             };
 
-            var graphResult = await this.RunQuery(CheckGraph, []);
+            var graphResult = await RunQuery(CheckGraph, []);
             bool graph = (bool)graphResult.First()["exists"];
 
             List<IRecord> routeResult;
             if (graph)
             {
-                routeResult = await RunQuery(astarPath, parameters);
+                try
+                {
+                    routeResult = await RunQuery(astarPath, parameters);
+                }
+                catch (Exception ex)
+                {
+                    // Specify the file name
+                    string fileName = "FailedNodes.txt";
+                    
+                    // Specify the content to write
+                    string content = $"{nodea}, {nodeb}\n";
+
+                    // Get the current directory
+                    string currentDirectory = Directory.GetCurrentDirectory();
+                    
+                    // Combine the directory and file name to get the full path
+                    string filePath = Path.Combine(currentDirectory, fileName);
+                    
+                    // Write the content to the file
+                    File.WriteAllText(filePath, content);
+                    
+                    Console.WriteLine("File written successfully!");
+                    routeResult = await RunQuery(astarPath, parameters);
+                }
             }
             else
             {
