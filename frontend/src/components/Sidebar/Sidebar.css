@@ -151,10 +151,15 @@
   opacity: 0;
 }
 
-.ptp_box.open, .loop_box.open {
+.ptp_box.open {
   opacity: 1;
   height: 100vh;
   max-height: calc(100vh - 283px); /* Adjust based on the content height */
+}
+
+.loop_box.open{
+  opacity: 1;
+  max-height: calc(100vh - 283px); 
 }
 
 .ptp_box.open
