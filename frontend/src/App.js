@@ -7,6 +7,7 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import SplashScreen from './components/SplashScreen/SplashScreen.js';
 import Legend from './components/Legend/Legend.js';
 import useStore from './store/store.js';
+import LoadingPopup from './components/LoadingPopup/LoadingPopup.js'; // Import LoadingPopup
 import './App.css';
 
 function App() {
@@ -20,6 +21,8 @@ function App() {
     multipleWarnings: false,
     other: false,
   });
+  const [loadingMessage, setLoadingMessage] = useState('Loading Route');
+  const [isLoading, setIsLoading] = useState(false);
 
   const loopGeocoderRef = useRef(null);
   const startGeocoderRef = useRef(null);
@@ -43,30 +46,48 @@ function App() {
     }));
   };
 
+  const closePopup = () => {
+    setIsLoading(false);
+  };
+
   async function handleFormSubmit(formType, formData) {
     console.log('handleFormSubmit called with formType:', formType);
     console.log(`Form data for ${formType} sent to backend: `, formData);
 
     let routeData;
-    if (formType === 'loop') {
-      routeData = await fetchLoopRoute(formData);
-    } else if (formType === 'pointToPoint') {
-      if (formData.isMultiP2P) {
-        routeData = await fetchMultiP2PRoute(formData);
-      } else {
-        routeData = await fetchP2PRoute(formData);
-      }
-    }
+    setIsLoading(true);
+    setLoadingMessage('Loading Route');
+    const timeoutId = setTimeout(() => {
+      setLoadingMessage('Error Loading Route, Try again');
+    }, 20000); // 20 seconds timeout
 
-    if (routeData) {
-      console.log('Fetched route data:', routeData);
-      if (Array.isArray(routeData.features)) {
-        setRoutes(routeData.features);
-        setSelectedRouteIndex(0); // Auto-select the first route
-      } else {
-        setRoutes([routeData]);
-        setSelectedRouteIndex(0); // Auto-select the single route
+    try {
+      if (formType === 'loop') {
+        routeData = await fetchLoopRoute(formData);
+      } else if (formType === 'pointToPoint') {
+        if (formData.isMultiP2P) {
+          routeData = await fetchMultiP2PRoute(formData);
+        } else {
+          routeData = await fetchP2PRoute(formData);
+        }
       }
+
+      if (routeData) {
+        console.log('Fetched route data:', routeData);
+        if (Array.isArray(routeData.features)) {
+          setRoutes(routeData.features);
+          setSelectedRouteIndex(0); // Auto-select the first route
+        } else {
+          setRoutes([routeData]);
+          setSelectedRouteIndex(0); // Auto-select the single route
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching route:', error);
+      setLoadingMessage('Error Loading Route, Try again');
+    } finally {
+      clearTimeout(timeoutId);
+      setIsLoading(false);
     }
   }
 
@@ -220,6 +241,7 @@ function App() {
         layerVisibility={layerVisibility} // Pass layer visibility state
         setPresentLayers={setPresentLayers} // Pass the setter for present layers
       />
+      {isLoading && <LoadingPopup message={loadingMessage} onClose={closePopup} />}
       <Legend onToggleLayer={toggleLayerVisibility} layerVisibility={layerVisibility} presentLayers={presentLayers} /> {/* Pass toggle function and present layers */}
       <WeatherPanel weather={weather} />
     </div>
