@@ -153,6 +153,11 @@ function MapComponent({ route, loopGeocoderRef,startGeocoderRef, endGeocoderRef,
   useEffect(() => {
     if (mapRef.current) return;
 
+    const bounds = [
+      [-74.1000, 40.7300], // Southwest coordinates
+      [-73.7000, 40.8600] 
+    ];
+
     mapRef.current = new mapboxgl.Map({
       container: mapContainerRef.current,
       style: isNightMode ? MAPBOX_NIGHT_STYLE_URL : MAPBOX_DAY_STYLE_URL,
@@ -162,7 +167,8 @@ function MapComponent({ route, loopGeocoderRef,startGeocoderRef, endGeocoderRef,
       maxZoom: 20,
       accessToken: MAPBOX_TOKEN,
       pitch: 50,
-      bearing: -2.6
+      bearing: -2.6,
+      maxBounds: bounds
     });
 
     mapRef.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
