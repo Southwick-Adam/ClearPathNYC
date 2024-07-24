@@ -417,6 +417,11 @@ namespace aspRun.Data
                 for (int i = 0; i < shapeSides; i++)
                 {
                     var (coordString, quietString, dist) = await LoopRun(Lats[i], Longs[i], Lats[i + 1], Longs[i + 1], quiet);
+                    if (coordinates.Length > 0)
+                    {
+                        coordinates.Append(",");
+                        quietscore.Append(",");
+                    }
                     coordinates.Append(coordString);
                     quietscore.Append(quietString);
                     totalDistance += dist;
