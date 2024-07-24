@@ -25,7 +25,7 @@ function App() {
   const startGeocoderRef = useRef(null);
   const endGeocoderRef = useRef(null);
   const geocoderRefs = [useRef(null), useRef(null), useRef(null), useRef(null), useRef(null)];
-  const { isNightMode, routes, selectedRouteIndex, setRoutes, setSelectedRouteIndex } = useStore();
+  const { isNightMode, isColorBlindMode, routes, selectedRouteIndex, setRoutes, setSelectedRouteIndex } = useStore();
 
   const [layerVisibility, setLayerVisibility] = useState({
     parks: true,
@@ -80,7 +80,7 @@ function App() {
     });
     params.append('quiet', isQuiet); // Add the quiet parameter
 
-    const requestUrl = `http://localhost:5056/route/p2p?${params.toString()}`;
+    const requestUrl = `/route/p2p?${params.toString()}`;
     console.log('Request URL:', requestUrl);
 
     try {
@@ -106,7 +106,7 @@ function App() {
     });
     params.append('quiet', isQuiet); // Add the quiet parameter
 
-    const requestUrl = `http://localhost:5056/route/multip2p?${params.toString()}`;
+    const requestUrl = `/route/multip2p?${params.toString()}`;
     console.log('Request URL:', requestUrl);
 
     try {
@@ -132,7 +132,7 @@ function App() {
     params.append('distance', distanceMeter);
     params.append('quiet', mode);
 
-    const requestUrl = `http://localhost:5056/route/loop?${params.toString()}`;
+    const requestUrl = `/route/loop?${params.toString()}`;
     console.log('Request URL:', requestUrl);
 
     try {
@@ -149,7 +149,7 @@ function App() {
   }
 
   async function fetchWeatherData() {
-    const apiUrl = 'http://localhost:5056/weather';
+    const apiUrl = '/weather';
     try {
       const response = await fetch(apiUrl, {
         method: 'GET',
@@ -195,7 +195,7 @@ function App() {
         endGeocoderRef={endGeocoderRef}
         geocoderRefs={geocoderRefs}
       />
-      <div className="route-tabs">
+      <div className={`route-tabs ${isNightMode ? 'night-mode' : ''} ${isColorBlindMode ? 'color-blind-mode' : ''}`}>
         {routes.length > 1 && (
           <>
             {routes.map((route, index) => (
@@ -212,6 +212,7 @@ function App() {
       </div>
       <MapComponent
         route={routes[selectedRouteIndex]} // Pass the selected route
+        loopGeocoderRef={loopGeocoderRef}
         startGeocoderRef={startGeocoderRef}
         endGeocoderRef={endGeocoderRef}
         geocoderRefs={geocoderRefs}

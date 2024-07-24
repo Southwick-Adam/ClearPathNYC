@@ -17,6 +17,8 @@ const useStore = create((set, get) => ({
   waypointCord3: null,
   waypointCord4: null,
   waypointCord5: null,
+  isLoopOpen: false,
+  isPtPOpen: false,
   setLoopCord: (cord) => set({ loopCord: cord }),
   setLoopDistance: (distance) => set({ loopDistance: distance }),
   setStartCord: (cord) => set({ startCord: cord }),
@@ -75,7 +77,8 @@ const useStore = create((set, get) => ({
   setColorBlindMode: (isColorBlind) => set({ isColorBlindMode: isColorBlind }),
   isMultiP2P: false,
   toggleIsMultiP2P: () => set((state) => ({ isMultiP2P: !state.isMultiP2P })),
-
+  setIsLoopOpen: (isOpen) => set({ isLoopOpen: isOpen }),
+  setIsPtPOpen: (isOpen) => set({ isPtPOpen: isOpen }),
 }));
 
 export default useStore;

@@ -5,6 +5,8 @@ import BusyToggleSwitch from '../BusyToggleSwitch/BusyToggleSwitch';
 import './PointToPoint.css';
 import Waypoint from '../Waypoint/Waypoint';
 import useStore from '../../store/store';
+import { OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { BsExclamationTriangleFill } from 'react-icons/bs';
 
 function PointToPoint({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoderRefs, hideSidebar }) {
   const {
@@ -12,7 +14,7 @@ function PointToPoint({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoder
     waypointCord1, waypointCord2, waypointCord3, waypointCord4, waypointCord5,
     setStartCord, setEndCord, togglePtpIsQuiet, setIncludeWaypoints, setVisibleWaypoints,
     setWaypointCord1, setWaypointCord2, setWaypointCord3, setWaypointCord4, setWaypointCord5, resetWaypointCord,
-    isColorBlindMode,isMultiP2P, toggleIsMultiP2P
+    isColorBlindMode, isMultiP2P, toggleIsMultiP2P
   } = useStore();
 
   const [isGoButtonDisabled, setGoButtonDisabled] = useState(true);
@@ -141,7 +143,6 @@ function PointToPoint({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoder
       }
     }
   }
-  
 
   function hideSuggestions(geocoder) {
     if (geocoder._container) {
@@ -197,15 +198,25 @@ function PointToPoint({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoder
         </label>
       </div>
       <div className='include_multiP2P'>
-        <label className={isMultiP2P ? 'checked' : ''}>
-          <input
-            type='checkbox'
-            checked={isMultiP2P}
-            onChange={toggleIsMultiP2P}
-            className='include-multi'
-          />
-          Find MultiRoute
-        </label>
+        <OverlayTrigger
+          placement="top"
+          overlay={
+            <Tooltip id="tooltip-multiP2P">
+              <BsExclamationTriangleFill style={{ color: 'red', fontSize: '16px', marginRight: '5px', height:'16px'}} />
+              Please be aware that loading multiple routes may take longer
+            </Tooltip>
+          }
+        >
+          <label className={isMultiP2P ? 'checked' : ''}>
+            <input
+              type='checkbox'
+              checked={isMultiP2P}
+              onChange={toggleIsMultiP2P}
+              className='include-multi'
+            />
+            Find MultiRoutes
+          </label>
+        </OverlayTrigger>
       </div>
     </form>
   );
