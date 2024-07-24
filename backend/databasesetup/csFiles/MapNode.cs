@@ -20,8 +20,8 @@ public class MapNode
 
 
     public MapNode(long ID, double latitude, double longitude) {
-        rounded_lat = Math.round(latitude, 6);
-        rounded_lng = Math.round(longitude, 6);
+        double rounded_lat = Math.Round(latitude, 6);
+        double rounded_lng = Math.Round(longitude, 6);
 
         this.ID = ID;
         this.Latitude = rounded_lat;
@@ -72,9 +72,9 @@ public class MapNode
 
         var c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
 
-        dist_total = R * c; // Distance in meters
+        double dist_total = R * c; // Distance in meters
 
-        return Math.round(dist_total, 2);
+        return Math.Round(dist_total, 2);
     }
 
     public override string ToString()
