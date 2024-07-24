@@ -274,11 +274,14 @@ export function addClusteredLayer(mapRef, geoJsonData, sourceId, imageId, cluste
     const coordinates = e.features[0].geometry.coordinates.slice();
     const { name } = e.features[0].properties;
 
+    // Replace commas with <br> tags for line breaks
+    const formattedName = name.split(',').join('<br>');
+
     removeExistingPopups();
 
     popup = new mapboxgl.Popup({ offset: 25, className: 'custom-popup' })
       .setLngLat(coordinates)
-      .setHTML(name)
+      .setHTML(`<div class="popup-content-311">${formattedName}</div>`)
       .addTo(mapRef.current);
   };
 
