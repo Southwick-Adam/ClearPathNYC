@@ -74,7 +74,7 @@ namespace aspBuild.Data
                 MATCH (n:nodes)-[r]->(relatedNode)
                 WHERE n.taxizone = $taxizone
                 RETURN n.nodeid, n.roadrank, n.metrozone, n.threeoneone, 
-                    type(r) AS relationshipType, r.distance, r.direction, 
+                    type(r) AS relationshipType, r.distance, 
                     relatedNode.nodeid AS relatedNodeId, relatedNode.roadrank AS relatedNodeRoadrank, 
                     relatedNode.metrozone AS relatedNodeMetrozone, relatedNode.threeoneone AS relatedNodeThreeoneone,
                     relatedNode.park as relatedNodePark
