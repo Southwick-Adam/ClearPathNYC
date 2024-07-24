@@ -26,7 +26,7 @@ import fetchOther311 from '../../assets/geodata/fetchOther311.js';
 import poiGeojson from '../../assets/geodata/171_POIs.json';
 import fetchMulti311 from '../../assets/geodata/fetchMulti311.js';
 
-function MapComponent({ route, startGeocoderRef, endGeocoderRef, geocoderRefs, playVideo, layerVisibility, setPresentLayers }) {
+function MapComponent({ route, loopGeocoderRef,startGeocoderRef, endGeocoderRef, geocoderRefs, playVideo, layerVisibility, setPresentLayers }) {
   const mapContainerRef = useRef(null);
   const mapRef = useRef(null);
   const isMapLoadedRef = useRef(false);
@@ -37,7 +37,7 @@ function MapComponent({ route, startGeocoderRef, endGeocoderRef, geocoderRefs, p
   const waypointRefs = [useRef(null), useRef(null), useRef(null), useRef(null), useRef(null)];
 
   const {
-    setStartCord, setEndCord, setWaypointAndIncrease,
+    setStartCord, setEndCord, setWaypointAndIncrease, setLoopCord,
     waypointCord1, waypointCord2, waypointCord3, waypointCord4, waypointCord5,
     visibleWaypoints, isNightMode, isColorBlindMode
   } = useStore();
@@ -46,6 +46,13 @@ function MapComponent({ route, startGeocoderRef, endGeocoderRef, geocoderRefs, p
     const response = await fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${lng},${lat}.json?access_token=${MAPBOX_TOKEN}`);
     const data = await response.json();
     return data.features[0]?.place_name || 'Unknown location';
+  };
+
+  const updateLoopStartInput = async (coordinates) => {
+    if (loopGeocoderRef.current) {
+      const placeName = await reverseGeocode(coordinates[0], coordinates[1]);
+      loopGeocoderRef.current.setInput(placeName);
+    }
   };
 
   const updateStartInput = async (coordinates) => {
@@ -151,7 +158,7 @@ function MapComponent({ route, startGeocoderRef, endGeocoderRef, geocoderRefs, p
       style: isNightMode ? MAPBOX_NIGHT_STYLE_URL : MAPBOX_DAY_STYLE_URL,
       center: [-73.9712, 40.7831],
       zoom: 13,
-      minZoom: 13,
+      minZoom: 11,
       maxZoom: 20,
       accessToken: MAPBOX_TOKEN,
       pitch: 50,
@@ -176,9 +183,11 @@ function MapComponent({ route, startGeocoderRef, endGeocoderRef, geocoderRefs, p
           multiHighImage,
           multiVeryHighImage,
           poiImage,
+          setLoopCord,
           setStartCord,
           setEndCord,
           setWaypointAndIncrease,
+          updateLoopStartInput,
           updateStartInput,
           updateEndInput,
           updateWaypointInput,
@@ -202,9 +211,11 @@ function MapComponent({ route, startGeocoderRef, endGeocoderRef, geocoderRefs, p
         multiHighImage,
         multiVeryHighImage,
         poiImage,
+        setLoopCord,
         setStartCord,
         setEndCord,
         setWaypointAndIncrease,
+        updateLoopStartInput,
         updateStartInput,
         updateEndInput,
         updateWaypointInput,

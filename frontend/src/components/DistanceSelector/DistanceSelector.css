@@ -1,17 +1,31 @@
 .distance_selector_container {
-    display: flex;
-    align-items: center;
-  }
-  
-  .distance_selector_label {
-    margin-right: 10px;
-    font-weight: bold;
-  }
-  
-  .distance_selector_input_group {
-    width: 50px;
-  }
-  
-  .distance_selector_input {
-    text-align: right;
-  }
+  display: flex;
+  align-items: center;
+}
+
+.distance_selector_label {
+  margin-right: 10px;
+  font-weight: bold;
+}
+
+.distance_selector_input_group {
+  width: 50px;
+}
+
+.distance_selector_input {
+  text-align: right;
+}
+
+.night-mode .distance_selector_input_group,
+.night-mode .distance_selector_input {
+  background-color: rgb(91 104 104);
+  color: #b5b9bd;
+  border-color: #8a9199;
+}
+
+.night-mode .input-group-text {
+  background-color: rgb(72 82 82);
+  color: #b5b9bd;
+  border-color: #8a9199;
+
+}

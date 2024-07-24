@@ -106,12 +106,14 @@
 }
 
 .alert_panel.minimised {
-    width: 40px;
-    height: 40px;
+    width: 60px;
+    height: 60px;
     grid-template-areas: "icon";
     grid-template-columns: auto;
     gap: 0;
     padding: 0;
     font-size: 0;
     bottom: 120px;
+    justify-content: center;
+    align-items: center;
 }
