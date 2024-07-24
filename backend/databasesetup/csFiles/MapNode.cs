@@ -11,9 +11,9 @@ public class MapNode
     public double Latitude {get;}
     public double Longitude {get;}
     public bool Park {get; set;}
-    public string TaxiZone {get; set;}
+    public int TaxiZone {get; set;}
     public int RoadRank {get; set;}
-    public string MetroZones {get; set;}
+    public int MetroZones {get; set;}
     public bool ThreeOneOne {get; set;}
     public List<long> vertices = [];
     public Hashtable verticesInfo = new Hashtable();
@@ -40,10 +40,11 @@ public class MapNode
         {
             double distance = this.NodeDistance(node);
             byte direction = this.BearingByte(node);
+            byte direction2 = node.BearingByte(this);
             Random rnd = new();
             int quietScore = rnd.Next(0,11);
 
-            NodeInfo nodeInfo = new(distance, direction, quietScore);
+            NodeInfo nodeInfo = new(distance, direction, direction2, quietScore);
             
             verticesInfo.Add(node.ID, nodeInfo);
             vertices.Add(node.ID);

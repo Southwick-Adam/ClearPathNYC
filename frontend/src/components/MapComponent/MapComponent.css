@@ -143,3 +143,15 @@
 .busyness-tooltip{
   height:40px;
 }
+
+@media only screen and (max-width: 500px) 
+{
+  .mapboxgl-control-container .mapboxgl-ctrl-top-right .mapboxgl-ctrl
+  {
+    margin: 5px 5px 0 0;
+  }
+}
+
+.mapboxgl-ctrl-geocoder--input .night{
+  color: white;
+}

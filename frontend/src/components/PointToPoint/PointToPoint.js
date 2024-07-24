@@ -5,13 +5,16 @@ import BusyToggleSwitch from '../BusyToggleSwitch/BusyToggleSwitch';
 import './PointToPoint.css';
 import Waypoint from '../Waypoint/Waypoint';
 import useStore from '../../store/store';
+import { OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { BsExclamationTriangleFill } from 'react-icons/bs';
 
 function PointToPoint({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoderRefs, hideSidebar }) {
   const {
-    startCord, endCord, isQuiet, includeWaypoints, visibleWaypoints,
+    startCord, endCord, ptpIsQuiet, includeWaypoints, visibleWaypoints,
     waypointCord1, waypointCord2, waypointCord3, waypointCord4, waypointCord5,
-    setStartCord, setEndCord, setIsQuiet, setIncludeWaypoints, setVisibleWaypoints,
-    setWaypointCord1, setWaypointCord2, setWaypointCord3, setWaypointCord4, setWaypointCord5, resetWaypointCord
+    setStartCord, setEndCord, togglePtpIsQuiet, setIncludeWaypoints, setVisibleWaypoints,
+    setWaypointCord1, setWaypointCord2, setWaypointCord3, setWaypointCord4, setWaypointCord5, resetWaypointCord,
+    isColorBlindMode, isMultiP2P, toggleIsMultiP2P
   } = useStore();
 
   const [isGoButtonDisabled, setGoButtonDisabled] = useState(true);
@@ -45,7 +48,7 @@ function PointToPoint({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoder
   }, [startCord, endCord, waypointCord1, waypointCord2, waypointCord3, waypointCord4, waypointCord5, visibleWaypoints]);
 
   function handleToggleChange() {
-    setIsQuiet(!isQuiet);
+    togglePtpIsQuiet();
   }
 
   function handleSubmit(event) {
@@ -58,7 +61,8 @@ function PointToPoint({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoder
     ].filter(coord => coord !== null);
 
     const formData = {
-      isQuiet,
+      isQuiet: ptpIsQuiet,
+      isMultiP2P,
       coordinates,
     };
 
@@ -118,18 +122,22 @@ function PointToPoint({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoder
       const tempCoord = waypointStates[index + 1].coordinates;
       waypointStates[index + 1].setCoordinates(waypointStates[index].coordinates);
       waypointStates[index].setCoordinates(tempCoord);
-
+  
       if (geocoderRefs[index].current && geocoderRefs[index + 1].current) {
-        const currentInput = geocoderRefs[index].current._inputEl.value;
-        const nextInput = geocoderRefs[index + 1].current._inputEl.value;
-
-        geocoderRefs[index].current.setInput(nextInput);
-        geocoderRefs[index + 1].setInput(currentInput);
-
-        if (!currentInput.trim()) {
+        const currentInput = geocoderRefs[index].current._inputEl?.value || '';
+        const nextInput = geocoderRefs[index + 1].current._inputEl?.value || '';
+  
+        if (geocoderRefs[index].current.setInput) {
+          geocoderRefs[index].current.setInput(nextInput);
+        }
+        if (geocoderRefs[index + 1].current.setInput) {
+          geocoderRefs[index + 1].current.setInput(currentInput);
+        }
+  
+        if (!currentInput.trim() && geocoderRefs[index + 1].current) {
           hideSuggestions(geocoderRefs[index + 1].current);
         }
-        if (!nextInput.trim()) {
+        if (!nextInput.trim() && geocoderRefs[index].current) {
           hideSuggestions(geocoderRefs[index].current);
         }
       }
@@ -146,7 +154,7 @@ function PointToPoint({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoder
   }
 
   return (
-    <form className="pointtopoint_container" onSubmit={handleSubmit}>
+    <form className={`pointtopoint_container ${isColorBlindMode ? 'color-blind-mode' : ''}`} onSubmit={handleSubmit}>
       <div className="ptp_row">
         <div className="ptp_label">Start</div>
         <LocationFinder setCoordinates={setStartCord} geocoderRef={startGeocoderRef} />
@@ -175,7 +183,7 @@ function PointToPoint({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoder
         <LocationFinder setCoordinates={setEndCord} geocoderRef={endGeocoderRef} />
       </div>
       <div className="busy_go_row">
-        <BusyToggleSwitch isQuiet={isQuiet} handleToggleChange={handleToggleChange} />
+        <BusyToggleSwitch isQuiet={ptpIsQuiet} handleToggleChange={handleToggleChange} />
         <GoButton disabled={isGoButtonDisabled} />
       </div>
       <div className='include_waypoints'>
@@ -184,9 +192,31 @@ function PointToPoint({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoder
             type='checkbox'
             checked={includeWaypoints}
             onChange={() => setIncludeWaypoints(!includeWaypoints)}
+            className='includ-text'
           />
           Include Waypoints
         </label>
+      </div>
+      <div className='include_multiP2P'>
+        <OverlayTrigger
+          placement="top"
+          overlay={
+            <Tooltip id="tooltip-multiP2P">
+              <BsExclamationTriangleFill style={{ color: 'red', fontSize: '16px', marginRight: '5px', height:'16px'}} />
+              Please be aware that loading multiple routes may take longer
+            </Tooltip>
+          }
+        >
+          <label className={isMultiP2P ? 'checked' : ''}>
+            <input
+              type='checkbox'
+              checked={isMultiP2P}
+              onChange={toggleIsMultiP2P}
+              className='include-multi'
+            />
+            Find MultiRoutes
+          </label>
+        </OverlayTrigger>
       </div>
     </form>
   );

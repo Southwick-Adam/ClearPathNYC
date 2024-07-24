@@ -1,3 +1,4 @@
+using System;
 using Neo4j.Driver;
 
 namespace aspRun.Data
@@ -10,31 +11,79 @@ namespace aspRun.Data
         public List<double> Costs { get; set; }
         public string CoordinatesString { get; set; }
         public string CostsString { get; set; }
+        public double totalDistance { get; set; }
 
-        public void generateCoordinatesString()
+        public Route()
         {
-            var coordinates = NodeLongs.Zip(NodeLats, (lat, lng) => new[] { lat, lng });
-            CoordinatesString = string.Join(",\n ", coordinates.Select(coord => $"[{coord[1]}, {coord[0]}]"));
+            NodeNames = [];
+            NodeLats = [];
+            NodeLongs = [];
+            Costs = [];
+            CoordinatesString = string.Empty;
+            CostsString = string.Empty;
         }
 
-        public void generateQuietScoresString()
+        public void GenerateCoordinatesString()
         {
-            List<double> distances = new List<double>();
-            List<double> costsLocal = new List<double>();
-            // distances.Add(0);
-            // costsLocal.Add(0);
+            var coordinates = NodeLongs.Zip(NodeLats, (lat, lng) => new[] { lat, lng });
+            CoordinatesString = string.Join(",\n ", coordinates.Select(coord => $"[{coord[0]}, {coord[1]}]"));
+        }
+
+        public void GenerateQuietScoresString()
+        {
+            List<double> distances = [];
+            List<double> costsLocal = [];
             for (var i = 1; i < NodeLats.Count; i++)
             {
-                distances.Add((HaversineCalculator.CalculateDistance(NodeLats[i-1], NodeLongs[i-1], NodeLats[i], NodeLongs[i])));
-                costsLocal.Add((Costs[i]-Costs[i-1]));
+                // Console.WriteLine($"Lat,Long, Lat1 Long1 : {NodeLats[i-1]}, {NodeLongs[i-1]},{ NodeLats[i]}, {NodeLongs[i]}");
+                // Console.WriteLine(HaversineCalculator.CalculateDistance(NodeLats[i-1], NodeLongs[i-1], NodeLats[i], NodeLongs[i]));
+                // Console.WriteLine($"Costs: {Costs[i]-Costs[i-1]}");
+                distances.Add(HaversineCalculator.CalculateDistance(NodeLats[i-1], NodeLongs[i-1], NodeLats[i], NodeLongs[i]));
+                costsLocal.Add(Costs[i]-Costs[i-1]);
             }
             
-            List<double> finalQuietScore = new List<double>();
+            List<double> finalQuietScore = [];
             for (var i = 0; i < distances.Count; i++)
             {
-                finalQuietScore.Add(Math.Round(costsLocal[i] / (distances [i])));
+                // Console.WriteLine($"{costsLocal[i]}, {distances[i]}, {Math.Round(costsLocal[i] / distances [i])}");
+                finalQuietScore.Add(Math.Round(costsLocal[i] / distances [i]));
             }
             CostsString = string.Join(", ", finalQuietScore);
+            foreach (var dist in distances)
+            {
+                totalDistance += dist;
+            }
+            Console.WriteLine($"In routeProcessor: {totalDistance}");
+        }
+
+        public void GenerateLoudScoreString()
+        {
+            List<double> distances = [];
+            List<double> costsLocal = [];
+            for (var i = 1; i < NodeLats.Count; i++)
+            {
+                Console.WriteLine($"Lat,Long, Lat1 Long1 : {NodeLats[i-1]}, {NodeLongs[i-1]},{ NodeLats[i]}, {NodeLongs[i]}");
+                Console.WriteLine(HaversineCalculator.CalculateDistance(NodeLats[i-1], NodeLongs[i-1], NodeLats[i], NodeLongs[i]));
+                Console.WriteLine($"Costs: {Costs[i]-Costs[i-1]}");
+                distances.Add(HaversineCalculator.CalculateDistance(NodeLats[i-1], NodeLongs[i-1], NodeLats[i], NodeLongs[i]));
+                costsLocal.Add(Costs[i]-Costs[i-1]);
+            }
+            
+            List<double> finalLoudScore = [];
+            for (var i = 0; i < distances.Count; i++)
+            {
+                Console.WriteLine($"{costsLocal[i]}, {distances[i]}, {Math.Round(costsLocal[i] / distances [i])}");
+                double tempScore = Math.Round(costsLocal[i] / distances [i]);
+                if (tempScore == 1000){finalLoudScore.Add(1000);}
+                else if (tempScore == 0){finalLoudScore.Add(5);}
+                else {finalLoudScore.Add(6- tempScore); }
+            }
+            CostsString = string.Join(", ", finalLoudScore);
+            foreach (var dist in distances)
+            {
+                totalDistance += dist;
+            }
+            Console.WriteLine($"In routeProcessor: {totalDistance}");
         }
     }
 
@@ -49,10 +98,10 @@ namespace aspRun.Data
 
             return new Route
             {
-                NodeNames = nodeNamesObjList?.OfType<long>().ToList() ?? new List<long>(),
-                NodeLats = nodeLatsObjList?.OfType<double>().ToList() ?? new List<double>(),
-                NodeLongs = nodeLongObjList?.OfType<double>().ToList() ?? new List<double>(),
-                Costs = nodeCostsObjList?.OfType<double>().ToList() ?? new List<double>()
+                NodeNames = nodeNamesObjList?.OfType<long>().ToList() ?? [],
+                NodeLats = nodeLatsObjList?.OfType<double>().ToList() ?? [],
+                NodeLongs = nodeLongObjList?.OfType<double>().ToList() ?? [],
+                Costs = nodeCostsObjList?.OfType<double>().ToList() ?? []
             };
         }
     }

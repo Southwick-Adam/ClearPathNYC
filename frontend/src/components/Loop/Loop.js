@@ -1,46 +1,53 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './Loop.css';
 import DistanceSelector from '../DistanceSelector/DistanceSelector';
 import BusyToggleSwitch from '../BusyToggleSwitch/BusyToggleSwitch';
 import LocationFinder from '../LocationFinder/LocationFinder';
 import GoButton from '../GoButton/GoButton';
+import useStore from '../../store/store';
 
-function Loop({onFormSubmit}) {
-  const [coordinates, setCoordinates] = useState(null);
-  const [distance, setDistance] = useState('');
-  const [mode, setMode] = useState('quiet');
+function Loop({ onFormSubmit, geocoderRef }) {
+  const {
+    loopCord, setLoopCord, loopIsQuiet, toggleLoopIsQuiet, loopDistance, setLoopDistance
+  } = useStore();
 
-  function handleToggleChange(val){
-    setMode(val);
+  const [isGoButtonDisabled, setGoButtonDisabled] = useState(true);
+
+  useEffect(() => {
+    const isDisabled = loopCord === null || loopDistance === 0 || !loopDistance;
+    setGoButtonDisabled(isDisabled);
+  }, [loopCord, loopDistance]);
+
+  function handleToggleChange() {
+    toggleLoopIsQuiet();
   };
 
-  function handleDistanceChange(dist){
-    setDistance(dist);
+  function handleDistanceChange(dist) {
+    setLoopDistance(dist);
   }
 
-  function handleSubmit(event){
-    event.preventDefault(); // prevent default form submission processses for smoother user interaction
+  function handleSubmit(event) {
+    event.preventDefault();
     const formData = {
-      coordinates,
-      distance,
-      mode,
+      coordinates: loopCord,
+      distance: loopDistance,
+      mode: loopIsQuiet ? 'true' : 'false',
     };
-    onFormSubmit('loop',formData);
+    onFormSubmit('loop', formData);
   };
 
   return (
     <form className="loop_container" onSubmit={handleSubmit}>
       <div>
-        <LocationFinder setCoordinates={setCoordinates}/>
+        <LocationFinder setCoordinates={setLoopCord} geocoderRef={geocoderRef} />
       </div>
       <div className="loop_distance_selector">
-        <DistanceSelector distance={distance} onDistanceChange={handleDistanceChange}/>
+        <DistanceSelector distance={loopDistance} onDistanceChange={handleDistanceChange} />
       </div>
       <div className='busy_go_row'>
-      <BusyToggleSwitch mode={mode} handleToggleChange={handleToggleChange} /> 
-      <GoButton />
+        <BusyToggleSwitch isQuiet={loopIsQuiet} handleToggleChange={handleToggleChange} />
+        <GoButton disabled={isGoButtonDisabled} />
       </div>
-      
     </form>
   );
 };

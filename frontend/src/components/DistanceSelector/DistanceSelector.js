@@ -1,22 +1,30 @@
 import React from 'react';
-import {InputGroup, FormControl } from 'react-bootstrap'
+import { InputGroup, FormControl } from 'react-bootstrap';
+import useStore from '../../store/store';
+import './DistanceSelector.css';
 
-const DistanceSelector = ({distance, onDistanceChange}) => {
-    const handleChange = (e) => {
+const DistanceSelector = ({ distance, onDistanceChange }) => {
+  const handleChange = (e) => {
+    const newValue = e.target.value;
+    // Allow empty input to support deletion
+    if (newValue === '') {
+      onDistanceChange('');
+    } else {
+      const newValueNumber = Number(newValue);
       // Validation for non-negative distance
-      const newValue = Number(e.target.value);
-      if (newValue >= 0) {
-        onDistanceChange(newValue);
-      } else {
-        onDistanceChange(0);
+      if (!isNaN(newValueNumber) && newValueNumber >= 0) {
+        onDistanceChange(newValueNumber);
       }
-    };
-  
+    }
+  };
+
+  const isColorBlindMode = useStore((state) => state.isColorBlindMode);
+  const isNightMode = useStore((state) => state.isNightMode);
 
   return (
-    <div className="distance_selector_container">
+    <div className={`distance_selector_container ${isColorBlindMode ? 'color-blind-mode' : ''} ${isNightMode ? 'night-mode' : ''}`}>
       <InputGroup className="number_selector_input_group">
-      <InputGroup.Text>miles</InputGroup.Text>
+        <InputGroup.Text>miles</InputGroup.Text>
         <FormControl
           id="distance_input"
           type="number"

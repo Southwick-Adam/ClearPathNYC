@@ -13,7 +13,7 @@ namespace aspBuild.Data
         public byte Direction { get; set; }
         public long RelatedNodeID { get; set; }
         public int RelatedNodeRoadRank { get; set; }
-        public string RelatedNodeMetroZone { get; set; } = string.Empty;
+        public int RelatedNodeMetroZone { get; set; }
         public bool RelatedNodeThreeOneOne { get; set; }
         public bool RelatedNodePark { get; set; }
     }
@@ -34,7 +34,7 @@ namespace aspBuild.Data
                 Direction = record["r.direction"].As<byte>(),
                 RelatedNodeID = record["relatedNodeId"].As<long>(),
                 RelatedNodeRoadRank = record["relatedNodeRoadrank"].As<int>(),
-                RelatedNodeMetroZone = record["relatedNodeMetrozone"].As<string>(),
+                RelatedNodeMetroZone = record["relatedNodeMetrozone"].As<int>(),
                 RelatedNodeThreeOneOne = record["relatedNodeThreeoneone"].As<bool>(),
                 RelatedNodePark = record["relatedNodePark"].As<bool>()
             };

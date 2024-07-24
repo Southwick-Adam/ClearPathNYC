@@ -1,5 +1,5 @@
 .pointtopoint_container {
-    padding: 20px 5px;
+    padding: 20px 10px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -24,6 +24,7 @@
     font-weight: bold;
     padding-right: 3px;
     padding-left:12px;
+    margin-right: 5px;
   }
 
   .ptp_label_end{
@@ -46,9 +47,6 @@
   .waypoint:nth-child(4) {z-index: 6;}
   .waypoint:nth-child(5) {z-index: 5;}
 
-  .checkbox{
-    background-color: #198754;
-  }
 
   .upDownWrapper{
     flex-direction: column;
@@ -120,3 +118,48 @@
   .include_waypoints input[type="checkbox"] {
     accent-color: #2a8754;
   }
+
+  include_multiP2P, .include_waypoints{
+    margin-bottom: 10px;
+  }
+
+
+  .include_multiP2P:hover{
+    cursor: pointer;
+  }
+
+  .include_multiP2P input[type="checkbox"] {
+    accent-color: #2a8754;
+  }
+
+  /* Color-Blind Mode */
+.color-blind-mode .upbtn,
+.color-blind-mode .downbtn,
+.color-blind-mode .addbtn {
+  color: #9881f5;
+  border-color: #9881f5;
+}
+
+.color-blind-mode .upbtn:hover,
+.color-blind-mode .downbtn:hover,
+.color-blind-mode .addbtn:hover {
+  color: #ffffff;
+  background-color: #9881f5;
+  border-color: #9881f5;
+}
+
+.color-blind-mode .include_waypoints input[type="checkbox"] {
+  accent-color: #9881f5;
+}
+
+.includ-text{
+  margin-right: 8px;
+}
+
+.include-multi{
+  margin-right: 8px;
+}
+
+.include-multi:hover, .includ-text:hover{
+  cursor: pointer;
+}

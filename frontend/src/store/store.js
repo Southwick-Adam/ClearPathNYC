@@ -4,9 +4,12 @@ const hour = new Date().getHours();
 const isNight = hour >= 18 || hour <= 6;
 
 const useStore = create((set, get) => ({
+  loopCord: null,
   startCord: null,
   endCord: null,
-  isQuiet: true,
+  loopIsQuiet: true, // Separate state for loop
+  ptpIsQuiet: true,  // Separate state for point-to-point
+  loopDistance: '',
   includeWaypoints: false,
   visibleWaypoints: 0,
   waypointCord1: null,
@@ -14,9 +17,14 @@ const useStore = create((set, get) => ({
   waypointCord3: null,
   waypointCord4: null,
   waypointCord5: null,
+  isLoopOpen: false,
+  isPtPOpen: false,
+  setLoopCord: (cord) => set({ loopCord: cord }),
+  setLoopDistance: (distance) => set({ loopDistance: distance }),
   setStartCord: (cord) => set({ startCord: cord }),
   setEndCord: (cord) => set({ endCord: cord }),
-  setIsQuiet: () => set((state) => ({ isQuiet: !state.isQuiet })),
+  toggleLoopIsQuiet: () => set((state) => ({ loopIsQuiet: !state.loopIsQuiet })),
+  togglePtpIsQuiet: () => set((state) => ({ ptpIsQuiet: !state.ptpIsQuiet })),
   setIncludeWaypoints: () => set((state) => ({ includeWaypoints: !state.includeWaypoints })),// This one is for when the user click on the include waypoint checkbox
   enableWaypoints: () => set({ includeWaypoints: true }),// This one's for the popup to set includewaypoint=true
   setVisibleWaypoints: (count) => set({ visibleWaypoints: count }),
@@ -56,12 +64,21 @@ const useStore = create((set, get) => ({
     set(updatedState);
     return waypointIndex;
   },
-  
+
   isNightMode: isNight,
   toggleNightMode: () => set((state) => ({ isNightMode: !state.isNightMode })),
   setNightMode: (isNight) => set({ isNightMode: isNight }),
-  route: null,
-  setRoute: (route) => set({ route }),
+  routes: [],
+  setRoutes: (routes) => set({ routes }),
+  selectedRouteIndex: 0,
+  setSelectedRouteIndex: (index) => set({ selectedRouteIndex: index }),
+  isColorBlindMode: false,
+  toggleColorBlindMode: () => set((state) => ({ isColorBlindMode: !state.isColorBlindMode })),
+  setColorBlindMode: (isColorBlind) => set({ isColorBlindMode: isColorBlind }),
+  isMultiP2P: false,
+  toggleIsMultiP2P: () => set((state) => ({ isMultiP2P: !state.isMultiP2P })),
+  setIsLoopOpen: (isOpen) => set({ isLoopOpen: isOpen }),
+  setIsPtPOpen: (isOpen) => set({ isPtPOpen: isOpen }),
 }));
 
 export default useStore;

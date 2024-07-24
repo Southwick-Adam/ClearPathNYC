@@ -56,7 +56,7 @@ class Predictor:
 
 def call_taxi_model():
     csv_file = 'data/taxi_data.csv'
-    model_file = 'models/taxi_stacking_model.pkl'
+    model_file = 'models/taxi_xgb_model.pkl'
     hour = get_hour()
     location_ids_string = "LocationID"
     feature_order = ['LocationID', 'day', 'month', 'year', 'hour']
@@ -67,7 +67,7 @@ def call_taxi_model():
 
 def call_subway_model():
     csv_file = 'data/subway_data.csv'
-    model_file = 'models/subway_stacking_model.pkl'
+    model_file = 'models/subway_xgb_model.pkl'
     hour = get_hour()
     location_ids_string = "station_complex_id"
     feature_order = ['station_complex_id', 'year', 'month', 'day', 'hour']

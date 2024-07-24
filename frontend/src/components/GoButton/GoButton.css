@@ -8,13 +8,26 @@
     font-size: 16px;
     border-radius: 5px;
     transition: background-color 0.3s ease-in-out;
-}
-
-.go_button:hover {
+  }
+  
+  .go_button:hover {
     background-color: #31b678;
-}
-
-.go_button.disabled {
+  }
+  
+  .go_button.disabled {
     background-color: #6c757d;
     cursor: not-allowed;
-}
+  }
+  
+  .go_button.color-blind {
+    background-color: #62309C;
+  }
+  
+  .go_button.color-blind:hover {
+    background-color: #7a41b0;
+  }
+  
+  .go_button.color-blind.disabled{
+    background-color: #6c757d;
+    cursor: not-allowed;
+  }

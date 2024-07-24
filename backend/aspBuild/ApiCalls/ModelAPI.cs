@@ -20,19 +20,19 @@ namespace aspBuild.ApiCalls
             var response = await _httpClient.GetAsync(url);
             response.EnsureSuccessStatusCode();
             var content = await response.Content.ReadAsStringAsync();
-            Console.WriteLine(content);//remove
+            Console.WriteLine($"Succes fetching data from {url}");
             File.WriteAllText(filePath, content);
             }
             catch (HttpRequestException ex)
             {
-                Console.WriteLine($"Error while fetching {url} data: {ex.StatusCode}");
+                Console.WriteLine($"Error while fetching {url} data: {ex.Message}");
             }
         }
 
         public async Task UpdateDataFiles()
         {
-            string taxiUrl = "http://modeling:5000/taxi";
-            string subwayUrl = "http://modeling:5000/subway";
+            string taxiUrl = "https://clearpath.info.gf/taxi";
+            string subwayUrl = "https://clearpath.info.gf/subway";
             string taxiFilePath = "DataFiles/taxi_busyness_ranking.json";
             string subwayFilePath = "DataFiles/subway_busyness_ranking.json";
 
