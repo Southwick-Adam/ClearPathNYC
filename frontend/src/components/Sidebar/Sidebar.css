@@ -153,6 +153,7 @@
 
 .ptp_box.open, .loop_box.open {
   opacity: 1;
+  height: 100vh;
   max-height: calc(100vh - 283px); /* Adjust based on the content height */
 }
 
