@@ -36,6 +36,7 @@ namespace aspRun.Controllers
 
             var finalCoordinates = new StringBuilder();
             var finalCosts = new StringBuilder();
+            double totalDistance = 0;
 
             try
             {
@@ -56,6 +57,8 @@ namespace aspRun.Controllers
                         finalCosts.Append(", ");
                     }
                     finalCosts.Append(result[1]);
+
+                    totalDistance += Double.Parse(result[2]);
                 }
             }
             catch (Exception ex)
@@ -63,7 +66,7 @@ namespace aspRun.Controllers
                 return StatusCode(500, $"An error occurred while connecting to the Neo4j database: {ex.Message}");
             }
 
-            var geoJson = _neo4jService.GeoJSON(finalCoordinates.ToString(), "P2P", "false", "[]", finalCosts.ToString());
+            var geoJson = _neo4jService.GeoJSON(finalCoordinates.ToString(), "P2P", "false", "[]", finalCosts.ToString(), totalDistance);
             return Ok(geoJson);
         }
 
@@ -87,10 +90,12 @@ namespace aspRun.Controllers
 
             List<StringBuilder> finalCoordinatesStringBuilder = [];
             List<StringBuilder> finalCostsStringbuilder = [];
+            List<double> finalDistancesDouble = [];
             for (var i = 0; i < yensAmount; i++)
             {
                 finalCoordinatesStringBuilder.Add(new StringBuilder());
                 finalCostsStringbuilder.Add(new StringBuilder());
+                finalDistancesDouble.Add(0);
 
             }
 
@@ -116,6 +121,7 @@ namespace aspRun.Controllers
                             finalCostsStringbuilder[j].Append(", ");
                         }
                         finalCostsStringbuilder[j].Append(results[j][1]);
+                        finalDistancesDouble[j] += Double.Parse(results[j][2]);
                     }
                 }
             }
@@ -126,13 +132,15 @@ namespace aspRun.Controllers
 
             List<string> listCoordinates = [];
             List<string> listQuietscores = [];
+            List<string> listDistances = [];
             for (var i = 0; i < finalCoordinatesStringBuilder.Count; i++)
             {
                 listCoordinates.Add(finalCoordinatesStringBuilder[i].ToString());
                 listQuietscores.Add(finalCostsStringbuilder[i].ToString());
+                listDistances.Add(finalDistancesDouble[i].ToString());
             }
 
-            var geoJson = _neo4jService.GeoJSONMulti(listCoordinates, "P2P", "false", [], listQuietscores);
+            var geoJson = _neo4jService.GeoJSONMulti(listCoordinates, "P2P", "false", [], listQuietscores, listDistances);
             return Ok(geoJson);
         }
 
