@@ -2,6 +2,11 @@ using System;
 using System.Text;
 using Microsoft.Extensions.Options;
 using Neo4j.Driver;
+using NetTopologySuite.Features;
+using NetTopologySuite.Geometries;
+using NetTopologySuite.Geometries.Utilities;
+using NetTopologySuite.IO;
+
 
 namespace aspRun.Data
 {
@@ -10,12 +15,39 @@ namespace aspRun.Data
         private readonly IDriver _driver;
         private readonly Neo4jOptions _neo4jOptions;
         private readonly string _database = "neo4j";
+        private readonly Geometry? polygon;
 
         public Neo4jService(IOptions<Neo4jOptions> options)
         {
             _neo4jOptions = options.Value;
             _driver = GraphDatabase.Driver(_neo4jOptions.Uri, AuthTokens.Basic(_neo4jOptions.Username, _neo4jOptions.Password));
-        }
+            var reader = new GeoJsonReader();
+            try
+            {
+                using (var streamReader = new StreamReader("loopPolygon.txt"))
+                {
+                    string geoJson = streamReader.ReadToEnd();
+                    var featureCollection = reader.Read<FeatureCollection>(geoJson);
+                    var feature = featureCollection[0];
+                    polygon = feature.Geometry as Polygon;
+
+                    if (polygon == null)
+                    {
+                        throw new InvalidOperationException("The geometry in the provided GeoJSON is not a polygon.");
+                    }
+                }
+            }
+            catch (FileNotFoundException ex)
+            {
+                Console.WriteLine($"Error: The file 'loopPolygon.txt' was not found. {ex.Message}");
+                // Handle the error as needed
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error reading GeoJSON file: {ex.Message}");
+                // Handle the error as needed
+            }
+        }        
 
         public async Task<T> ReadAsync<T>(Func<IAsyncQueryRunner, Task<T>> func)
         //handles session logic for reading info from DB
@@ -350,20 +382,6 @@ namespace aspRun.Data
             return GeoJSON;
         }
 
-        // public async Task AddLoudScore()
-        // {
-        //     var query = "MATCH ()-[r:PATH]->() SET r.loudscore = -r.quietscore;";
-        //     var parameters = new Dictionary<string, object>();
-        //     await using var session = _driver.AsyncSession(o => o.WithDatabase(_database));
-
-        //     await session.ExecuteWriteAsync(
-        //         async tx =>
-        //     {
-        //         await tx.RunAsync(query, parameters);
-        //     });
-        //     Console.WriteLine("Loud score added");
-        // }
-
         public async Task DisposeAsync()
         //Disposes of session
         {
@@ -378,10 +396,28 @@ namespace aspRun.Data
 
             var distanceHit = false;
 
-            var shapeSides = 10;
+            var shapeSides = random.Next(3,11);
             double modifier = 2;
+            NetTopologySuite.Geometries.Point point = new(longitude, latitude);
 
-            double startDirection = random.Next(0, 360);
+            double startDirection;
+            if (polygon != null && polygon.Contains(point))
+            {
+                startDirection = random.Next(0, 360);
+                Console.WriteLine("Contains point");
+            }
+            else
+            {
+                startDirection = GetDirectionFromPointToPolygon(point);
+                startDirection += random.Next(-30,30);
+                if (startDirection < 0)
+                    startDirection += 360;
+                else if (startDirection >= 360)
+                    startDirection -= 360;
+                Console.WriteLine($"Direction is: {startDirection}");
+            }
+
+
             double startDirectionSave = startDirection;
             double internalAngle = 360 / shapeSides;
             while (!distanceHit)
@@ -438,8 +474,12 @@ namespace aspRun.Data
                 else { modifier -= 1; }
                 totalDistance = 0;
                 startDirection = startDirectionSave;
-                if (attempt > 10) { distanceHit = true; }
+                if (attempt > 5) 
+                { 
+                    startDirection = startDirection + random.Next(-30, 30);
+                }
                 attempt += 1;
+                
             }
 
             Console.WriteLine("Failed to find loop");
@@ -513,6 +553,18 @@ namespace aspRun.Data
             Console.WriteLine($"In looprun: {distance}");
 
             return (route.CoordinatesString, route.CostsString, distance);
+        }
+
+        public double GetDirectionFromPointToPolygon(NetTopologySuite.Geometries.Point point)
+        {
+            var nearestPoint = NetTopologySuite.Operation.Distance.DistanceOp.NearestPoints(polygon, point)[0];
+
+            double deltaX = nearestPoint.X - point.X;
+            double deltaY = nearestPoint.Y - point.Y;
+
+            double angle = Math.Atan2(deltaY, deltaX) * (180.0 / Math.PI); // Convert radians to degrees
+            if (angle < 0){angle += 360;}
+            return angle;
         }
     }
 }

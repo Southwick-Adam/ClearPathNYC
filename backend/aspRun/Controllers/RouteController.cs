@@ -1,6 +1,7 @@
 using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using aspRun.Data;
+using System.Drawing;
 
 namespace aspRun.Controllers
 {
@@ -148,16 +149,26 @@ namespace aspRun.Controllers
 
             double longitude = coordinate[0];
             double latitude = coordinate[1];
-            string result;
+            string result = "";
 
             Console.WriteLine($"Coordinates: {latitude}, {longitude}");
-            try
+            bool PointFound = false;
+            var attempts = 0;
+            while (!PointFound)
             {
-                result = await _neo4jService.Loop(latitude, longitude, distance, quiet);                
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"An error occurred while connecting to the Neo4j database: {ex.Message}");
+                try
+                {
+                    result = await _neo4jService.Loop(latitude, longitude, distance, quiet);                
+                    PointFound = true;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Error occurred");
+                    attempts += 1;
+                    if (attempts > 3){
+                        return StatusCode(500, $"An error occurred while creating the loop: {ex.Message}");
+                    }
+                }
             }
 
 
