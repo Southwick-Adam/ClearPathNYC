@@ -417,6 +417,11 @@ namespace aspRun.Data
                 for (int i = 0; i < shapeSides; i++)
                 {
                     var (coordString, quietString, dist) = await LoopRun(Lats[i], Longs[i], Lats[i + 1], Longs[i + 1], quiet);
+                    if (coordinates.Length > 0)
+                    {
+                        coordinates.Append(",");
+                        quietscore.Append(",");
+                    }
                     coordinates.Append(coordString);
                     quietscore.Append(quietString);
                     totalDistance += dist;
@@ -446,6 +451,13 @@ namespace aspRun.Data
             var nodea = await FindNode(latitude, longitude);
             var nodeb = await FindNode(finLatitude, finLongitude);
             Console.WriteLine($"Looprun: {nodea}, {nodeb}");
+
+            var CheckGraph = @"
+            CALL gds.graph.exists('NYC1')
+            YIELD exists
+            RETURN exists
+            ";
+
             string quietness;
             if (quiet) { quietness= "quietscore";}
             else { quietness = "loudscore";}
@@ -476,7 +488,19 @@ namespace aspRun.Data
                 {"nodeb", nodeb}
             };
 
-            var routeResult = await RunQuery(astarPath, parameters);
+            var graphResult = await this.RunQuery(CheckGraph, []);
+            bool graph = (bool)graphResult.First()["exists"];
+
+            List<IRecord> routeResult;
+            if (graph)
+            {
+                routeResult = await RunQuery(astarPath, parameters);
+            }
+            else
+            {
+                await StartGraph();
+                routeResult = await RunQuery(astarPath, parameters);
+            }
 
             var result = routeResult.First();
 
