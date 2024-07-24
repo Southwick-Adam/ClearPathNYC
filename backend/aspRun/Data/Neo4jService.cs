@@ -229,7 +229,7 @@ namespace aspRun.Data
                 route.GenerateCoordinatesString();
                 if (quiet) { route.GenerateQuietScoresString(); }
                 else { route.GenerateLoudScoreString(); }
-                finalList.Add([route.CoordinatesString, route.CostsString]);
+                finalList.Add([route.CoordinatesString, route.CostsString, route.totalDistance.ToString()]);
             }
 
             return finalList;
@@ -303,12 +303,12 @@ namespace aspRun.Data
             else { route.GenerateLoudScoreString(); }
 
 
-            return [route.CoordinatesString, route.CostsString];
+            return [route.CoordinatesString, route.CostsString, route.totalDistance.ToString()];
         }
 
 
         // Used to return a GeoJSON format
-        public string GeoJSONMulti(List<string> coordinatesList, string loopOrP2P, string isLoop, List<string> elevationsList, List<string> quietScoresList)
+        public string GeoJSONMulti(List<string> coordinatesList, string loopOrP2P, string isLoop, List<string> elevationsList, List<string> quietScoresList, List<string> distances)
         {
             var features = new List<string>();
             Console.WriteLine(coordinatesList.Count);
@@ -319,6 +319,7 @@ namespace aspRun.Data
             {
                 string coordinates = coordinatesList[i];
                 string quietScore = quietScoresList[i];
+                string distance = distances[i];
 
                 string feature = $@"
                 {{
@@ -333,7 +334,8 @@ namespace aspRun.Data
                         ""name"": ""{loopOrP2P}"",
                         ""isLoop"": {isLoop},
                         ""elevation"": [],
-                        ""quietness_score"": [{quietScore}]
+                        ""quietness_score"": [{quietScore}],
+                        ""distance"": [{distance}]
                     }}
                 }}";
 
@@ -354,7 +356,7 @@ namespace aspRun.Data
         }
 
 
-        public string GeoJSON(string coordinates, string loopOrP2P, string isLoop, string elevation, string quietScore)
+        public string GeoJSON(string coordinates, string loopOrP2P, string isLoop, string elevation, string quietScore,double distance)
         {
 
             string GeoJSON = $@"
@@ -373,7 +375,8 @@ namespace aspRun.Data
                     ""name"": ""{loopOrP2P}"",
                     ""isLoop"": {isLoop},
                     ""elevation"": [{elevation}],
-                    ""quietness_score"": [{quietScore}]
+                    ""quietness_score"": [{quietScore}],
+                    ""distance"": [{distance}]
                 }}
             }}
             ]
@@ -468,7 +471,7 @@ namespace aspRun.Data
                 if (totalDistance < (distance * 1.2) && totalDistance > (distance * .9))
                 {
                     distanceHit = true;
-                    return GeoJSON(coordinates.ToString(), "Loop", "true", "[]", quietscore.ToString());
+                    return GeoJSON(coordinates.ToString(), "Loop", "true", "[]", quietscore.ToString(), totalDistance);
                 }
                 else if (totalDistance > distance * 1.2) { modifier += 1.25; }
                 else { modifier -= 1; }
