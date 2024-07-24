@@ -1,35 +1,50 @@
-svg {
-    height: 36px;
-    width: auto;
-    color: #198754;
-}
-
-svg:hover {
-    color:#31b678;
+/* AutoLocationButton.css */
+.autobutton {
+    display: inline-block;
     cursor: pointer;
 }
 
+.autobutton svg {
+    height: 36px;
+    width: auto;
+    transition: color 0.3s ease;
+}
 
-.color-blind-mode .night-mode svg {
+.autobutton svg:hover {
+    cursor: pointer;
+}
+
+/* Default mode */
+.autobutton svg {
+    color: #198754;
+}
+
+.autobutton svg:hover {
+    color: #31b678;
+}
+
+/* Night mode */
+.autobutton.night-mode svg {
+    color: #31b678; 
+}
+
+.autobutton.night-mode svg:hover {
+    color: #198754; 
+}
+
+/* Color-blind mode */
+.autobutton.color-blind-mode svg {
     color: #9881f5;
 }
 
-.color-blind-mode svg {
-    color: #9881f5;
-}
-
-.color-blind-mode svg:hover {
+.autobutton.color-blind-mode svg:hover {
     color: #9151CC;
 }
 
-.color-blind-mode .night-mode svg:hover {
-    color: #9151CC; /* Slightly darker hover color for night mode */
+.autobutton.color-blind-mode.night-mode svg {
+    color: #9881f5;
 }
 
-.night-mode svg {
-    color: #31b678; /* Light color for night mode */
-}
-
-.night-mode svg:hover {
-    color: #198754; /* Slightly darker hover color for night mode */
+.autobutton.color-blind-mode.night-mode svg:hover {
+    color: #9151CC;
 }
