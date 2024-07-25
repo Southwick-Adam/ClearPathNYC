@@ -2,6 +2,7 @@ using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using aspRun.Data;
 using System.Drawing;
+using System.Diagnostics;
 
 namespace aspRun.Controllers
 {
@@ -165,7 +166,24 @@ namespace aspRun.Controllers
                 result = await _neo4jService.Loop(latitude, longitude, distance, quiet); 
                 return Ok(result);
             }  
-            catch(Exception ex){ return BadRequest($"An error occurred while processing your request: {ex}");}         
+            catch (Exception ex)
+            { 
+                int attempts = 0;
+                while (attempts < 5)
+                {
+                    try
+                    {
+                        result = await _neo4jService.Loop(latitude, longitude, distance, quiet); 
+                        return Ok(result);
+                    }
+                    catch
+                    {
+                        attempts++;
+                    }
+                }
+                return BadRequest($"An error occurred while processing your request: {ex}");
+            }        
+
 
         }
     }

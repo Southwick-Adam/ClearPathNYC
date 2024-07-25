@@ -82,7 +82,7 @@ namespace aspRun.Data
             {
                 totalDistance += dist;
             }
-            Console.WriteLine($"In routeProcessor: {totalDistance}");
+            // Console.WriteLine($"In routeProcessor: {totalDistance}");
         }
     }
 
