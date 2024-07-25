@@ -31,7 +31,7 @@ namespace aspBuild.Data
             {
                 NodeID = record["n.nodeid"].As<long>(),
                 Distance = record["r.distance"].As<double>(),
-                // Direction = record["r.direction"].As<byte>(),
+                Direction = record["r.direction"].As<byte>(),
                 RelatedNodeID = record["relatedNodeId"].As<long>(),
                 RelatedNodeRoadRank = record["relatedNodeRoadrank"].As<int>(),
                 RelatedNodeMetroZone = record["relatedNodeMetrozone"].As<int>(),
