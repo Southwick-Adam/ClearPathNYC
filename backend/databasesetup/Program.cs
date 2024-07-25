@@ -113,13 +113,13 @@ List<List<double>> AllSegments = new List<List<double>>{
 //await createDatabase.AddMapArea(filePath, NYCSegment);
 
 // For creating the full database: Feeds the segments one at a time to the AddMapArea, which will add them to the database
-int count = 0;
-foreach (var segment in AllSegments)
-{
-    Console.WriteLine(count);
-    await createDatabase.AddMapArea(filePath, segment); // used to add all nodes and relationships
-    count += 1;
-}
+// int count = 0;
+// foreach (var segment in AllSegments.Skip(37))
+// {
+//     Console.WriteLine(count);
+//     await createDatabase.AddMapArea(filePath, segment); // used to add all nodes and relationships
+//     count += 1;
+// }
 
 
 
@@ -149,9 +149,11 @@ while (true)
         Console.WriteLine("In function");
         break; 
     }
-    await driver.WriteQuery(delNodesQuery);
+    await driver.WriteQuery(delNodesQuery, []);
 }
 */
+
+await driver.FixDistance();
 
 stopwatch.Stop();
 double min = stopwatch.ElapsedMilliseconds/60000;
