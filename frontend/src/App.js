@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { OverlayTrigger, Tooltip } from 'react-bootstrap';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import MapComponent from './components/MapComponent/MapComponent.js';
 import Sidebar from './components/Sidebar/Sidebar.js';
 import SmogAlert from './components/SmogAlert/SmogAlert.js';
@@ -7,7 +9,7 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import SplashScreen from './components/SplashScreen/SplashScreen.js';
 import Legend from './components/Legend/Legend.js';
 import useStore from './store/store.js';
-import LoadingPopup from './components/LoadingPopup/LoadingPopup.js'; // Import LoadingPopup
+import LoadingPopup from './components/LoadingPopup/LoadingPopup.js';
 import './App.css';
 
 function App() {
@@ -23,12 +25,13 @@ function App() {
   });
   const [loadingMessage, setLoadingMessage] = useState('Loading Route');
   const [isLoading, setIsLoading] = useState(false);
+  const [isClearButtonEnabled, setIsClearButtonEnabled] = useState(false);
 
   const loopGeocoderRef = useRef(null);
   const startGeocoderRef = useRef(null);
   const endGeocoderRef = useRef(null);
   const geocoderRefs = [useRef(null), useRef(null), useRef(null), useRef(null), useRef(null)];
-  const { isNightMode, isColorBlindMode, routes, selectedRouteIndex, setRoutes, setSelectedRouteIndex } = useStore();
+  const { isNightMode, isColorBlindMode, routes, selectedRouteIndex, setRoutes, setSelectedRouteIndex, clearRoutes, setIsSidebarOpen } = useStore();
 
   const [layerVisibility, setLayerVisibility] = useState({
     parks: true,
@@ -145,10 +148,10 @@ function App() {
 
   async function fetchLoopRoute(formData) {
     const { coordinates, distance, mode } = formData;
-    const distanceMeter = distance * 1609.34; //Change miles to meters for backend
+    const distanceMeter = distance * 1609.34; // Change miles to meters for backend
 
     const params = new URLSearchParams();
-    params.append('coordinate', parseFloat(coordinates[0])); //Flipped here so it's not reversed
+    params.append('coordinate', parseFloat(coordinates[0])); // Flipped here so it's not reversed
     params.append('coordinate', parseFloat(coordinates[1]));
     params.append('distance', distanceMeter);
     params.append('quiet', mode);
@@ -205,6 +208,20 @@ function App() {
 
   const epaIndex = weather ? weather.current.air_quality['us-epa-index'] : null;
 
+  const handleClearRoutes = () => {
+    clearRoutes();
+    setIsSidebarOpen(true); // Open the sidebar when the clear routes button is clicked
+  };
+
+  // Enable the clear route button 5 seconds after it is created
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsClearButtonEnabled(true);
+    }, 5000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <div className="App">
       <SplashScreen setPlayVideo={setPlayVideo} />
@@ -216,9 +233,23 @@ function App() {
         endGeocoderRef={endGeocoderRef}
         geocoderRefs={geocoderRefs}
       />
-      <div className={`route-tabs ${isNightMode ? 'night-mode' : ''} ${isColorBlindMode ? 'color-blind-mode' : ''}`}>
+      <div className={`route-tabs-container ${isNightMode ? 'night-mode' : ''} ${isColorBlindMode ? 'color-blind-mode' : ''}`}>
+        {routes.length > 0 && (
+          <OverlayTrigger
+            placement="bottom"
+            overlay={<Tooltip id="tooltip-clear">Click to remove existing route(s)</Tooltip>}
+          >
+            <button 
+              className="btn btn-danger clear-route-btn" 
+              onClick={handleClearRoutes} 
+              disabled={!isClearButtonEnabled}
+            >
+              Clear Route(s)
+            </button>
+          </OverlayTrigger>
+        )}
         {routes.length > 1 && (
-          <>
+          <div className={`route-tabs ${isNightMode ? 'night-mode' : ''} ${isColorBlindMode ? 'color-blind-mode' : ''}`}>
             {routes.map((route, index) => (
               <button
                 key={index}
@@ -228,7 +259,7 @@ function App() {
                 Route {index + 1}
               </button>
             ))}
-          </>
+          </div>
         )}
       </div>
       <MapComponent

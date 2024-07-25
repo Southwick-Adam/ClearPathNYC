@@ -174,23 +174,24 @@ export function addRouteMarkers(mapRef, routeData, startMarkerRef, endMarkerRef,
   // Add start marker
   setTimeout(() => {
     if (startMarkerRef.current) {
-      startMarkerRef.current.setLngLat(startCoord);
-    } else {
-      const startMarker = document.createElement('div');
-      startMarker.className = 'marker start_marker bounce'; // Add bounce class
-
-      startMarkerRef.current = new mapboxgl.Marker({
-        element: startMarker,
-        offset: [0, -15]
-      })
-        .setLngLat(startCoord)
-        .addTo(mapRef.current);
-
-      animateMarkers($(startMarker));
+      startMarkerRef.current.remove();
+      startMarkerRef.current = null;
     }
+
+    const startMarker = document.createElement('div');
+    startMarker.className = 'marker start_marker bounce'; // Add bounce class and identifiable class
+
+    startMarkerRef.current = new mapboxgl.Marker({
+      element: startMarker,
+      offset: [0, -15]
+    })
+      .setLngLat(startCoord)
+      .addTo(mapRef.current);
+
+    animateMarkers($(startMarker));
   }, timeout);
 
-  timeout += 1000; // Adjust delay as needed
+  timeout += 200; // Adjust delay as needed
 
   // Add waypoint markers
   for (let i = 0; i < visibleWaypoints; i++) {
@@ -209,36 +210,34 @@ export function addRouteMarkers(mapRef, routeData, startMarkerRef, endMarkerRef,
         animateMarkers($(waypointMarker));
       }, timeout);
 
-      timeout += 500; // Adjust delay as needed
+      timeout += 200; // Adjust delay as needed
     }
   }
 
-  // Check to remove any existing endmarkers (if they exist)
-  if (endMarkerRef.current) {
-    endMarkerRef.current.remove();
-    endMarkerRef.current = null;
-  }
   // Add end marker only if start and end coordinates are different
   if (startCoord[0] !== endCoord[0] || startCoord[1] !== endCoord[1]) {
     setTimeout(() => {
       if (endMarkerRef.current) {
-        endMarkerRef.current.setLngLat(endCoord);
-      } else {
-        const endMarker = document.createElement('div');
-        endMarker.className = 'marker end_marker';
-
-        endMarkerRef.current = new mapboxgl.Marker({
-          element: endMarker,
-          offset: [0, -15]
-        })
-          .setLngLat(endCoord)
-          .addTo(mapRef.current);
-
-        animateMarkers($(endMarker));
+        endMarkerRef.current.remove();
+        endMarkerRef.current = null;
       }
+
+      const endMarker = document.createElement('div');
+      endMarker.className = 'marker end_marker';
+
+      endMarkerRef.current = new mapboxgl.Marker({
+        element: endMarker,
+        offset: [0, -15]
+      })
+        .setLngLat(endCoord)
+        .addTo(mapRef.current);
+
+      animateMarkers($(endMarker));
     }, timeout);
   }
 }
+
+
 
 export function zoomToRoute(mapRef, route, helpers) {
   const { fetchNoise311, fetchGarbage311, fetchOther311, fetchMulti311, add311Markers, add311Multiple, setPresentLayers } = helpers;
@@ -307,13 +306,18 @@ export function clearRoute(mapRef) {
     mapRef.current.removeLayer('route');
     mapRef.current.removeSource('route');
   }
-  if (mapRef.current.getLayer('start_marker')) {
-    mapRef.current.removeLayer('start_marker');
-  }
-  if (mapRef.current.getLayer('end_marker')) {
-    mapRef.current.removeLayer('end_marker');
-  }
+
+  // Remove markers by querying their classes
+  const markerClasses = ['start_marker', 'end_marker', 'waypoint1_marker', 'waypoint2_marker', 'waypoint3_marker', 'waypoint4_marker', 'waypoint5_marker'];
+  
+  markerClasses.forEach(className => {
+    const markerElements = document.querySelectorAll(`.${className}`);
+    markerElements.forEach(markerElement => {
+      markerElement.remove();
+    });
+  });
 }
+
 
 export function updateRouteColors(mapRef) {
   const route = useStore.getState().routes[useStore.getState().selectedRouteIndex];
