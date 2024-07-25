@@ -1,7 +1,7 @@
 .legend {
     position: fixed;
     top: 0;
-    right: -305px; /* Start hidden off-screen */
+    right: -305px;
     width: 305px;
     top: 20%;
     height: 45%;
@@ -30,7 +30,8 @@
 
 .toggle-btn-legend {
     position: absolute;
-    top: 20%;
+    top: 50%;
+    transform: translateY(-50%);
     left: -36px;
     transform-origin: top left;
     height: 200px;
@@ -61,7 +62,7 @@
 .legend-content {
     font-style: normal;
     padding: 20px;
-    max-height: calc(100% - 40px);
+    max-height: calc(100%);
     overflow-y: auto;
 }
 
@@ -165,13 +166,6 @@
     background-color: #198754;
     border-color: #198754;
 }
-
-/* .btn-primary {
-    --bs-btn-active-bg: #31b678;
-    --bs-btn-active-border-color: #31b678;
-
-  } */
-
 
   .legend-bar-container {
     margin-top: 20px;
