@@ -24,6 +24,7 @@ function App() {
     other: false,
   });
   const [loadingMessage, setLoadingMessage] = useState('Loading Route');
+  const [loadingStatus, setLoadingStatus] = useState('loading'); // 'loading' or 'error'
   const [isLoading, setIsLoading] = useState(false);
   const [isClearButtonEnabled, setIsClearButtonEnabled] = useState(false);
 
@@ -60,8 +61,10 @@ function App() {
     let routeData;
     setIsLoading(true);
     setLoadingMessage('Loading Route');
+    setLoadingStatus('loading'); // Set status to 'loading'
     const timeoutId = setTimeout(() => {
       setLoadingMessage('Error Loading Route, Try again');
+      setLoadingStatus('error'); // Set status to 'error' on timeout
     }, 20000); // 20 seconds timeout
 
     try {
@@ -88,6 +91,7 @@ function App() {
     } catch (error) {
       console.error('Error fetching route:', error);
       setLoadingMessage('Error Loading Route, Try again');
+      setLoadingStatus('error'); // Set status to 'error' on catch
     } finally {
       clearTimeout(timeoutId);
       setIsLoading(false);
@@ -272,7 +276,7 @@ function App() {
         layerVisibility={layerVisibility} // Pass layer visibility state
         setPresentLayers={setPresentLayers} // Pass the setter for present layers
       />
-      {isLoading && <LoadingPopup message={loadingMessage} onClose={closePopup} />}
+      {isLoading && <LoadingPopup message={loadingMessage} status={loadingStatus} onClose={closePopup} />}
       <Legend onToggleLayer={toggleLayerVisibility} layerVisibility={layerVisibility} presentLayers={presentLayers} /> {/* Pass toggle function and present layers */}
       <WeatherPanel weather={weather} />
     </div>

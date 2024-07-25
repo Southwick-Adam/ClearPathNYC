@@ -172,3 +172,21 @@
   opacity: 0;
   overflow: hidden;
 }
+
+.wrapper-btn.day{
+  border: none;
+  padding: 10px;
+  background-color: #f9faf3;
+  color:#666262;
+}
+
+.wrapper-btn.night{
+  border: none;
+  padding: 10px;
+  background-color: #4b4f5c;
+  color:#f9faf3;
+}
+
+.toggle_title_row:hover{
+  cursor: pointer;
+}

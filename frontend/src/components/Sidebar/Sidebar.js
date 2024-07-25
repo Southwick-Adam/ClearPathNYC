@@ -65,8 +65,8 @@ function Sidebar({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoderRefs,
       <div className="sidebar-content-wrapper">
         <div className="sidebar-content">
           <div className='loop_wrapper'>
-            <div className='toggle_title_row' id='loop_toggle_title_row'> 
-              <button className='btn' onClick={toggleLoop}>
+            <div className='toggle_title_row' id='loop_toggle_title_row' onClick={toggleLoop}> 
+              <button className={`wrapper-btn ${isNightMode ? 'night' : 'day'}`} >
                 {isLoopOpen ? '▼' : '▶'}
               </button>
               <div className={`container_title ${isNightMode ? 'night' : 'day'}`}>Loop</div>
@@ -76,8 +76,8 @@ function Sidebar({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoderRefs,
             </div>
           </div>
           <div className='ptp_wrapper'>
-            <div className='toggle_title_row'>
-              <button className='btn' onClick={togglePtP}>
+            <div className='toggle_title_row'onClick={togglePtP}>
+              <button className={`wrapper-btn ${isNightMode ? 'night' : 'day'}`} >
                 {isPtPOpen ? '▼' : '▶'}
               </button>
               <div className={`container_title ${isNightMode ? 'night' : 'day'}`}>PointToPoint</div>

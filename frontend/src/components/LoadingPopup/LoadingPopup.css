@@ -18,6 +18,8 @@
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
     font-size: 1.2em;
     position: relative; 
+    display: flex;
+    align-items: center;
   }
   
   .close-button {
@@ -33,5 +35,24 @@
   
   .close-button:hover {
     color: #000;
+  }
+
+  .loading-popup-gif, .error-icon {
+    width: 70px;
+    height: 100px;
+    margin-bottom: 20px;
+  }
+
+  .error-icon{
+    color: red;
+    width: 100px;
+    height: 100px;
+    margin-bottom: 20px;
+  }
+  
+  .loading-popup-message {
+    font-size: 16px;
+    margin-left: 20px;
+    font-weight: bold;
   }
   
