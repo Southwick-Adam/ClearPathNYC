@@ -57,16 +57,15 @@ function App() {
   async function handleFormSubmit(formType, formData) {
     console.log('handleFormSubmit called with formType:', formType);
     console.log(`Form data for ${formType} sent to backend: `, formData);
+    setIsSidebarOpen(false); // Close the sidebar upon form submission
 
+  
     let routeData;
     setIsLoading(true);
     setLoadingMessage('Loading Route');
     setLoadingStatus('loading'); // Set status to 'loading'
-    const timeoutId = setTimeout(() => {
-      setLoadingMessage('Error Loading Route, Try again');
-      setLoadingStatus('error'); // Set status to 'error' on timeout
-    }, 20000); // 20 seconds timeout
 
+  
     try {
       if (formType === 'loop') {
         routeData = await fetchLoopRoute(formData);
@@ -77,7 +76,7 @@ function App() {
           routeData = await fetchP2PRoute(formData);
         }
       }
-
+  
       if (routeData) {
         console.log('Fetched route data:', routeData);
         if (Array.isArray(routeData.features)) {
@@ -88,96 +87,104 @@ function App() {
           setSelectedRouteIndex(0); // Auto-select the single route
         }
       }
+      setIsLoading(false);
     } catch (error) {
-      console.error('Error fetching route:', error);
+      console.error('Just an Error fetching route:', error);
       setLoadingMessage('Error Loading Route, Try again');
       setLoadingStatus('error'); // Set status to 'error' on catch
-    } finally {
-      clearTimeout(timeoutId);
-      setIsLoading(false);
+      setTimeout(() => setIsLoading(false), 3000); // Close the error message after 3 seconds
     }
   }
-
+  
   async function fetchP2PRoute(formData) {
     const { coordinates, isQuiet } = formData;
-
+  
     const params = new URLSearchParams();
     coordinates.forEach((coord) => {
       params.append('coord1', parseFloat(coord[1])); // Latitude as double
       params.append('coord2', parseFloat(coord[0])); // Longitude as double
     });
     params.append('quiet', isQuiet); // Add the quiet parameter
-
-    const requestUrl = `/route/p2p?${params.toString()}`;
+  
+    const requestUrl = `http://localhost:5056/route/p2p?${params.toString()}`;
     console.log('Request URL:', requestUrl);
-
+  
     try {
       const response = await fetch(requestUrl);
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
       const responseText = await response.text();
       console.log('Response Text:', responseText);
       const data = JSON.parse(responseText);
-
+  
       return data;
     } catch (error) {
       console.error('Error fetching route:', error);
-      return null;
+      throw error; // Re-throw the error to be caught in handleFormSubmit
     }
   }
-
+  
   async function fetchMultiP2PRoute(formData) {
     const { coordinates, isQuiet } = formData;
-
+  
     const params = new URLSearchParams();
     coordinates.forEach((coord) => {
       params.append('coord1', parseFloat(coord[1])); // Latitude as double
       params.append('coord2', parseFloat(coord[0])); // Longitude as double
     });
     params.append('quiet', isQuiet); // Add the quiet parameter
-
-    const requestUrl = `/route/multip2p?${params.toString()}`;
+  
+    const requestUrl = `http://localhost:5056/route/multip2p?${params.toString()}`;
     console.log('Request URL:', requestUrl);
-
+  
     try {
       const response = await fetch(requestUrl);
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
       const responseText = await response.text();
       console.log('Response Text:', responseText);
       const data = JSON.parse(responseText);
-
+  
       return data;
     } catch (error) {
       console.error('Error fetching route:', error);
-      return null;
+      throw error; // Re-throw the error to be caught in handleFormSubmit
     }
   }
-
+  
   async function fetchLoopRoute(formData) {
     const { coordinates, distance, mode } = formData;
     const distanceMeter = distance * 1609.34; // Change miles to meters for backend
-
+  
     const params = new URLSearchParams();
     params.append('coordinate', parseFloat(coordinates[0])); // Flipped here so it's not reversed
     params.append('coordinate', parseFloat(coordinates[1]));
     params.append('distance', distanceMeter);
     params.append('quiet', mode);
-
-    const requestUrl = `/route/loop?${params.toString()}`;
+  
+    const requestUrl = `http://localhost:5056/route/loop?${params.toString()}`;
     console.log('Request URL:', requestUrl);
-
+  
     try {
       const response = await fetch(requestUrl);
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
       const responseText = await response.text();
       console.log('Response Text:', responseText);
       const data = JSON.parse(responseText);
-
+  
       return data;
     } catch (error) {
       console.error('Error fetching route:', error);
-      return null;
+      throw error; // Re-throw the error to be caught in handleFormSubmit
     }
   }
 
   async function fetchWeatherData() {
-    const apiUrl = '/weather';
+    const apiUrl = 'http://localhost:5056/weather';
     try {
       const response = await fetch(apiUrl, {
         method: 'GET',

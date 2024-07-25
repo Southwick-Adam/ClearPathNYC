@@ -1,13 +1,11 @@
 import mapboxgl from 'mapbox-gl';
 import $ from 'jquery';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client'; // Import createRoot from react-dom/client
 import PopupContent from '../../PopupContent/PopupContent';
-import poijson from '../../../assets/geodata/171_POIs.json'
+import poijson from '../../../assets/geodata/171_POIs.json';
 import useStore from '../../../store/store';
 import floraImage from '../../../assets/images/flora.png';
 import floraCBImage from '../../../assets/images/flora_CB.png';
-
-
 
 export function addMarkers(mapRef, markerData, markerType) {
   markerData.forEach(location => {
@@ -22,9 +20,10 @@ export function addMarkers(mapRef, markerData, markerType) {
       .setPopup(new mapboxgl.Popup({ offset: 25 }).setText(location.name))
       .addTo(mapRef.current);
 
-      animateMarkers($(marker));
+    animateMarkers($(marker));
   });
 }
+
 export function add311Markers(mapRef, markerData, category) {
   markerData.forEach(location => {
     const marker = document.createElement('div');
@@ -42,6 +41,7 @@ export function add311Markers(mapRef, markerData, category) {
     animateMarkers($(marker));
   });
 }
+
 function animateMarkers($marker) {
   $marker.css({
     top: '-50px',
@@ -67,11 +67,9 @@ export function add311Multiple(mapRef, markerData) {
       .setPopup(new mapboxgl.Popup({ offset: 25 }).setText(location.Complaint_Type_collection))
       .addTo(mapRef.current);
 
-    animateMarkers($(marker));}
-  );
+    animateMarkers($(marker));
+  });
 }
-
-
 
 function getMarkerType(complaintCategory, severityCategory) {
   let markerType = complaintCategory.toLowerCase();
@@ -122,7 +120,8 @@ export function plotRoutePOI(mapRef, geojsonData, helpers) {
     }
 
     const popupNode = document.createElement('div');
-    ReactDOM.render(
+    const root = createRoot(popupNode); // Use createRoot instead of ReactDOM.render
+    root.render(
       <PopupContent
         coordinates={coordinates}
         name={name}
@@ -136,8 +135,7 @@ export function plotRoutePOI(mapRef, geojsonData, helpers) {
         updateWaypointInput={helpers.updateWaypointInput}
         geocoderRefs={helpers.geocoderRefs}
         closePopup={closePopup} // Pass closePopup function
-      />,
-      popupNode
+      />
     );
 
     if (popup) {
@@ -191,8 +189,6 @@ export function plotRoutePOI(mapRef, geojsonData, helpers) {
     mapRef.current.getCanvas().style.cursor = '';
   });
 }
-
-
 
 export function addClusteredLayer(mapRef, geoJsonData, sourceId, imageId, clusterColor) {
   if (mapRef.current.getSource(sourceId)) {
@@ -321,12 +317,9 @@ export function addClusteredLayer(mapRef, geoJsonData, sourceId, imageId, cluste
   });
 }
 
-
-
-
 export function clearMapFeatures(mapRef) {
-  // Function to ckear features close to the route
-  const sourceIds = ['route-noise-h','route-noise-vh','route-garbage-h','route-other-h','route-multi-h','route-multi-vh']; 
+  // Function to clear features close to the route
+  const sourceIds = ['route-noise-h', 'route-noise-vh', 'route-garbage-h', 'route-other-h', 'route-multi-h', 'route-multi-vh'];
 
   sourceIds.forEach(sourceId => {
     if (mapRef.current.getSource(sourceId)) {
@@ -337,9 +330,9 @@ export function clearMapFeatures(mapRef) {
     }
   });
 }
+
 export function addMapFeatures(mapRef, helpers) {
   const {
-    fetchInitialPOI,
     simulateFetchParks,
     convertToGeoJSON,
     floraImage,
@@ -350,11 +343,9 @@ export function addMapFeatures(mapRef, helpers) {
     multiHighImage,
     multiVeryHighImage,
     poiImage,
-    setLoopCord,
     setStartCord,
     setEndCord,
     setWaypointAndIncrease,
-    updateLoopStartInput,
     updateStartInput,
     updateEndInput,
     updateWaypointInput,
@@ -488,7 +479,8 @@ export function addMapFeatures(mapRef, helpers) {
     const { name } = e.features[0].properties;
 
     const popupNode = document.createElement('div');
-    ReactDOM.render(
+    const root = createRoot(popupNode); // Use createRoot instead of ReactDOM.render
+    root.render(
       <PopupContent
         coordinates={coordinates}
         name={name}
@@ -502,8 +494,7 @@ export function addMapFeatures(mapRef, helpers) {
         updateWaypointInput={updateWaypointInput}
         geocoderRefs={geocoderRefs}
         closePopup={closePopup} // Pass closePopup function
-      />,
-      popupNode
+      />
     );
 
     if (popup) {
@@ -562,9 +553,6 @@ export function addMapFeatures(mapRef, helpers) {
   });
 }
 
-
-
-
 export function reloadParkFeature(mapRef) {
   const isColorBlindMode = useStore.getState().isColorBlindMode;
 
@@ -600,6 +588,7 @@ export function reloadParkFeature(mapRef) {
     mapRef.current.setLayoutProperty('unclustered-point', 'icon-image', 'flora-marker');
   }
 }
+
 export function toggleLayerVisibility(mapRef, layerVisibility) {
   const visibilityMap = {
     parks: ['clusters', 'cluster-count', 'unclustered-point'],

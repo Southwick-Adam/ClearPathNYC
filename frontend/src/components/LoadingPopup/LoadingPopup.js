@@ -1,7 +1,7 @@
 import React from 'react';
 import './LoadingPopup.css';
 import { BsExclamationTriangleFill } from 'react-icons/bs';
-import loadingGif from '../../assets/images/runner.gif'; 
+import loadingGif from '../../assets/images/runner.gif';
 
 const LoadingPopup = ({ message, status, onClose }) => (
   <div className="loading-popup">
