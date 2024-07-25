@@ -160,16 +160,13 @@ namespace aspRun.Controllers
             string result = "";
 
             Console.WriteLine($"Coordinates: {latitude}, {longitude}");
-            bool PointFound = false;
-            var attempts = 0;
-            while (!PointFound)
-            {
-                result = await _neo4jService.Loop(latitude, longitude, distance, quiet);                
-                    PointFound = true;
-            }
+            try
+            {   
+                result = await _neo4jService.Loop(latitude, longitude, distance, quiet); 
+                return Ok(result);
+            }  
+            catch(Exception ex){ return BadRequest($"An error occurred while processing your request: {ex}");}         
 
-
-            return Ok(result);
         }
     }
 }
