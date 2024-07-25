@@ -57,11 +57,14 @@ function App() {
   async function handleFormSubmit(formType, formData) {
     console.log('handleFormSubmit called with formType:', formType);
     console.log(`Form data for ${formType} sent to backend: `, formData);
+    setIsSidebarOpen(false); // Close the sidebar upon form submission
+
   
     let routeData;
     setIsLoading(true);
     setLoadingMessage('Loading Route');
     setLoadingStatus('loading'); // Set status to 'loading'
+
   
     try {
       if (formType === 'loop') {

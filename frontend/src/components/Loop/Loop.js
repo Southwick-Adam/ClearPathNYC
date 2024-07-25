@@ -8,7 +8,7 @@ import useStore from '../../store/store';
 
 function Loop({ onFormSubmit, geocoderRef }) {
   const {
-    loopCord, setLoopCord, loopIsQuiet, toggleLoopIsQuiet, loopDistance, setLoopDistance
+    loopCord, setLoopCord, loopIsQuiet, toggleLoopIsQuiet, loopDistance, setLoopDistance, setIsSidebarOpen
   } = useStore();
 
   const [isGoButtonDisabled, setGoButtonDisabled] = useState(true);
@@ -27,6 +27,7 @@ function Loop({ onFormSubmit, geocoderRef }) {
   }
 
   function handleSubmit(event) {
+    setIsSidebarOpen(false); // Close the sidebar upon form submission
     event.preventDefault();
     const formData = {
       coordinates: loopCord,
