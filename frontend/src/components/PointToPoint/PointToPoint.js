@@ -17,6 +17,7 @@ function PointToPoint({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoder
     isColorBlindMode, isMultiP2P, toggleIsMultiP2P
   } = useStore();
 
+  const { isNightMode } = useStore();
   const [isGoButtonDisabled, setGoButtonDisabled] = useState(true);
 
   const waypointStates = [
@@ -183,7 +184,7 @@ function PointToPoint({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoder
               placement="top"
               overlay={<Tooltip id="tooltip-add">Add Waypoint</Tooltip>}
             >
-              <button type='button' className="btn btn-outline-success btn-sm addbtn" onClick={handleAddWaypoint}>+</button>
+              <button type='button'  className={`btn btn-sm addbtn ${isNightMode ? 'night-mode' : ''}`} onClick={handleAddWaypoint}>+</button>
             </OverlayTrigger>
           </div>
         )}
