@@ -14,11 +14,10 @@
   border-radius: 0 20px 20px 0;
 }
 
-@media only screen and (max-width: 350px) 
+@media only screen and (max-width: 388px) 
 {
-  .sidebar 
-  {
-    width: 350px;
+  .sidebar {
+    width: 400px;
     left: calc(-100vw + 36px);
   }
 }
