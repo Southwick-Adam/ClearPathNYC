@@ -20,7 +20,7 @@ namespace aspBuild.Data
         public async Task UpdateNodeRelationship(long NodeIDA, long NodeIDB, double quietscore, int taxiZone, double loudscore)
         {
             string query = @"
-            MATCH (a:nodes {nodeid: $nodeida, taxizone: $taxizonea})-[r:PATH]->(b:nodes {nodeid:$nodeidb})
+            MATCH (a:nodes {nodeid: $nodeida, taxizone: $taxizonea})-[r:PATH]-(b:nodes {nodeid:$nodeidb})
             SET r.quietscore = $quietscore
             SET r.loudscore = $loudscore";
 

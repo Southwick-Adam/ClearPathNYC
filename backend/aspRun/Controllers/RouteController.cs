@@ -164,19 +164,8 @@ namespace aspRun.Controllers
             var attempts = 0;
             while (!PointFound)
             {
-                try
-                {
-                    result = await _neo4jService.Loop(latitude, longitude, distance, quiet);                
+                result = await _neo4jService.Loop(latitude, longitude, distance, quiet);                
                     PointFound = true;
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("Error occurred");
-                    attempts += 1;
-                    if (attempts > 3){
-                        return StatusCode(500, $"An error occurred while creating the loop: {ex.Message}");
-                    }
-                }
             }
 
 

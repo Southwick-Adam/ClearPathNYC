@@ -556,7 +556,7 @@ namespace aspRun.Data
                     string filePath = Path.Combine(currentDirectory, fileName);
                     
                     // Write the content to the file
-                    File.WriteAllText(filePath, content);
+                    File.AppendAllText(filePath, content);
                     
                     Console.WriteLine("File written successfully!");
                     routeResult = await RunQuery(astarPath, parameters);
@@ -567,8 +567,26 @@ namespace aspRun.Data
                 await StartGraph();
                 routeResult = await RunQuery(astarPath, parameters);
             }
+            IRecord result;
+            try{result = routeResult.First();}
+            catch{// Specify the file name
+                    string fileName = "FailedNodes.txt";
+                    
+                    // Specify the content to write
+                    string content = $"{nodea}, {nodeb}\n";
 
-            var result = routeResult.First();
+                    // Get the current directory
+                    string currentDirectory = Directory.GetCurrentDirectory();
+                    
+                    // Combine the directory and file name to get the full path
+                    string filePath = Path.Combine(currentDirectory, fileName);
+                    
+                    // Write the content to the file
+                    File.AppendAllText(filePath, content);
+                    
+                    Console.WriteLine("File written successfully!");
+                    routeResult = await RunQuery(astarPath, parameters);
+                    result = routeResult.First();}
 
             var route = RouteMapper.Map(result);
             route.GenerateCoordinatesString();
