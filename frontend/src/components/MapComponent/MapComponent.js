@@ -150,8 +150,8 @@ function MapComponent({ route, loopGeocoderRef, startGeocoderRef, endGeocoderRef
     if (mapRef.current) return;
 
     const bounds = [
-      [-74.1, 40.73], // Southwest coordinates
-      [-73.7, 40.86], // Northeast coordinates
+      [-74.3, 40.43], // Southwest coordinates
+      [-73.5, 40.96], // Northeast coordinates
     ];
 
     mapRef.current = new mapboxgl.Map({
@@ -197,6 +197,15 @@ function MapComponent({ route, loopGeocoderRef, startGeocoderRef, endGeocoderRef
         });
       }
     });
+
+    const handleResize = () => {
+      if (mapRef.current) {
+        mapRef.current.resize();
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   useEffect(() => {
