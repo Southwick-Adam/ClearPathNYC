@@ -153,6 +153,8 @@ return n";
 //     await driver.WriteQuery(delNodesQuery);
 // }
 
+await driver.FixDistance();
+
 stopwatch.Stop();
 double min = stopwatch.ElapsedMilliseconds/60000;
 Console.WriteLine($"Elapsed Time: {min} min");

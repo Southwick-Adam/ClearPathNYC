@@ -25,7 +25,7 @@ public class HaversineCalculator
         double c = 2 * Math.Asin(Math.Sqrt(a));
 
         // Distance in kilometers
-        double distance = EarthRadiusKm * c;
+        double distance = (EarthRadiusKm * c)*1000;
 
         return distance;
     }
