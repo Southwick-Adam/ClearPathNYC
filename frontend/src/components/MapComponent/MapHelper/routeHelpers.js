@@ -250,7 +250,6 @@ export function updateRouteColors(mapRef) {
   const isColorBlindMode = useStore.getState().isColorBlindMode;
 
   if (!route) {
-    console.error('No route found in store.');
     return;
   }
 

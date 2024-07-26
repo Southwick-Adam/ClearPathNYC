@@ -8,7 +8,7 @@ const DistanceSelector = ({ distance, onDistanceChange }) => {
     const newValue = e.target.value;
     // Allow empty input to support deletion
     if (newValue === '') {
-      onDistanceChange('');
+      onDistanceChange(0); // Use 0 to indicate no value
     } else {
       const newValueNumber = Number(newValue);
       // Validation for non-negative distance
@@ -28,7 +28,7 @@ const DistanceSelector = ({ distance, onDistanceChange }) => {
         <FormControl
           id="distance_input"
           type="number"
-          value={distance}
+          value={distance !== null && distance !== undefined ? distance : ''} // Handle null and undefined
           onChange={handleChange}
           className="distance_selector_input"
         />
