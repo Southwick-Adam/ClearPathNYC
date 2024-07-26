@@ -1,5 +1,9 @@
 using OsmSharp;
 using OsmSharp.Streams;
+using NetTopologySuite.Features;
+using NetTopologySuite.Geometries;
+using NetTopologySuite.Geometries.Utilities;
+using NetTopologySuite.IO;
 
 class CreateDatabase
 {
@@ -11,7 +15,7 @@ class CreateDatabase
     private PedestrianData pedestrianData;
     private Parks parks;
     private ThreeOneOne threeOneOne;
-    private Polygon polygon
+    private Polygon polygon;
     public CreateDatabase(string taxiData, string metroData, string pedestrianCsv, string csvParks, string csvThreeOneOne)
     {
         taxiZones = new TaxiZones(taxiData);
@@ -37,8 +41,7 @@ class CreateDatabase
         }
         catch (FileNotFoundException ex)
         {
-            Console.WriteLine($"Error: The file 'loopPolygon.txt' was not found. {ex.Message}");
-            // Handle the error as needed
+            Console.WriteLine($"Error: The file 'island.txt' was not found. {ex.Message}");
         }
         catch (Exception ex)
         {
@@ -80,7 +83,6 @@ class CreateDatabase
             // used to filter to just the selected area 
             var filtered = source.FilterBox((float)left, (float)top, (float)right, (float)bottom); // left, top, right, bottom
 
-            var ignoredWays = new List<long> {225870532}
             var ignoredTags = new List<string> {"freeway", "service"};
             // Enumerate through the OSM data and display it
             foreach (var osmGeo in filtered)
