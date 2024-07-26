@@ -1,55 +1,55 @@
 [
     {
         "station_complex_id": 1,
-        "busyness_rank": 3
-    },
-    {
-        "station_complex_id": 2,
-        "busyness_rank": 3
-    },
-    {
-        "station_complex_id": 6,
-        "busyness_rank": 3
-    },
-    {
-        "station_complex_id": 7,
-        "busyness_rank": 3
-    },
-    {
-        "station_complex_id": 8,
-        "busyness_rank": 3
-    },
-    {
-        "station_complex_id": 9,
-        "busyness_rank": 4
-    },
-    {
-        "station_complex_id": 10,
-        "busyness_rank": 3
-    },
-    {
-        "station_complex_id": 13,
-        "busyness_rank": 3
-    },
-    {
-        "station_complex_id": 14,
         "busyness_rank": 2
     },
     {
+        "station_complex_id": 2,
+        "busyness_rank": 1
+    },
+    {
+        "station_complex_id": 6,
+        "busyness_rank": 1
+    },
+    {
+        "station_complex_id": 7,
+        "busyness_rank": 1
+    },
+    {
+        "station_complex_id": 8,
+        "busyness_rank": 1
+    },
+    {
+        "station_complex_id": 9,
+        "busyness_rank": 2
+    },
+    {
+        "station_complex_id": 10,
+        "busyness_rank": 2
+    },
+    {
+        "station_complex_id": 13,
+        "busyness_rank": 2
+    },
+    {
+        "station_complex_id": 14,
+        "busyness_rank": 0
+    },
+    {
         "station_complex_id": 16,
-        "busyness_rank": 3
+        "busyness_rank": 2
     },
     {
         "station_complex_id": 17,
-        "busyness_rank": 3
+        "busyness_rank": 2
     },
     {
         "station_complex_id": 18,
-        "busyness_rank": 3
+        "busyness_rank": 2
     },
     {
         "station_complex_id": 19,
-        "busyness_rank": 3
+        "busyness_rank": 2
     },
     {
         "station_complex_id": 20,
@@ -61,474 +61,474 @@
     },
     {
         "station_complex_id": 22,
-        "busyness_rank": 2
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 23,
-        "busyness_rank": 3
+        "busyness_rank": 2
     },
     {
         "station_complex_id": 24,
-        "busyness_rank": 2
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 25,
-        "busyness_rank": 3
+        "busyness_rank": 2
     },
     {
         "station_complex_id": 28,
-        "busyness_rank": 3
+        "busyness_rank": 2
     },
     {
         "station_complex_id": 35,
-        "busyness_rank": 2
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 103,
-        "busyness_rank": 2
+        "busyness_rank": 1
     },
     {
         "station_complex_id": 107,
-        "busyness_rank": 2
+        "busyness_rank": 1
     },
     {
         "station_complex_id": 118,
-        "busyness_rank": 3
+        "busyness_rank": 1
     },
     {
         "station_complex_id": 119,
-        "busyness_rank": 3
+        "busyness_rank": 1
     },
     {
         "station_complex_id": 143,
-        "busyness_rank": 2
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 144,
-        "busyness_rank": 2
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 145,
-        "busyness_rank": 2
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 146,
-        "busyness_rank": 2
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 147,
-        "busyness_rank": 3
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 149,
-        "busyness_rank": 2
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 150,
-        "busyness_rank": 2
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 151,
-        "busyness_rank": 3
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 152,
-        "busyness_rank": 2
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 153,
-        "busyness_rank": 3
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 154,
-        "busyness_rank": 2
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 155,
-        "busyness_rank": 2
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 156,
-        "busyness_rank": 2
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 157,
-        "busyness_rank": 3
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 158,
-        "busyness_rank": 3
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 159,
-        "busyness_rank": 3
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 160,
-        "busyness_rank": 3
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 162,
-        "busyness_rank": 3
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 164,
-        "busyness_rank": 3
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 165,
-        "busyness_rank": 3
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 167,
-        "busyness_rank": 3
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 168,
-        "busyness_rank": 3
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 169,
-        "busyness_rank": 3
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 220,
-        "busyness_rank": 2
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 222,
-        "busyness_rank": 3
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 223,
-        "busyness_rank": 3
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 224,
-        "busyness_rank": 3
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 225,
-        "busyness_rank": 3
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 228,
-        "busyness_rank": 3
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 231,
-        "busyness_rank": 3
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 232,
-        "busyness_rank": 3
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 234,
-        "busyness_rank": 2
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 276,
-        "busyness_rank": 3
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 277,
-        "busyness_rank": 3
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 296,
-        "busyness_rank": 2
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 297,
-        "busyness_rank": 3
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 298,
-        "busyness_rank": 2
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 299,
-        "busyness_rank": 2
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 300,
-        "busyness_rank": 2
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 301,
-        "busyness_rank": 3
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 303,
-        "busyness_rank": 3
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 304,
-        "busyness_rank": 3
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 305,
-        "busyness_rank": 3
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 306,
-        "busyness_rank": 2
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 307,
-        "busyness_rank": 2
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 308,
-        "busyness_rank": 2
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 309,
-        "busyness_rank": 3
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 310,
-        "busyness_rank": 3
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 311,
-        "busyness_rank": 3
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 312,
-        "busyness_rank": 3
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 313,
-        "busyness_rank": 3
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 314,
-        "busyness_rank": 3
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 316,
-        "busyness_rank": 3
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 318,
-        "busyness_rank": 3
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 319,
-        "busyness_rank": 3
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 320,
-        "busyness_rank": 3
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 321,
-        "busyness_rank": 2
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 323,
-        "busyness_rank": 2
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 324,
-        "busyness_rank": 3
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 325,
-        "busyness_rank": 2
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 326,
-        "busyness_rank": 2
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 327,
-        "busyness_rank": 3
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 328,
-        "busyness_rank": 3
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 329,
-        "busyness_rank": 2
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 333,
-        "busyness_rank": 2
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 392,
-        "busyness_rank": 2
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 393,
-        "busyness_rank": 3
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 394,
-        "busyness_rank": 3
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 395,
-        "busyness_rank": 3
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 396,
-        "busyness_rank": 3
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 397,
-        "busyness_rank": 3
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 398,
-        "busyness_rank": 2
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 399,
-        "busyness_rank": 2
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 403,
-        "busyness_rank": 3
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 404,
-        "busyness_rank": 3
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 405,
-        "busyness_rank": 3
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 407,
-        "busyness_rank": 3
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 409,
-        "busyness_rank": 3
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 413,
-        "busyness_rank": 3
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 414,
-        "busyness_rank": 3
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 436,
-        "busyness_rank": 2
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 437,
-        "busyness_rank": 2
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 438,
-        "busyness_rank": 3
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 439,
-        "busyness_rank": 3
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 440,
-        "busyness_rank": 3
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 441,
-        "busyness_rank": 2
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 471,
-        "busyness_rank": 3
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 475,
-        "busyness_rank": 3
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 476,
-        "busyness_rank": 3
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 477,
-        "busyness_rank": 3
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 601,
-        "busyness_rank": 2
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 602,
-        "busyness_rank": 3
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 605,
-        "busyness_rank": 2
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 607,
-        "busyness_rank": 3
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 609,
-        "busyness_rank": 3
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 610,
-        "busyness_rank": 3
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 611,
-        "busyness_rank": 3
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 612,
-        "busyness_rank": 3
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 613,
-        "busyness_rank": 3
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 614,
-        "busyness_rank": 3
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 618,
-        "busyness_rank": 3
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 619,
-        "busyness_rank": 2
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 622,
-        "busyness_rank": 2
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 623,
-        "busyness_rank": 2
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 624,
-        "busyness_rank": 2
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 625,
-        "busyness_rank": 2
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 628,
-        "busyness_rank": 2
+        "busyness_rank": 0
     },
     {
         "station_complex_id": 635,
-        "busyness_rank": 2
+        "busyness_rank": 0
     }
 ]

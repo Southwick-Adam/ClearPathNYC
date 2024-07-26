@@ -33,7 +33,7 @@
     },
     {
         "LocationID": 48,
-        "busyness_rank": 1
+        "busyness_rank": 2
     },
     {
         "LocationID": 50,
@@ -41,7 +41,7 @@
     },
     {
         "LocationID": 68,
-        "busyness_rank": 0
+        "busyness_rank": 1
     },
     {
         "LocationID": 74,
@@ -69,15 +69,15 @@
     },
     {
         "LocationID": 100,
-        "busyness_rank": 0
-    },
-    {
-        "LocationID": 105,
         "busyness_rank": 1
     },
     {
+        "LocationID": 105,
+        "busyness_rank": 2
+    },
+    {
         "LocationID": 107,
-        "busyness_rank": 0
+        "busyness_rank": 1
     },
     {
         "LocationID": 113,
@@ -101,11 +101,11 @@
     },
     {
         "LocationID": 127,
-        "busyness_rank": 2
+        "busyness_rank": 1
     },
     {
         "LocationID": 128,
-        "busyness_rank": 2
+        "busyness_rank": 1
     },
     {
         "LocationID": 137,
@@ -113,15 +113,15 @@
     },
     {
         "LocationID": 140,
-        "busyness_rank": 0
+        "busyness_rank": 1
     },
     {
         "LocationID": 141,
-        "busyness_rank": 0
+        "busyness_rank": 1
     },
     {
         "LocationID": 142,
-        "busyness_rank": 0
+        "busyness_rank": 1
     },
     {
         "LocationID": 143,
@@ -145,7 +145,7 @@
     },
     {
         "LocationID": 153,
-        "busyness_rank": 2
+        "busyness_rank": 1
     },
     {
         "LocationID": 158,
@@ -153,19 +153,19 @@
     },
     {
         "LocationID": 161,
-        "busyness_rank": 0
+        "busyness_rank": 1
     },
     {
         "LocationID": 162,
-        "busyness_rank": 0
+        "busyness_rank": 1
     },
     {
         "LocationID": 163,
-        "busyness_rank": 0
+        "busyness_rank": 1
     },
     {
         "LocationID": 164,
-        "busyness_rank": 0
+        "busyness_rank": 1
     },
     {
         "LocationID": 166,
@@ -173,19 +173,19 @@
     },
     {
         "LocationID": 170,
-        "busyness_rank": 0
+        "busyness_rank": 1
     },
     {
         "LocationID": 186,
-        "busyness_rank": 0
+        "busyness_rank": 1
     },
     {
         "LocationID": 194,
-        "busyness_rank": 2
+        "busyness_rank": 1
     },
     {
         "LocationID": 202,
-        "busyness_rank": 2
+        "busyness_rank": 1
     },
     {
         "LocationID": 209,
@@ -201,11 +201,11 @@
     },
     {
         "LocationID": 229,
-        "busyness_rank": 0
+        "busyness_rank": 1
     },
     {
         "LocationID": 230,
-        "busyness_rank": 0
+        "busyness_rank": 1
     },
     {
         "LocationID": 231,
@@ -221,23 +221,23 @@
     },
     {
         "LocationID": 234,
-        "busyness_rank": 0
+        "busyness_rank": 1
     },
     {
         "LocationID": 236,
-        "busyness_rank": 0
+        "busyness_rank": 1
     },
     {
         "LocationID": 237,
-        "busyness_rank": 0
+        "busyness_rank": 1
     },
     {
         "LocationID": 238,
-        "busyness_rank": 0
+        "busyness_rank": 1
     },
     {
         "LocationID": 239,
-        "busyness_rank": 0
+        "busyness_rank": 1
     },
     {
         "LocationID": 243,
@@ -249,7 +249,7 @@
     },
     {
         "LocationID": 246,
-        "busyness_rank": 0
+        "busyness_rank": 1
     },
     {
         "LocationID": 249,
@@ -265,6 +265,6 @@
     },
     {
         "LocationID": 263,
-        "busyness_rank": 0
+        "busyness_rank": 1
     }
 ]

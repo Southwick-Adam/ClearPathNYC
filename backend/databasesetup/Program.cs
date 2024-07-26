@@ -129,47 +129,33 @@ string user = "neo4j";
 string password = "password";
 Neo4jImplementation driver = new Neo4jImplementation(uri, user, password);
 
-// string query = "MATCH (n:nodes) WHERE n.park = true RETURN n.nodeid;";
-// await driver.CreateJSON(query, "ParkNodes.txt");
-
-
-// MapNode demoNode = new MapNode(123, 21, 22);
-// MapNode demoNode2 = new MapNode(124, 3, 5);
-// Console.WriteLine(string.Join(",",demoNode2.MetroZones));
-// demoNode.AddInfo(demoNode2);
-// Console.WriteLine(demoNode.verticesInfo[demoNode2.ID]);
-// await driver.AddNodeToDB(demoNode);
-// await driver.AddNodeToDB(demoNode2);
-// await driver.AddNodeRelationships(demoNode, demoNode2);
-// await driver.UpdateNodeRelationship(123,124,10);
-
-// Testing Finding closest Node 
-// var info = await driver.FindNode(-73.984515, 40.7721);
-// Console.WriteLine(info);
-
-// used to time the function - fun fact: it takes ages.
 
 string delNodesQuery = @"
 MATCH (n:nodes)-[r:PATH]->()
 WITH n, COUNT(r) AS relCount
-WHERE relCount = 1
+WHERE relCount = 0
 detach delete n";
 string checkNodesQuery = @"
 MATCH (n:nodes)-[r:PATH]->()
 WITH n, COUNT(r) AS relCount
-WHERE relCount = 1
+WHERE relCount = 0
 return n";
-while (true)
-{
-    var result = await driver.RunQuery(checkNodesQuery, []);
-    Console.WriteLine(result);
-    if (result.Count == 0)
-    {
-        Console.WriteLine("In function");
-        break; 
-    }
-    await driver.WriteQuery(delNodesQuery);
-}
+
+
+// while (true)
+// {
+//     var result = await driver.RunQuery(checkNodesQuery, []);
+//     Console.WriteLine(result);
+//     if (result.Count == 0)
+//     {
+//         Console.WriteLine("In function");
+//         break; 
+//     }
+//     await driver.WriteQuery(delNodesQuery);
+// }
+
+await driver.FixDistance();
 
 stopwatch.Stop();
-Console.WriteLine("Elapsed Time: {0} milliseconds", stopwatch.ElapsedMilliseconds);
+double min = stopwatch.ElapsedMilliseconds/60000;
+Console.WriteLine($"Elapsed Time: {min} min");

@@ -2,6 +2,7 @@ using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using aspRun.Data;
 using System.Drawing;
+using System.Diagnostics;
 
 namespace aspRun.Controllers
 {
@@ -160,27 +161,30 @@ namespace aspRun.Controllers
             string result = "";
 
             Console.WriteLine($"Coordinates: {latitude}, {longitude}");
-            bool PointFound = false;
-            var attempts = 0;
-            while (!PointFound)
-            {
-                try
+            try
+            {   
+                result = await _neo4jService.Loop(latitude, longitude, distance, quiet); 
+                return Ok(result);
+            }  
+            catch (Exception ex)
+            { 
+                int attempts = 0;
+                while (attempts < 5)
                 {
-                    result = await _neo4jService.Loop(latitude, longitude, distance, quiet);                
-                    PointFound = true;
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("Error occurred");
-                    attempts += 1;
-                    if (attempts > 3){
-                        return StatusCode(500, $"An error occurred while creating the loop: {ex.Message}");
+                    try
+                    {
+                        result = await _neo4jService.Loop(latitude, longitude, distance, quiet); 
+                        return Ok(result);
+                    }
+                    catch
+                    {
+                        attempts++;
                     }
                 }
-            }
+                return BadRequest($"An error occurred while processing your request: {ex}");
+            }        
 
 
-            return Ok(result);
         }
     }
 }

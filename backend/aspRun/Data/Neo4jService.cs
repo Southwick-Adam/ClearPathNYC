@@ -311,8 +311,8 @@ namespace aspRun.Data
         public string GeoJSONMulti(List<string> coordinatesList, string loopOrP2P, string isLoop, List<string> elevationsList, List<string> quietScoresList, List<string> distances)
         {
             var features = new List<string>();
-            Console.WriteLine(coordinatesList.Count);
-            Console.WriteLine(quietScoresList.Count);
+            // Console.WriteLine(coordinatesList.Count);
+            // Console.WriteLine(quietScoresList.Count);
 
 
             for (int i = 0; i < coordinatesList.Count - 1; i++)
@@ -407,7 +407,8 @@ namespace aspRun.Data
             if (polygon != null && polygon.Contains(point))
             {
                 startDirection = random.Next(0, 360);
-                Console.WriteLine("Contains point");
+                Console.WriteLine($"Contains point, direction is {startDirection}");
+
             }
             else
             {
@@ -420,7 +421,8 @@ namespace aspRun.Data
                 Console.WriteLine($"Direction is: {startDirection}");
             }
 
-
+            double latitudeSave = latitude;
+            double longitudeSave = longitude;
             double startDirectionSave = startDirection;
             double internalAngle = 360 / shapeSides;
             while (!distanceHit)
@@ -432,7 +434,7 @@ namespace aspRun.Data
 
                 for (int i = 0; i < shapeSides - 1; i++)
                 {
-                    Console.WriteLine(startDirection);
+                    // Console.WriteLine(startDirection);
                     var (lat1, lon1) = GeoUtils.PointInGivenDirection(latitude, longitude, distance / (shapeSides + modifier), startDirection);
 
                     Lats.Add(lat1);
@@ -446,11 +448,7 @@ namespace aspRun.Data
                 Lats.Add(Lats[0]);
                 Longs.Add(Longs[0]);
 
-                for (int i = 1; i < Lats.Count; i++)
-                {
-                    Console.WriteLine($"{Lats[i]}, {Longs[i]}");
-                }
-
+         
                 StringBuilder coordinates = new();
                 StringBuilder quietscore = new();
                 for (int i = 0; i < shapeSides; i++)
@@ -470,13 +468,14 @@ namespace aspRun.Data
 
                 if (totalDistance < (distance * 1.2) && totalDistance > (distance * .9))
                 {
-                    distanceHit = true;
                     return GeoJSON(coordinates.ToString(), "Loop", "true", "[]", quietscore.ToString(), totalDistance);
                 }
                 else if (totalDistance > distance * 1.2) { modifier += 1.25; }
                 else { modifier -= 1; }
                 totalDistance = 0;
                 startDirection = startDirectionSave;
+                latitude = latitudeSave;
+                longitude = longitudeSave;
                 if (attempt > 5) 
                 { 
                     startDirection = startDirection + random.Next(-30, 30);
@@ -531,21 +530,62 @@ namespace aspRun.Data
                 {"nodeb", nodeb}
             };
 
-            var graphResult = await this.RunQuery(CheckGraph, []);
+            var graphResult = await RunQuery(CheckGraph, []);
             bool graph = (bool)graphResult.First()["exists"];
 
             List<IRecord> routeResult;
             if (graph)
             {
-                routeResult = await RunQuery(astarPath, parameters);
+                try
+                {
+                    routeResult = await RunQuery(astarPath, parameters);
+                }
+                catch (Exception ex)
+                {
+                    // Specify the file name
+                    string fileName = "FailedNodes.txt";
+                    
+                    // Specify the content to write
+                    string content = $"{nodea}, {nodeb}\n";
+
+                    // Get the current directory
+                    string currentDirectory = Directory.GetCurrentDirectory();
+                    
+                    // Combine the directory and file name to get the full path
+                    string filePath = Path.Combine(currentDirectory, fileName);
+                    
+                    // Write the content to the file
+                    File.AppendAllText(filePath, content);
+                    
+                    Console.WriteLine("File written successfully!");
+                    routeResult = await RunQuery(astarPath, parameters);
+                }
             }
             else
             {
                 await StartGraph();
                 routeResult = await RunQuery(astarPath, parameters);
             }
+            IRecord result;
+            try{result = routeResult.First();}
+            catch{// Specify the file name
+                    string fileName = "FailedNodes.txt";
+                    
+                    // Specify the content to write
+                    string content = $"{nodea}, {nodeb}\n";
 
-            var result = routeResult.First();
+                    // Get the current directory
+                    string currentDirectory = Directory.GetCurrentDirectory();
+                    
+                    // Combine the directory and file name to get the full path
+                    string filePath = Path.Combine(currentDirectory, fileName);
+                    
+                    // Write the content to the file
+                    File.AppendAllText(filePath, content);
+                    
+                    Console.WriteLine("File written successfully!");
+                    routeResult = await RunQuery(astarPath, parameters);
+                    result = routeResult.First();}
 
             var route = RouteMapper.Map(result);
             route.GenerateCoordinatesString();
@@ -553,8 +593,6 @@ namespace aspRun.Data
             else { route.GenerateLoudScoreString(); }
 
             double distance = route.totalDistance;
-            Console.WriteLine($"In looprun: {distance}");
-
             return (route.CoordinatesString, route.CostsString, distance);
         }
 
