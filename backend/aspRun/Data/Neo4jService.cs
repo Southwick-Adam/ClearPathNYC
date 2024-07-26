@@ -399,8 +399,7 @@ namespace aspRun.Data
 
             var distanceHit = false;
 
-            // var shapeSides = random.Next(3,11);
-            var shapeSides = 5;
+            var shapeSides = random.Next(3,11);
             double modifier = 2;
             NetTopologySuite.Geometries.Point point = new(longitude, latitude);
 
