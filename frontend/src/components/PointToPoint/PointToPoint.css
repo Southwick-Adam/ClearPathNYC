@@ -1,138 +1,173 @@
 .pointtopoint_container {
-    padding: 20px 10px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-    margin-bottom: 0px;
-  }
+  padding: 20px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 0px;
+}
 
-  .ptp_row
-  {
-    display: flex;
-    justify-content: center;
-    width: 100%;
-  }
-/* geocoder z-index bug fix */
-  .ptp_row:first-of-type
-  {
-    z-index: 10;
-  }
-
-  .ptp_label{
-    font-size: 20px;
-    font-weight: bold;
-    padding-right: 3px;
-    padding-left:12px;
-    margin-right: 5px;
-  }
-
-  .ptp_label_end{
-    font-size: 20px;
-    font-weight: bold;
-    padding-left: 17px;
-    padding-right: 10px;
-  }
+.ptp_row {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
 
 /* geocoder z-index bug fix */
-  .waypoint{
-    display: flex;
-    position: relative;
-  }
+.ptp_row:first-of-type {
+  z-index: 10;
+}
 
-  .waypoint:nth-child(0) {z-index: 10;}
-  .waypoint:nth-child(1) {z-index: 9;}
-  .waypoint:nth-child(2) {z-index: 8;}
-  .waypoint:nth-child(3) {z-index: 7;}
-  .waypoint:nth-child(4) {z-index: 6;}
-  .waypoint:nth-child(5) {z-index: 5;}
+.ptp_label, .ptp_label_end {
+  font-size: 20px;
+  font-weight: bold;
+  padding-right: 3px;
+  margin-right: 5px;
+  min-width: 55.56px;
+  text-align: center;
+}
 
+/* geocoder z-index bug fix */
+.waypoint {
+  display: flex;
+  position: relative;
+}
 
-  .upDownWrapper{
-    flex-direction: column;
-    display: flex;
-    padding-left: 2px;
-    padding-bottom: 15px;
-  }
+.waypoint:nth-child(0) { z-index: 10; }
+.waypoint:nth-child(1) { z-index: 9; }
+.waypoint:nth-child(2) { z-index: 8; }
+.waypoint:nth-child(3) { z-index: 7; }
+.waypoint:nth-child(4) { z-index: 6; }
+.waypoint:nth-child(5) { z-index: 5; }
 
-  .addbtn{
-    width: 200px;
-    margin: 10px 20px 10px 20px;
+.upDownWrapper {
+  flex-direction: column;
+  display: flex;
+  padding-bottom: 15px;
+  padding-right: 3px;
+  margin-right: 5px;
+}
 
-  }
+/* comment out if we want to keep the long design */
+.add_wrapper {
+  display: flex;
+  min-width: 330px;
+}
+.addbtn {
+  width: 50px;
+  height: 45px;
+  align-items: left;
+  font-size: 30px;
+  font-weight: bold;
+  border: none;
+  color: #198754;
+}
 
-  .upbtn{
-    height: 17px;
-    width: 50px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color:#198754;
-    border-color: #198754;
-  }
+.addbtn:hover {
+  color: #31b678;
+  background-color: #f9faf3;
+}
 
-  .upbtn:hover{
-    color:#ffffff;
-    border-color: #198754;
-    background-color: #198754;
-  }
-  
-  .downbtn{
+.addbtn.night-mode{
+  color: #31b678;
+}
+
+.addbtn.night-mode:hover{
+  color: #198754;
+background-color: #4b4f5c;
+}
+
+.add_wrapper > .addbtn{
+  padding: 0px;
+}
+
+.upbtn, .downbtn {
   height: 17px;
   width: 50px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color:#198754;
+  color: #198754;
   border-color: #198754;
+  border: none;
+  font-size: 16px;
+
 }
 
-.downbtn:hover{
-  color:#ffffff;
-  border-color: #198754;
-  background-color: #198754;
+.upbtn:hover, .downbtn:hover {
+  color: #31b678;
+  background-color: #f9faf3;
 }
 
-  .removebtn{
-    height: 42px;
-    width: 42px;
+
+.night-mode .upbtn, .night-mode .downbtn {
+  color: #31b678
+}
+
+.night-mode .upbtn:hover, .night-mode .downbtn:hover {
+  color: #198754;
+  background-color: #4b4f5c;
+}
+
+
+.removebtn {
+  height: 42px;
+  width: 36px;
+  font-size: 20px;
+  margin-left: 7px;
+  border: none;
+  background-color: #f9faf3;
+  color: red;
+
+}
+
+.removebtn:hover{
+  border: none;
+  background-color: #f9faf3;
+  color: rgb(201, 20, 20);
+}
+.removebtn.night-mode:hover{
+background-color: #4b4f5c;
+border: none;
+}
+
+.removebtn.night-mode{
+  background-color: #4b4f5c;
   }
+/* geocoder z-index bug fix */
+.waypoints_container {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  z-index: 5;
+}
 
-  /* geocoder z-index bug fix */
-  .waypoints_container{
-    margin-top: 10px;
-    margin-bottom: 10px;
-    z-index: 5;
-  }
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+body {
+  font-family: 'Montserrat', sans-serif;
+  font-style: italic;
+}
 
-  @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
-  body {
-    font-family: 'Montserrat', sans-serif;
-    font-style: italic;
-  }
+.include_waypoints:hover {
+  cursor: pointer;
+}
 
-  .include_waypoints:hover{
-    cursor: pointer;
-  }
+.include_waypoints input[type="checkbox"] {
+  accent-color: #2a8754;
+}
 
-  .include_waypoints input[type="checkbox"] {
-    accent-color: #2a8754;
-  }
+.include_multiP2P, .include_waypoints {
+  margin-bottom: 10px;
+}
 
-  include_multiP2P, .include_waypoints{
-    margin-bottom: 10px;
-  }
+.include_multiP2P:hover {
+  cursor: pointer;
+}
 
+.include_multiP2P input[type="checkbox"] {
+  accent-color: #2a8754;
+}
 
-  .include_multiP2P:hover{
-    cursor: pointer;
-  }
-
-  .include_multiP2P input[type="checkbox"] {
-    accent-color: #2a8754;
-  }
-
-  /* Color-Blind Mode */
+/* Color-Blind Mode */
 .color-blind-mode .upbtn,
 .color-blind-mode .downbtn,
 .color-blind-mode .addbtn {
@@ -148,18 +183,19 @@
   border-color: #9881f5;
 }
 
-.color-blind-mode .include_waypoints input[type="checkbox"] {
+.color-blind-mode .include_waypoints input[type="checkbox"],
+.color-blind-mode .include_multiP2P input[type="checkbox"] {
   accent-color: #9881f5;
 }
 
-.includ-text{
+.includ-text {
   margin-right: 8px;
 }
 
-.include-multi{
+.include-multi {
   margin-right: 8px;
 }
 
-.include-multi:hover, .includ-text:hover{
+.include-multi:hover, .includ-text:hover {
   cursor: pointer;
 }

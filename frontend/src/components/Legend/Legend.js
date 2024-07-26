@@ -6,7 +6,8 @@ import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 
 function Legend({ onToggleLayer, layerVisibility, presentLayers }) {
   const [isOpen, setIsOpen] = useState(false);
-  const { isNightMode, route, isColorBlindMode } = useStore();
+  const { isNightMode, routes, selectedRouteIndex, isColorBlindMode } = useStore();
+  const route = routes[selectedRouteIndex];
 
   useEffect(() => {
     if (window.innerWidth > 480) {
@@ -19,7 +20,6 @@ function Legend({ onToggleLayer, layerVisibility, presentLayers }) {
       };
     }
   }, []);
-
 
   function toggleLegend() {
     setIsOpen(!isOpen);
@@ -38,7 +38,7 @@ function Legend({ onToggleLayer, layerVisibility, presentLayers }) {
       <ViewLayerToggle
         isChecked={layerVisibility[layerName]}
         onToggle={() => handleButtonClick(layerName)}
-        tooltipText={`Toggle ${layerName}`}
+        tooltipText={`View/Hide ${layerName}`}
         className={`toggle-${layerName}`} // Add a className prop based on the layerName
       />
     );
@@ -46,18 +46,19 @@ function Legend({ onToggleLayer, layerVisibility, presentLayers }) {
 
   const renderDisableableButton = (layerName) => {
     const isDisabled = !presentLayers[layerName];
+    const tooltipText = route
+      ? 'None found near the route'
+      : 'View after finding a route';
+
     const button = (
       <ViewLayerToggle
         isChecked={layerVisibility[layerName]}
         onToggle={() => handleButtonClick(layerName)}
-        tooltipText={!route ? 'View after finding a route' : 'None found near the route'}
+        tooltipText={tooltipText}
         isDisabled={isDisabled}
         className={`toggle-${layerName}`}
       />
     );
-    const tooltipText = !route
-      ? 'View after finding a route'
-      : 'None found near the route';
 
     if (isDisabled) {
       return (

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import useStore from '../../store/store';
 import './Sidebar.css';
 import Loop from '../Loop/Loop.js';
@@ -14,15 +14,15 @@ function Sidebar({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoderRefs,
     isLoopOpen, 
     isPtPOpen, 
     setIsLoopOpen, 
-    setIsPtPOpen 
+    setIsPtPOpen,
+    isSidebarOpen,
+    setIsSidebarOpen,
   } = useStore();
-
-  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     if (window.innerWidth > 480) {
       const sidebarTimer = setTimeout(() => {
-        setIsOpen(true);
+        setIsSidebarOpen(true);
       }, 3500); // Adjust the delay as needed
 
       const ptPTimer = setTimeout(() => {
@@ -37,7 +37,7 @@ function Sidebar({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoderRefs,
   }, []);
 
   function toggleSidebar() {
-    setIsOpen(!isOpen);
+    setIsSidebarOpen(!isSidebarOpen);
   }
 
   function toggleLoop() {
@@ -51,22 +51,22 @@ function Sidebar({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoderRefs,
   }
 
   function hideSidebar() {
-    setIsOpen(false);
+    setIsSidebarOpen(false);
   }
 
   return (
-    <div className={`sidebar ${isOpen ? 'open' : ''} ${isNightMode ? 'night' : 'day'}`}>
+    <div className={`sidebar ${isSidebarOpen ? 'open' : ''} ${isNightMode ? 'night' : 'day'}`}>
       <button
         className={`btn btn-primary toggle-btn ${isNightMode ? 'night' : 'day'} ${isColorBlindMode ? 'color-blind' : ''}`}
         onClick={toggleSidebar}
       >
-        {isOpen ? '◀' : '▶'}
+        {isSidebarOpen ? '◀' : '▶'}
       </button>
       <div className="sidebar-content-wrapper">
         <div className="sidebar-content">
           <div className='loop_wrapper'>
-            <div className='toggle_title_row' id='loop_toggle_title_row'> 
-              <button className='btn' onClick={toggleLoop}>
+            <div className='toggle_title_row' id='loop_toggle_title_row' onClick={toggleLoop}> 
+              <button className={`wrapper-btn ${isNightMode ? 'night' : 'day'}`} >
                 {isLoopOpen ? '▼' : '▶'}
               </button>
               <div className={`container_title ${isNightMode ? 'night' : 'day'}`}>Loop</div>
@@ -76,8 +76,8 @@ function Sidebar({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoderRefs,
             </div>
           </div>
           <div className='ptp_wrapper'>
-            <div className='toggle_title_row'>
-              <button className='btn' onClick={togglePtP}>
+            <div className='toggle_title_row'onClick={togglePtP}>
+              <button className={`wrapper-btn ${isNightMode ? 'night' : 'day'}`} >
                 {isPtPOpen ? '▼' : '▶'}
               </button>
               <div className={`container_title ${isNightMode ? 'night' : 'day'}`}>PointToPoint</div>

@@ -17,6 +17,7 @@ function PointToPoint({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoder
     isColorBlindMode, isMultiP2P, toggleIsMultiP2P
   } = useStore();
 
+  const { isNightMode } = useStore();
   const [isGoButtonDisabled, setGoButtonDisabled] = useState(true);
 
   const waypointStates = [
@@ -92,6 +93,9 @@ function PointToPoint({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoder
     }
     resetWaypointCord(visibleWaypoints); // Clear the last waypoint input
     setVisibleWaypoints(visibleWaypoints - 1);
+    if (visibleWaypoints - 1 === 0) {
+      setIncludeWaypoints(false);
+    }
   }
 
   function handleMoveWaypointUp(index) {
@@ -175,7 +179,14 @@ function PointToPoint({ onFormSubmit, startGeocoderRef, endGeocoderRef, geocoder
           />
         ))}
         {visibleWaypoints < 5 && (
-          <button type='button' className="btn btn-outline-success btn-lg d-block mx-auto addbtn" onClick={handleAddWaypoint}>+</button>
+          <div className='add_wrapper'>
+            <OverlayTrigger
+              placement="top"
+              overlay={<Tooltip id="tooltip-add">Add Waypoint</Tooltip>}
+            >
+              <button type='button'  className={`btn btn-sm addbtn ${isNightMode ? 'night-mode' : ''}`} onClick={handleAddWaypoint}>+</button>
+            </OverlayTrigger>
+          </div>
         )}
       </div>
       <div className="ptp_row">

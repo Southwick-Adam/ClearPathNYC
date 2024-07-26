@@ -19,6 +19,8 @@ const useStore = create((set, get) => ({
   waypointCord5: null,
   isLoopOpen: false,
   isPtPOpen: false,
+  isSidebarOpen: false,
+  setIsSidebarOpen: (isOpen) => set({ isSidebarOpen: isOpen }),
   setLoopCord: (cord) => set({ loopCord: cord }),
   setLoopDistance: (distance) => set({ loopDistance: distance }),
   setStartCord: (cord) => set({ startCord: cord }),
@@ -33,6 +35,14 @@ const useStore = create((set, get) => ({
   setWaypointCord3: (cord) => set({ waypointCord3: cord }),
   setWaypointCord4: (cord) => set({ waypointCord4: cord }),
   setWaypointCord5: (cord) => set({ waypointCord5: cord }),
+  clearWaypointData: () => set({
+    waypointCord1: null,
+    waypointCord2: null,
+    waypointCord3: null,
+    waypointCord4: null,
+    waypointCord5: null,
+    visibleWaypoints: 0,
+  }),
   resetWaypointCord: (index) => set((state) => {
     const waypointKey = `waypointCord${index}`;
     return { [waypointKey]: null };
@@ -79,6 +89,8 @@ const useStore = create((set, get) => ({
   toggleIsMultiP2P: () => set((state) => ({ isMultiP2P: !state.isMultiP2P })),
   setIsLoopOpen: (isOpen) => set({ isLoopOpen: isOpen }),
   setIsPtPOpen: (isOpen) => set({ isPtPOpen: isOpen }),
+  
+  clearRoutes: () => set({ routes: [], selectedRouteIndex: 0 })
 }));
 
 export default useStore;

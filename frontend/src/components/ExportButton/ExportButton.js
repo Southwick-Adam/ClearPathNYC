@@ -5,15 +5,17 @@ import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import './ExportButton.css';
 
 const ExportButton = () => {
-  const route = useStore(state => state.route);
+  const routes = useStore(state => state.routes);
+  const selectedRouteIndex = useStore(state => state.selectedRouteIndex);
 
   const handleExport = () => {
-    if (!route) {
+    if (!routes || routes.length === 0 || selectedRouteIndex === null || selectedRouteIndex >= routes.length) {
       alert('No route to export');
       return;
     }
 
-    const gpx = geojsonToGpx(route);
+    const selectedRoute = routes[selectedRouteIndex];
+    const gpx = geojsonToGpx(selectedRoute);
     const blob = new Blob([gpx], { type: 'application/gpx+xml' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -35,7 +37,7 @@ const ExportButton = () => {
         <button
           onClick={handleExport}
           className="export-button"
-          disabled={!route} // Disable the button if no route
+          disabled={!routes || routes.length === 0 || selectedRouteIndex === null || selectedRouteIndex >= routes.length}
         >
           Export to GPX
         </button>

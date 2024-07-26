@@ -26,7 +26,7 @@ import fetchOther311 from '../../assets/geodata/fetchOther311.js';
 import poiGeojson from '../../assets/geodata/171_POIs.json';
 import fetchMulti311 from '../../assets/geodata/fetchMulti311.js';
 
-function MapComponent({ route, loopGeocoderRef,startGeocoderRef, endGeocoderRef, geocoderRefs, playVideo, layerVisibility, setPresentLayers }) {
+function MapComponent({ route, loopGeocoderRef, startGeocoderRef, endGeocoderRef, geocoderRefs, playVideo, layerVisibility, setPresentLayers }) {
   const mapContainerRef = useRef(null);
   const mapRef = useRef(null);
   const isMapLoadedRef = useRef(false);
@@ -36,11 +36,7 @@ function MapComponent({ route, loopGeocoderRef,startGeocoderRef, endGeocoderRef,
   const [videoEnded, setVideoEnded] = useState(false);
   const waypointRefs = [useRef(null), useRef(null), useRef(null), useRef(null), useRef(null)];
 
-  const {
-    setStartCord, setEndCord, setWaypointAndIncrease, setLoopCord,
-    waypointCord1, waypointCord2, waypointCord3, waypointCord4, waypointCord5,
-    visibleWaypoints, isNightMode, isColorBlindMode
-  } = useStore();
+  const { setStartCord, setEndCord, setWaypointAndIncrease, setLoopCord, waypointCord1, waypointCord2, waypointCord3, waypointCord4, waypointCord5, visibleWaypoints, isNightMode, isColorBlindMode, routes, loopCord, startCord, endCord } = useStore();
 
   const reverseGeocode = async (lng, lat) => {
     const response = await fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${lng},${lat}.json?access_token=${MAPBOX_TOKEN}`);
@@ -79,7 +75,7 @@ function MapComponent({ route, loopGeocoderRef,startGeocoderRef, endGeocoderRef,
     const sources = map.getStyle().sources;
     const images = map.listImages();
 
-    const layerCopy = layers.filter(layer => layer.id !== 'background').map(layer => ({ ...layer }));
+    const layerCopy = layers.filter((layer) => layer.id !== 'background').map((layer) => ({ ...layer }));
     const sourceCopy = { ...sources };
     const imageCopy = images.map((imageId) => ({
       id: imageId,
@@ -153,6 +149,11 @@ function MapComponent({ route, loopGeocoderRef,startGeocoderRef, endGeocoderRef,
   useEffect(() => {
     if (mapRef.current) return;
 
+    const bounds = [
+      [-74.1, 40.73], // Southwest coordinates
+      [-73.7, 40.86], // Northeast coordinates
+    ];
+
     mapRef.current = new mapboxgl.Map({
       container: mapContainerRef.current,
       style: isNightMode ? MAPBOX_NIGHT_STYLE_URL : MAPBOX_DAY_STYLE_URL,
@@ -162,7 +163,8 @@ function MapComponent({ route, loopGeocoderRef,startGeocoderRef, endGeocoderRef,
       maxZoom: 20,
       accessToken: MAPBOX_TOKEN,
       pitch: 50,
-      bearing: -2.6
+      bearing: -2.6,
+      maxBounds: bounds,
     });
 
     mapRef.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
@@ -191,7 +193,7 @@ function MapComponent({ route, loopGeocoderRef,startGeocoderRef, endGeocoderRef,
           updateStartInput,
           updateEndInput,
           updateWaypointInput,
-          geocoderRefs
+          geocoderRefs,
         });
       }
     });
@@ -219,20 +221,25 @@ function MapComponent({ route, loopGeocoderRef,startGeocoderRef, endGeocoderRef,
         updateStartInput,
         updateEndInput,
         updateWaypointInput,
-        geocoderRefs
+        geocoderRefs,
       });
     }
   }, [videoEnded, isMapLoadedRef.current]);
 
   useEffect(() => {
     if (!route || !mapRef.current || !isMapLoadedRef.current) return;
+    // Remove any existing popups
+    const existingPopups = document.getElementsByClassName('mapboxgl-popup');
+    while (existingPopups.length > 0) {
+      existingPopups[0].remove();
+    }
 
     clearRoute(mapRef); // Clear existing route and markers
     clearMapFeatures(mapRef); // Clear existing POI markers and clusters
 
     console.log('Adding route to map', route); // Debug log
     addRouteToMap(mapRef); // Updated call to addRouteToMap without passing route directly
-    
+
     addRouteMarkers(mapRef, route, startMarkerRef, endMarkerRef, waypointRefs);
 
     zoomToRoute(mapRef, route, {
@@ -250,16 +257,34 @@ function MapComponent({ route, loopGeocoderRef,startGeocoderRef, endGeocoderRef,
 
   useEffect(() => {
     if (!mapRef.current || !isMapLoadedRef.current) return;
-
-    const { layerCopy, sourceCopy, imageCopy } = saveLayersAndSources(mapRef.current);
-    const newStyle = isNightMode ? MAPBOX_NIGHT_STYLE_URL : MAPBOX_DAY_STYLE_URL;
-
-    mapRef.current.setStyle(newStyle);
-
-    mapRef.current.once('styledata', () => {
-      restoreLayersAndSources(mapRef.current, layerCopy, sourceCopy, imageCopy);
-    });
+  
+    const handleNightModeChange = async () => {
+      const { layerCopy, sourceCopy, imageCopy } = saveLayersAndSources(mapRef.current);
+      const newStyle = isNightMode ? MAPBOX_NIGHT_STYLE_URL : MAPBOX_DAY_STYLE_URL;
+  
+      mapRef.current.setStyle(newStyle);
+  
+      mapRef.current.once('styledata', async () => {
+        restoreLayersAndSources(mapRef.current, layerCopy, sourceCopy, imageCopy);
+  
+        try {
+          if (loopCord) await updateLoopStartInput(loopCord);
+          if (startCord) await updateStartInput(startCord);
+          if (endCord) await updateEndInput(endCord);
+          
+          const waypointCords = [waypointCord1, waypointCord2, waypointCord3, waypointCord4, waypointCord5];
+          for (let i = 0; i < waypointCords.length; i++) {
+            if (waypointCords[i]) await updateWaypointInput(i, waypointCords[i]);
+          }
+        } catch (error) {
+          console.error('Error updating inputs:', error);
+        }
+      });
+    };
+  
+    handleNightModeChange();
   }, [isNightMode]);
+  
 
   useEffect(() => {
     if (mapRef.current && isMapLoadedRef.current) {
@@ -277,6 +302,15 @@ function MapComponent({ route, loopGeocoderRef,startGeocoderRef, endGeocoderRef,
     if (!mapRef.current || !isMapLoadedRef.current) return;
     toggleLayerVisibility(mapRef, layerVisibility);
   }, [layerVisibility]);
+
+  useEffect(() => {
+    if (!mapRef.current || !isMapLoadedRef.current) return;
+
+    if (routes.length === 0) {
+      clearRoute(mapRef); // Clear existing route and markers
+      clearMapFeatures(mapRef); // Clear existing POI markers and clusters
+    }
+  }, [routes]);
 
   const handleVideoEnd = () => {
     setVideoEnded(true);
