@@ -85,7 +85,6 @@ function MapComponent({ route, loopGeocoderRef, startGeocoderRef, endGeocoderRef
   };
 
   const restoreLayersAndSources = (map, layerCopy, sourceCopy, imageCopy) => {
-    const isColorBlindMode = useStore.getState().isColorBlindMode;
 
     Object.keys(sourceCopy).forEach((sourceId) => {
       if (!map.getSource(sourceId)) {
