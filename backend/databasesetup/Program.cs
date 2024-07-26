@@ -129,7 +129,7 @@ string user = "neo4j";
 string password = "password";
 Neo4jImplementation driver = new Neo4jImplementation(uri, user, password);
 
-/*
+
 string delNodesQuery = @"
 MATCH (n:nodes)-[r:PATH]->()
 WITH n, COUNT(r) AS relCount
