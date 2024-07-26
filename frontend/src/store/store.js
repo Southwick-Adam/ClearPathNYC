@@ -9,7 +9,7 @@ const useStore = create((set, get) => ({
   endCord: null,
   loopIsQuiet: true, // Separate state for loop
   ptpIsQuiet: true,  // Separate state for point-to-point
-  loopDistance: '',
+  loopDistance: null,
   includeWaypoints: false,
   visibleWaypoints: 0,
   waypointCord1: null,

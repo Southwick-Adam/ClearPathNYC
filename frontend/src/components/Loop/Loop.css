@@ -34,7 +34,6 @@
 }
 
 input[type=number] {
-  /*for absolutely positioning spinners*/
   position: relative; 
   padding: 5px;
   padding-right: 25px;
@@ -43,7 +42,6 @@ input[type=number] {
 
 input[type=number]::-webkit-outer-spin-button, 
 input[type=number]::-webkit-inner-spin-button {
-  -webkit-appearance: inner-spin-button !important;
   width: 20px;
   position: absolute;
   top: 0;

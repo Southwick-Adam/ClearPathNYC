@@ -148,12 +148,12 @@ function MapComponent({ route, loopGeocoderRef, startGeocoderRef, endGeocoderRef
 
   useEffect(() => {
     if (mapRef.current) return;
-
+  
     const bounds = [
       [-74.3, 40.43], // Southwest coordinates
       [-73.5, 40.96], // Northeast coordinates
     ];
-
+  
     mapRef.current = new mapboxgl.Map({
       container: mapContainerRef.current,
       style: isNightMode ? MAPBOX_NIGHT_STYLE_URL : MAPBOX_DAY_STYLE_URL,
@@ -166,12 +166,12 @@ function MapComponent({ route, loopGeocoderRef, startGeocoderRef, endGeocoderRef
       bearing: -2.6,
       maxBounds: bounds,
     });
-
+  
     mapRef.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
-
+  
     mapRef.current.on('load', () => {
       isMapLoadedRef.current = true;
-
+  
       if (videoEnded) {
         addMapFeatures(mapRef, {
           fetchInitialPOI,
@@ -197,16 +197,40 @@ function MapComponent({ route, loopGeocoderRef, startGeocoderRef, endGeocoderRef
         });
       }
     });
-
+  
     const handleResize = () => {
       if (mapRef.current) {
         mapRef.current.resize();
       }
     };
-
+  
     window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+  
+    // Override addEventListener globally to force passive listeners for touch events
+    const originalAddEventListener = EventTarget.prototype.addEventListener;
+  
+    EventTarget.prototype.addEventListener = function (type, listener, options) {
+      if (type === 'touchstart' || type === 'touchmove' || type === 'touchend') {
+        if (typeof options === 'boolean') {
+          options = {
+            capture: options,
+            passive: true,
+          };
+        } else if (typeof options === 'object') {
+          options.passive = true;
+        }
+      }
+  
+      originalAddEventListener.call(this, type, listener, options);
+    };
+  
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      // Restore the original addEventListener method on cleanup
+      EventTarget.prototype.addEventListener = originalAddEventListener;
+    };
   }, []);
+  
 
   useEffect(() => {
     if (videoEnded && isMapLoadedRef.current) {
