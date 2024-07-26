@@ -32,7 +32,7 @@ function App() {
   const startGeocoderRef = useRef(null);
   const endGeocoderRef = useRef(null);
   const geocoderRefs = [useRef(null), useRef(null), useRef(null), useRef(null), useRef(null)];
-  const { isNightMode, isColorBlindMode, routes, selectedRouteIndex, setRoutes, setSelectedRouteIndex, clearRoutes, setIsSidebarOpen } = useStore();
+  const { isNightMode, isColorBlindMode, routes, selectedRouteIndex, setRoutes, setSelectedRouteIndex, clearRoutes, setIsSidebarOpen, clearWaypointData } = useStore();
 
   const [layerVisibility, setLayerVisibility] = useState({
     parks: true,
@@ -59,16 +59,15 @@ function App() {
     console.log(`Form data for ${formType} sent to backend: `, formData);
     setIsSidebarOpen(false); // Close the sidebar upon form submission
 
-  
     let routeData;
     setIsLoading(true);
     setLoadingMessage('Loading Route');
     setLoadingStatus('loading'); // Set status to 'loading'
 
-  
     try {
       if (formType === 'loop') {
         routeData = await fetchLoopRoute(formData);
+        clearWaypointData(); // Clear waypoint data when submitting the loop form
       } else if (formType === 'pointToPoint') {
         if (formData.isMultiP2P) {
           routeData = await fetchMultiP2PRoute(formData);
@@ -76,7 +75,7 @@ function App() {
           routeData = await fetchP2PRoute(formData);
         }
       }
-  
+
       if (routeData) {
         console.log('Fetched route data:', routeData);
         if (Array.isArray(routeData.features)) {
@@ -95,6 +94,7 @@ function App() {
       setTimeout(() => setIsLoading(false), 3000); // Close the error message after 3 seconds
     }
   }
+
   
   async function fetchP2PRoute(formData) {
     const { coordinates, isQuiet } = formData;

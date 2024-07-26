@@ -35,6 +35,14 @@ const useStore = create((set, get) => ({
   setWaypointCord3: (cord) => set({ waypointCord3: cord }),
   setWaypointCord4: (cord) => set({ waypointCord4: cord }),
   setWaypointCord5: (cord) => set({ waypointCord5: cord }),
+  clearWaypointData: () => set({
+    waypointCord1: null,
+    waypointCord2: null,
+    waypointCord3: null,
+    waypointCord4: null,
+    waypointCord5: null,
+    visibleWaypoints: 0,
+  }),
   resetWaypointCord: (index) => set((state) => {
     const waypointKey = `waypointCord${index}`;
     return { [waypointKey]: null };
