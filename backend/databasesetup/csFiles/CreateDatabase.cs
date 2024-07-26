@@ -133,10 +133,10 @@ class CreateDatabase
             {
                 if (node.Longitude.HasValue && node.Latitude.HasValue)
                 {
-                    NetTopologySuite.Geometries.Point point = new(longitude, latitude);
-                    if (polygon.Contains(point))
+                    NetTopologySuite.Geometries.Point point = new(node.Longitude.Value, node.Latitude.Value);
+                    if (!polygon.Contains(point))
                     {
-                        Console.WriteLine("Point on island, skipping");
+                        Console.WriteLine($"Point not in, skipping {node.Latitude.Value}, {node.Longitude.Value}");
                         continue;
                     }
 
