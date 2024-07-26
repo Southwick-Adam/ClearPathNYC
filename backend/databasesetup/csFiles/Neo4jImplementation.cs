@@ -97,10 +97,8 @@ public class Neo4jImplementation : IDisposable
         var query = @"
         MATCH (a:nodes {nodeid: $ID1}), (b:nodes {nodeid: $ID2})
         MERGE (a)-[r1:PATH]->(b)
-        ON CREATE SET r1.distance = $distance, r1.direction = $direction, r1.quietscore = $quietscore
-        MERGE (b)-[r2:PATH]->(a)
-        ON CREATE SET r2.distance = $distance, r2.direction = $direction2, r2.quietscore = $quietscore
-        RETURN a, b, r1, r2";
+        ON CREATE SET r1.distance = $distance, r1.quietscore = $quietscore
+        RETURN a, b, r1";
 
         NodeInfo nodeInfo = (NodeInfo)node.verticesInfo[neighbor.ID];
 
@@ -109,8 +107,6 @@ public class Neo4jImplementation : IDisposable
             {"ID1", node.ID},
             {"ID2", neighbor.ID},
             {"distance", nodeInfo.Distance},
-            {"direction", nodeInfo.Direction},
-            {"direction2", nodeInfo.DirectionReverse},
             {"quietscore", nodeInfo.QuietScore}
         };
 
@@ -387,11 +383,8 @@ public class Neo4jImplementation : IDisposable
             foreach (var record in result)
             {
                 writetext.WriteLine(record["n.nodeid"]);
-                // outputList.Add(record["n.nodeid"]);
             }
-
         }
-
     }
 
     public async Task WriteQuery(string query)
