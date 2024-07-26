@@ -119,6 +119,19 @@
     accent-color: #2a8754;
   }
 
+  include_multiP2P, .include_waypoints{
+    margin-bottom: 10px;
+  }
+
+
+  .include_multiP2P:hover{
+    cursor: pointer;
+  }
+
+  .include_multiP2P input[type="checkbox"] {
+    accent-color: #2a8754;
+  }
+
   /* Color-Blind Mode */
 .color-blind-mode .upbtn,
 .color-blind-mode .downbtn,
@@ -141,4 +154,12 @@
 
 .includ-text{
   margin-right: 8px;
+}
+
+.include-multi{
+  margin-right: 8px;
+}
+
+.include-multi:hover, .includ-text:hover{
+  cursor: pointer;
 }

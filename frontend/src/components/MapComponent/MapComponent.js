@@ -3,7 +3,7 @@ import './MapComponent.css';
 import { MAPBOX_TOKEN, MAPBOX_DAY_STYLE_URL, MAPBOX_NIGHT_STYLE_URL } from '../../config.js';
 import mapboxgl from 'mapbox-gl';
 import PropTypes from 'prop-types';
-import { addRouteMarkers, addRouteToMap, zoomToRoute, clearRoute,updateRouteColors } from './MapHelper/routeHelpers.js';
+import { addRouteMarkers, addRouteToMap, zoomToRoute, clearRoute, updateRouteColors } from './MapHelper/routeHelpers.js';
 import { addMapFeatures, clearMapFeatures, toggleLayerVisibility } from './MapHelper/markerHelpers.js';
 import useStore from '../../store/store.js';
 import mapUnfoldVid from '../../assets/videos/mapunfolding.mp4';
@@ -19,14 +19,14 @@ import otherHighImage from '../../assets/images/Road_Warning_orange.png';
 import multiHighImage from '../../assets/images/orange_warning.png';
 import multiVeryHighImage from '../../assets/images/red_warning.png';
 import { convertToGeoJSON } from './MapHelper/geojsonHelpers.js';
-import { add311Markers, plotRoutePOI, add311Multiple,reloadParkFeature } from './MapHelper/markerHelpers.js';
+import { add311Markers, plotRoutePOI, add311Multiple, reloadParkFeature } from './MapHelper/markerHelpers.js';
 import fetchNoise311 from '../../assets/geodata/fetchNoise311.js';
 import fetchGarbage311 from '../../assets/geodata/fetchGarbage311.js';
 import fetchOther311 from '../../assets/geodata/fetchOther311.js';
 import poiGeojson from '../../assets/geodata/171_POIs.json';
 import fetchMulti311 from '../../assets/geodata/fetchMulti311.js';
 
-function MapComponent({ route, startGeocoderRef, endGeocoderRef, geocoderRefs, playVideo, layerVisibility, setPresentLayers }) {
+function MapComponent({ route, loopGeocoderRef,startGeocoderRef, endGeocoderRef, geocoderRefs, playVideo, layerVisibility, setPresentLayers }) {
   const mapContainerRef = useRef(null);
   const mapRef = useRef(null);
   const isMapLoadedRef = useRef(false);
@@ -37,7 +37,7 @@ function MapComponent({ route, startGeocoderRef, endGeocoderRef, geocoderRefs, p
   const waypointRefs = [useRef(null), useRef(null), useRef(null), useRef(null), useRef(null)];
 
   const {
-    setStartCord, setEndCord, setWaypointAndIncrease,
+    setStartCord, setEndCord, setWaypointAndIncrease, setLoopCord,
     waypointCord1, waypointCord2, waypointCord3, waypointCord4, waypointCord5,
     visibleWaypoints, isNightMode, isColorBlindMode
   } = useStore();
@@ -46,6 +46,13 @@ function MapComponent({ route, startGeocoderRef, endGeocoderRef, geocoderRefs, p
     const response = await fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${lng},${lat}.json?access_token=${MAPBOX_TOKEN}`);
     const data = await response.json();
     return data.features[0]?.place_name || 'Unknown location';
+  };
+
+  const updateLoopStartInput = async (coordinates) => {
+    if (loopGeocoderRef.current) {
+      const placeName = await reverseGeocode(coordinates[0], coordinates[1]);
+      loopGeocoderRef.current.setInput(placeName);
+    }
   };
 
   const updateStartInput = async (coordinates) => {
@@ -81,68 +88,67 @@ function MapComponent({ route, startGeocoderRef, endGeocoderRef, geocoderRefs, p
     return { layerCopy, sourceCopy, imageCopy };
   };
 
-const restoreLayersAndSources = (map, layerCopy, sourceCopy, imageCopy) => {
-  const isColorBlindMode = useStore.getState().isColorBlindMode;
+  const restoreLayersAndSources = (map, layerCopy, sourceCopy, imageCopy) => {
+    const isColorBlindMode = useStore.getState().isColorBlindMode;
 
-  Object.keys(sourceCopy).forEach((sourceId) => {
-    if (!map.getSource(sourceId)) {
-      map.addSource(sourceId, sourceCopy[sourceId]);
-    }
-  });
-
-  layerCopy.forEach((layer) => {
-    if (!map.getLayer(layer.id)) {
-      map.addLayer(layer);
-    }
-  });
-
-  imageCopy.forEach((image) => {
-    if (!map.hasImage(image.id)) {
-      if (image.id === 'flora-marker') {
-        map.loadImage(isColorBlindMode ? floraImageCB : floraImage, (error, img) => {
-          if (error) throw error;
-          map.addImage('flora-marker', img);
-        });
-      } else if (image.id === 'poi-marker') {
-        map.loadImage(poiImage, (error, img) => {
-          if (error) throw error;
-          map.addImage('poi-marker', img);
-        });
-      } else if (image.id === 'noise-high-marker') {
-        map.loadImage(noiseHighImage, (error, img) => {
-          if (error) throw error;
-          map.addImage('noise-high-marker', img);
-        });
-      } else if (image.id === 'noise-veryhigh-marker') {
-        map.loadImage(noiseVeryHighImage, (error, img) => {
-          if (error) throw error;
-          map.addImage('noise-veryhigh-marker', img);
-        });
-      } else if (image.id === 'garbage-high-marker') {
-        map.loadImage(garbageHighImage, (error, img) => {
-          if (error) throw error;
-          map.addImage('garbage-high-marker', img);
-        });
-      } else if (image.id === 'other-high-marker') {
-        map.loadImage(otherHighImage, (error, img) => {
-          if (error) throw error;
-          map.addImage('other-high-marker', img);
-        });
-      } else if (image.id === 'multi-high-marker') {
-        map.loadImage(multiHighImage, (error, img) => {
-          if (error) throw error;
-          map.addImage('multi-high-marker', img);
-        });
-      } else if (image.id === 'multi-veryhigh-marker') {
-        map.loadImage(multiVeryHighImage, (error, img) => {
-          if (error) throw error;
-          map.addImage('multi-veryhigh-marker', img);
-        });
+    Object.keys(sourceCopy).forEach((sourceId) => {
+      if (!map.getSource(sourceId)) {
+        map.addSource(sourceId, sourceCopy[sourceId]);
       }
-    }
-  });
-};
+    });
 
+    layerCopy.forEach((layer) => {
+      if (!map.getLayer(layer.id)) {
+        map.addLayer(layer);
+      }
+    });
+
+    imageCopy.forEach((image) => {
+      if (!map.hasImage(image.id)) {
+        if (image.id === 'flora-marker') {
+          map.loadImage(isColorBlindMode ? floraImageCB : floraImage, (error, img) => {
+            if (error) throw error;
+            map.addImage('flora-marker', img);
+          });
+        } else if (image.id === 'poi-marker') {
+          map.loadImage(poiImage, (error, img) => {
+            if (error) throw error;
+            map.addImage('poi-marker', img);
+          });
+        } else if (image.id === 'noise-high-marker') {
+          map.loadImage(noiseHighImage, (error, img) => {
+            if (error) throw error;
+            map.addImage('noise-high-marker', img);
+          });
+        } else if (image.id === 'noise-veryhigh-marker') {
+          map.loadImage(noiseVeryHighImage, (error, img) => {
+            if (error) throw error;
+            map.addImage('noise-veryhigh-marker', img);
+          });
+        } else if (image.id === 'garbage-high-marker') {
+          map.loadImage(garbageHighImage, (error, img) => {
+            if (error) throw error;
+            map.addImage('garbage-high-marker', img);
+          });
+        } else if (image.id === 'other-high-marker') {
+          map.loadImage(otherHighImage, (error, img) => {
+            if (error) throw error;
+            map.addImage('other-high-marker', img);
+          });
+        } else if (image.id === 'multi-high-marker') {
+          map.loadImage(multiHighImage, (error, img) => {
+            if (error) throw error;
+            map.addImage('multi-high-marker', img);
+          });
+        } else if (image.id === 'multi-veryhigh-marker') {
+          map.loadImage(multiVeryHighImage, (error, img) => {
+            if (error) throw error;
+            map.addImage('multi-veryhigh-marker', img);
+          });
+        }
+      }
+    });
+  };
 
   useEffect(() => {
     if (mapRef.current) return;
@@ -152,7 +158,7 @@ const restoreLayersAndSources = (map, layerCopy, sourceCopy, imageCopy) => {
       style: isNightMode ? MAPBOX_NIGHT_STYLE_URL : MAPBOX_DAY_STYLE_URL,
       center: [-73.9712, 40.7831],
       zoom: 13,
-      minZoom: 13,
+      minZoom: 11,
       maxZoom: 20,
       accessToken: MAPBOX_TOKEN,
       pitch: 50,
@@ -177,9 +183,11 @@ const restoreLayersAndSources = (map, layerCopy, sourceCopy, imageCopy) => {
           multiHighImage,
           multiVeryHighImage,
           poiImage,
+          setLoopCord,
           setStartCord,
           setEndCord,
           setWaypointAndIncrease,
+          updateLoopStartInput,
           updateStartInput,
           updateEndInput,
           updateWaypointInput,
@@ -203,9 +211,11 @@ const restoreLayersAndSources = (map, layerCopy, sourceCopy, imageCopy) => {
         multiHighImage,
         multiVeryHighImage,
         poiImage,
+        setLoopCord,
         setStartCord,
         setEndCord,
         setWaypointAndIncrease,
+        updateLoopStartInput,
         updateStartInput,
         updateEndInput,
         updateWaypointInput,
@@ -220,7 +230,9 @@ const restoreLayersAndSources = (map, layerCopy, sourceCopy, imageCopy) => {
     clearRoute(mapRef); // Clear existing route and markers
     clearMapFeatures(mapRef); // Clear existing POI markers and clusters
 
-    addRouteToMap(mapRef, route);
+    console.log('Adding route to map', route); // Debug log
+    addRouteToMap(mapRef); // Updated call to addRouteToMap without passing route directly
+    
     addRouteMarkers(mapRef, route, startMarkerRef, endMarkerRef, waypointRefs);
 
     zoomToRoute(mapRef, route, {

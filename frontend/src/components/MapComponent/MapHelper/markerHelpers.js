@@ -126,9 +126,11 @@ export function plotRoutePOI(mapRef, geojsonData, helpers) {
       <PopupContent
         coordinates={coordinates}
         name={name}
+        setLoopCord={helpers.setLoopCord}
         setStartCord={helpers.setStartCord}
         setEndCord={helpers.setEndCord}
         setWaypointAndIncrease={helpers.setWaypointAndIncrease}
+        updateLoopStartInput={helpers.updateLoopStartInput}
         updateStartInput={helpers.updateStartInput}
         updateEndInput={helpers.updateEndInput}
         updateWaypointInput={helpers.updateWaypointInput}
@@ -345,9 +347,11 @@ export function addMapFeatures(mapRef, helpers) {
     multiHighImage,
     multiVeryHighImage,
     poiImage,
+    setLoopCord,
     setStartCord,
     setEndCord,
     setWaypointAndIncrease,
+    updateLoopStartInput,
     updateStartInput,
     updateEndInput,
     updateWaypointInput,
@@ -485,9 +489,11 @@ export function addMapFeatures(mapRef, helpers) {
       <PopupContent
         coordinates={coordinates}
         name={name}
+        setLoopCord={helpers.setLoopCord}
         setStartCord={setStartCord}
         setEndCord={setEndCord}
         setWaypointAndIncrease={setWaypointAndIncrease}
+        updateLoopStartInput={helpers.updateLoopStartInput}
         updateStartInput={updateStartInput}
         updateEndInput={updateEndInput}
         updateWaypointInput={updateWaypointInput}

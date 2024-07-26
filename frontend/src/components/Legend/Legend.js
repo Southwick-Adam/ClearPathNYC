@@ -9,13 +9,15 @@ function Legend({ onToggleLayer, layerVisibility, presentLayers }) {
   const { isNightMode, route, isColorBlindMode } = useStore();
 
   useEffect(() => {
-    const legendTimer = setTimeout(() => {
-      setIsOpen(true);
-    }, 3500); // Adjust the delay as needed
+    if (window.innerWidth > 480) {
+      const legendTimer = setTimeout(() => {
+        setIsOpen(true);
+      }, 3500); // Adjust the delay as needed
 
-    return () => {
-      clearTimeout(legendTimer);
-    };
+      return () => {
+        clearTimeout(legendTimer);
+      };
+    }
   }, []);
 
 
