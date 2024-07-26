@@ -22,7 +22,7 @@ namespace aspBuild.Data
         public Task StartAsync(CancellationToken cancellationToken)
         {
             _logger.LogInformation("Starting background service...");
-            _timer = new Timer(async state => await CheckTime(state), null, TimeSpan.FromMinutes(0), TimeSpan.FromMinutes(40));
+            _timer = new Timer(async state => await CheckTime(state), null, TimeSpan.FromMinutes(5), TimeSpan.FromMinutes(5));
             return Task.CompletedTask;
         }
 
@@ -31,8 +31,12 @@ namespace aspBuild.Data
             if (_blockOverlap) {
                 return;
             }
-            Console.WriteLine(DateTime.Now.TimeOfDay);
-            await ExecuteTask();
+            var now = DateTime.Now.TimeOfDay;
+            if (now.Minutes < 5)
+            {
+                Console.WriteLine(DateTime.Now.TimeOfDay);
+                await ExecuteTask();
+            }
         }
 
         private async Task ExecuteTask()
