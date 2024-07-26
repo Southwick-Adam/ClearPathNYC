@@ -155,3 +155,7 @@
 .mapboxgl-ctrl-geocoder--input .night{
   color: white;
 }
+
+.popup-content-311{
+  font-weight: bold;
+}

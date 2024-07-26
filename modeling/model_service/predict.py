@@ -79,4 +79,4 @@ def call_subway_model():
 def get_hour():
     nyc_tz = pytz.timezone('America/New_York')
     nyc_time = datetime.now(nyc_tz)
-    return nyc_time.hour + 2
+    return nyc_time.hour + 1

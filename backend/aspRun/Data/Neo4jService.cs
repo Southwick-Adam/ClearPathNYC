@@ -2,6 +2,11 @@ using System;
 using System.Text;
 using Microsoft.Extensions.Options;
 using Neo4j.Driver;
+using NetTopologySuite.Features;
+using NetTopologySuite.Geometries;
+using NetTopologySuite.Geometries.Utilities;
+using NetTopologySuite.IO;
+
 
 namespace aspRun.Data
 {
@@ -10,12 +15,39 @@ namespace aspRun.Data
         private readonly IDriver _driver;
         private readonly Neo4jOptions _neo4jOptions;
         private readonly string _database = "neo4j";
+        private readonly Geometry? polygon;
 
         public Neo4jService(IOptions<Neo4jOptions> options)
         {
             _neo4jOptions = options.Value;
             _driver = GraphDatabase.Driver(_neo4jOptions.Uri, AuthTokens.Basic(_neo4jOptions.Username, _neo4jOptions.Password));
-        }
+            var reader = new GeoJsonReader();
+            try
+            {
+                using (var streamReader = new StreamReader("loopPolygon.txt"))
+                {
+                    string geoJson = streamReader.ReadToEnd();
+                    var featureCollection = reader.Read<FeatureCollection>(geoJson);
+                    var feature = featureCollection[0];
+                    polygon = feature.Geometry as Polygon;
+
+                    if (polygon == null)
+                    {
+                        throw new InvalidOperationException("The geometry in the provided GeoJSON is not a polygon.");
+                    }
+                }
+            }
+            catch (FileNotFoundException ex)
+            {
+                Console.WriteLine($"Error: The file 'loopPolygon.txt' was not found. {ex.Message}");
+                // Handle the error as needed
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error reading GeoJSON file: {ex.Message}");
+                // Handle the error as needed
+            }
+        }        
 
         public async Task<T> ReadAsync<T>(Func<IAsyncQueryRunner, Task<T>> func)
         //handles session logic for reading info from DB
@@ -87,8 +119,6 @@ namespace aspRun.Data
         {
             var StopGraph = @"CALL gds.graph.drop('NYC1')";
             await RunQuery(StopGraph, []);
-            StopGraph = @"CALL gds.graph.drop('NYC1Loud')";
-            await RunQuery(StopGraph, []);
             Console.WriteLine($"Graph stopped");
         }
 
@@ -105,7 +135,8 @@ namespace aspRun.Data
             },
             {
                 PATH: {
-                properties: ['distance', 'quietscore', 'loudscore']
+                properties: ['distance', 'quietscore', 'loudscore'],
+                orientation: 'UNDIRECTED'
                 }
             });";
             await RunQuery(StartGraph, []);
@@ -197,7 +228,7 @@ namespace aspRun.Data
                 route.GenerateCoordinatesString();
                 if (quiet) { route.GenerateQuietScoresString(); }
                 else { route.GenerateLoudScoreString(); }
-                finalList.Add([route.CoordinatesString, route.CostsString]);
+                finalList.Add([route.CoordinatesString, route.CostsString, route.totalDistance.ToString()]);
             }
 
             return finalList;
@@ -271,22 +302,23 @@ namespace aspRun.Data
             else { route.GenerateLoudScoreString(); }
 
 
-            return [route.CoordinatesString, route.CostsString];
+            return [route.CoordinatesString, route.CostsString, route.totalDistance.ToString()];
         }
 
 
         // Used to return a GeoJSON format
-        public string GeoJSONMulti(List<string> coordinatesList, string loopOrP2P, string isLoop, List<string> elevationsList, List<string> quietScoresList)
+        public string GeoJSONMulti(List<string> coordinatesList, string loopOrP2P, string isLoop, List<string> elevationsList, List<string> quietScoresList, List<string> distances)
         {
             var features = new List<string>();
-            Console.WriteLine(coordinatesList.Count);
-            Console.WriteLine(quietScoresList.Count);
+            // Console.WriteLine(coordinatesList.Count);
+            // Console.WriteLine(quietScoresList.Count);
 
 
             for (int i = 0; i < coordinatesList.Count - 1; i++)
             {
                 string coordinates = coordinatesList[i];
                 string quietScore = quietScoresList[i];
+                string distance = distances[i];
 
                 string feature = $@"
                 {{
@@ -301,7 +333,8 @@ namespace aspRun.Data
                         ""name"": ""{loopOrP2P}"",
                         ""isLoop"": {isLoop},
                         ""elevation"": [],
-                        ""quietness_score"": [{quietScore}]
+                        ""quietness_score"": [{quietScore}],
+                        ""distance"": [{distance}]
                     }}
                 }}";
 
@@ -322,7 +355,7 @@ namespace aspRun.Data
         }
 
 
-        public string GeoJSON(string coordinates, string loopOrP2P, string isLoop, string elevation, string quietScore)
+        public string GeoJSON(string coordinates, string loopOrP2P, string isLoop, string elevation, string quietScore,double distance)
         {
 
             string GeoJSON = $@"
@@ -341,7 +374,8 @@ namespace aspRun.Data
                     ""name"": ""{loopOrP2P}"",
                     ""isLoop"": {isLoop},
                     ""elevation"": [{elevation}],
-                    ""quietness_score"": [{quietScore}]
+                    ""quietness_score"": [{quietScore}],
+                    ""distance"": [{distance}]
                 }}
             }}
             ]
@@ -349,20 +383,6 @@ namespace aspRun.Data
         ";
             return GeoJSON;
         }
-
-        // public async Task AddLoudScore()
-        // {
-        //     var query = "MATCH ()-[r:PATH]->() SET r.loudscore = -r.quietscore;";
-        //     var parameters = new Dictionary<string, object>();
-        //     await using var session = _driver.AsyncSession(o => o.WithDatabase(_database));
-
-        //     await session.ExecuteWriteAsync(
-        //         async tx =>
-        //     {
-        //         await tx.RunAsync(query, parameters);
-        //     });
-        //     Console.WriteLine("Loud score added");
-        // }
 
         public async Task DisposeAsync()
         //Disposes of session
@@ -378,10 +398,30 @@ namespace aspRun.Data
 
             var distanceHit = false;
 
-            var shapeSides = 10;
+            var shapeSides = random.Next(3,11);
             double modifier = 2;
+            NetTopologySuite.Geometries.Point point = new(longitude, latitude);
 
-            double startDirection = random.Next(0, 360);
+            double startDirection;
+            if (polygon != null && polygon.Contains(point))
+            {
+                startDirection = random.Next(0, 360);
+                Console.WriteLine($"Contains point, direction is {startDirection}");
+
+            }
+            else
+            {
+                startDirection = GetDirectionFromPointToPolygon(point);
+                startDirection += random.Next(-30,30);
+                if (startDirection < 0)
+                    startDirection += 360;
+                else if (startDirection >= 360)
+                    startDirection -= 360;
+                Console.WriteLine($"Direction is: {startDirection}");
+            }
+
+            double latitudeSave = latitude;
+            double longitudeSave = longitude;
             double startDirectionSave = startDirection;
             double internalAngle = 360 / shapeSides;
             while (!distanceHit)
@@ -393,7 +433,7 @@ namespace aspRun.Data
 
                 for (int i = 0; i < shapeSides - 1; i++)
                 {
-                    Console.WriteLine(startDirection);
+                    // Console.WriteLine(startDirection);
                     var (lat1, lon1) = GeoUtils.PointInGivenDirection(latitude, longitude, distance / (shapeSides + modifier), startDirection);
 
                     Lats.Add(lat1);
@@ -407,11 +447,7 @@ namespace aspRun.Data
                 Lats.Add(Lats[0]);
                 Longs.Add(Longs[0]);
 
-                for (int i = 1; i < Lats.Count; i++)
-                {
-                    Console.WriteLine($"{Lats[i]}, {Longs[i]}");
-                }
-
+         
                 StringBuilder coordinates = new();
                 StringBuilder quietscore = new();
                 for (int i = 0; i < shapeSides; i++)
@@ -431,15 +467,20 @@ namespace aspRun.Data
 
                 if (totalDistance < (distance * 1.2) && totalDistance > (distance * .9))
                 {
-                    distanceHit = true;
-                    return GeoJSON(coordinates.ToString(), "Loop", "true", "[]", quietscore.ToString());
+                    return GeoJSON(coordinates.ToString(), "Loop", "true", "[]", quietscore.ToString(), totalDistance);
                 }
                 else if (totalDistance > distance * 1.2) { modifier += 1.25; }
                 else { modifier -= 1; }
                 totalDistance = 0;
                 startDirection = startDirectionSave;
-                if (attempt > 10) { distanceHit = true; }
+                latitude = latitudeSave;
+                longitude = longitudeSave;
+                if (attempt > 5) 
+                { 
+                    startDirection = startDirection + random.Next(-30, 30);
+                }
                 attempt += 1;
+                
             }
 
             Console.WriteLine("Failed to find loop");
@@ -450,7 +491,7 @@ namespace aspRun.Data
         {
             var nodea = await FindNode(latitude, longitude);
             var nodeb = await FindNode(finLatitude, finLongitude);
-            Console.WriteLine($"Looprun: {nodea}, {nodeb}");
+            // Console.WriteLine($"Looprun: {nodea}, {nodeb}");
 
             var CheckGraph = @"
             CALL gds.graph.exists('NYC1')
@@ -488,21 +529,62 @@ namespace aspRun.Data
                 {"nodeb", nodeb}
             };
 
-            var graphResult = await this.RunQuery(CheckGraph, []);
+            var graphResult = await RunQuery(CheckGraph, []);
             bool graph = (bool)graphResult.First()["exists"];
 
             List<IRecord> routeResult;
             if (graph)
             {
-                routeResult = await RunQuery(astarPath, parameters);
+                try
+                {
+                    routeResult = await RunQuery(astarPath, parameters);
+                }
+                catch (Exception ex)
+                {
+                    // Specify the file name
+                    string fileName = "FailedNodes.txt";
+                    
+                    // Specify the content to write
+                    string content = $"{nodea}, {nodeb}\n";
+
+                    // Get the current directory
+                    string currentDirectory = Directory.GetCurrentDirectory();
+                    
+                    // Combine the directory and file name to get the full path
+                    string filePath = Path.Combine(currentDirectory, fileName);
+                    
+                    // Write the content to the file
+                    File.AppendAllText(filePath, content);
+                    
+                    Console.WriteLine("File written successfully!");
+                    routeResult = await RunQuery(astarPath, parameters);
+                }
             }
             else
             {
                 await StartGraph();
                 routeResult = await RunQuery(astarPath, parameters);
             }
+            IRecord result;
+            try{result = routeResult.First();}
+            catch{// Specify the file name
+                    string fileName = "FailedNodes.txt";
+                    
+                    // Specify the content to write
+                    string content = $"{nodea}, {nodeb}\n";
 
-            var result = routeResult.First();
+                    // Get the current directory
+                    string currentDirectory = Directory.GetCurrentDirectory();
+                    
+                    // Combine the directory and file name to get the full path
+                    string filePath = Path.Combine(currentDirectory, fileName);
+                    
+                    // Write the content to the file
+                    File.AppendAllText(filePath, content);
+                    
+                    Console.WriteLine("File written successfully!");
+                    routeResult = await RunQuery(astarPath, parameters);
+                    result = routeResult.First();}
 
             var route = RouteMapper.Map(result);
             route.GenerateCoordinatesString();
@@ -510,9 +592,19 @@ namespace aspRun.Data
             else { route.GenerateLoudScoreString(); }
 
             double distance = route.totalDistance;
-            Console.WriteLine($"In looprun: {distance}");
-
             return (route.CoordinatesString, route.CostsString, distance);
+        }
+
+        public double GetDirectionFromPointToPolygon(NetTopologySuite.Geometries.Point point)
+        {
+            var nearestPoint = NetTopologySuite.Operation.Distance.DistanceOp.NearestPoints(polygon, point)[0];
+
+            double deltaX = nearestPoint.X - point.X;
+            double deltaY = nearestPoint.Y - point.Y;
+
+            double angle = Math.Atan2(deltaY, deltaX) * (180.0 / Math.PI); // Convert radians to degrees
+            if (angle < 0){angle += 360;}
+            return angle;
         }
     }
 }

@@ -21,7 +21,7 @@
   object-fit: cover; /* This ensures the video covers the entire area without distortion */
 }
 
-.route-tabs {
+.route-tabs-container {
   position: absolute;
   top: 10px; /* Adjust as needed to position it within the map */
   left: 50%;
@@ -29,16 +29,30 @@
   z-index: 10; /* Ensure it is above the map */
   display: flex;
   justify-content: center;
+  align-items: center;
 }
 
+
+.route-tabs {
+  display: flex;
+  justify-content: center;
+}
+
+.clear-route-btn{
+  padding: 10px;
+  margin: 0 5px;
+  cursor: pointer;
+  border-radius: 10px;
+  font-size: 15px;
+  color: #f0f0f0;
+}
 .route-tabs button {
-  padding: 10px 20px;
+  padding: 10px;
   margin: 0 5px;
   background-color: #f0f0f0;
   border: 1px solid #ccc;
   cursor: pointer;
   border-radius: 10px;
-
 }
 
 .route-tabs button.active {
@@ -51,6 +65,7 @@
   background-color: white;
   border-color: white;
 }
+
 .route-tabs button.active:hover {
   background-color:  #31b678;
   color: #fff;
@@ -61,59 +76,68 @@
   background-color: #333;
   color: #fff;
   border: 1px solid #333;
-
 }
 
 .route-tabs.night-mode button:hover {
   background-color: #555;
   color: #fff;
 }
+
 .route-tabs.night-mode button.active {
   background-color:  #198754;
   color: #fff;
   border-color: #198754;
 }
-  .route-tabs.night-mode button.active:hover {
-    background-color:  #31b678;
-    color: #fff;
-    border-color: #31b678;
+
+.route-tabs.night-mode button.active:hover {
+  background-color:  #31b678;
+  color: #fff;
+  border-color: #31b678;
 }
 
 .route-tabs.color-blind-mode button {
   color: #000;
   border: 1px solid #ccc;
 }
-.route-tabs.color-blind-mode.night-mode button{
-color: #ccc;
-border-color: #333;
+
+.route-tabs.color-blind-mode.night-mode button {
+  color: #ccc;
+  border-color: #333;
 }
 
-.route-tabs.color-blind-mode.night-mode button:hover{
+.route-tabs.color-blind-mode.night-mode button:hover {
   background-color: #555;
   border-color: #333;
   color:#ccc;
-  }
+}
+
 
 .route-tabs.color-blind-mode button.active {
+  background-color: #9881f5;
+  border-color: #9881f5;
+  color: #ccc;
+
+}
+
+.route-tabs.color-blind-mode button.active:hover {
+
   background-color: #62309C;
   color: #ccc;
   border-color: #62309C;
 }
 
-.route-tabs.color-blind-mode button.active:hover {
-  background-color: #9881f5;
-  border-color: #9881f5;
-}
 .route-tabs.color-blind-mode button:hover {
   background-color: white;
 }
-.a .mapboxgl-ctrl-logo,.mapboxgl-ctrl-attrib-inner{
+
+.a .mapboxgl-ctrl-logo, .mapboxgl-ctrl-attrib-inner {
   display: none !important;
 }
 
-.mapboxgl-ctrl-bottom-right{
+.mapboxgl-ctrl-bottom-right {
   display: none !important;
 }
+
 .mapboxgl-ctrl-logo {
   display: none !important;
 }

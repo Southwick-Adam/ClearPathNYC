@@ -9,6 +9,7 @@ builder.Services.AddCors(options =>
     builder =>
     {
         builder.WithOrigins("https://clearpath.info.gf")
+
             .AllowAnyHeader()
             .AllowAnyMethod();
     });

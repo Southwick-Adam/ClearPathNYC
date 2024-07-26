@@ -1,5 +1,9 @@
 using OsmSharp;
 using OsmSharp.Streams;
+using NetTopologySuite.Features;
+using NetTopologySuite.Geometries;
+using NetTopologySuite.Geometries.Utilities;
+using NetTopologySuite.IO;
 
 class CreateDatabase
 {
@@ -11,6 +15,7 @@ class CreateDatabase
     private PedestrianData pedestrianData;
     private Parks parks;
     private ThreeOneOne threeOneOne;
+    private Polygon polygon;
     public CreateDatabase(string taxiData, string metroData, string pedestrianCsv, string csvParks, string csvThreeOneOne)
     {
         taxiZones = new TaxiZones(taxiData);
@@ -18,6 +23,31 @@ class CreateDatabase
         pedestrianData = new PedestrianData(pedestrianCsv);
         parks = new Parks(csvParks);
         threeOneOne = new ThreeOneOne(csvThreeOneOne);
+        var reader = new GeoJsonReader();
+        try
+        {
+            using (var streamReader = new StreamReader("island.txt"))
+            {
+                string geoJson = streamReader.ReadToEnd();
+                var featureCollection = reader.Read<FeatureCollection>(geoJson);
+                var feature = featureCollection[0];
+                polygon = feature.Geometry as Polygon;
+
+                if (polygon == null)
+                {
+                    throw new InvalidOperationException("The geometry in the provided GeoJSON is not a polygon.");
+                }
+            }
+        }
+        catch (FileNotFoundException ex)
+        {
+            Console.WriteLine($"Error: The file 'island.txt' was not found. {ex.Message}");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error reading GeoJSON file: {ex.Message}");
+            // Handle the error as needed
+        }
     }
     
     /// <summary>
@@ -105,6 +135,13 @@ class CreateDatabase
             {
                 if (node.Longitude.HasValue && node.Latitude.HasValue)
                 {
+                    NetTopologySuite.Geometries.Point point = new(node.Longitude.Value, node.Latitude.Value);
+                    if (!polygon.Contains(point))
+                    {
+                        Console.WriteLine($"Point not in, skipping {node.Latitude.Value}, {node.Longitude.Value}");
+                        continue;
+                    }
+
                     // populates the Node object and adds it to the database
                     MapNode tempNode = new MapNode(node.Id.Value, node.Latitude.Value, node.Longitude.Value);
                     int tempTaxiZone = taxiZones.PointInTaxiZone(node.Latitude.Value, node.Longitude.Value);
