@@ -387,15 +387,47 @@ public class Neo4jImplementation : IDisposable
         }
     }
 
-    public async Task WriteQuery(string query)
+    public async Task WriteQuery(string query, Dictionary<string, object> parameters)
     {
         await using var session = _driver.AsyncSession(o => o.WithDatabase(Database));
+        await session.ExecuteWriteAsync(async tx =>
+        {
+            await tx.RunAsync(query, parameters);
+        });
+    }
 
-            await session.ExecuteWriteAsync(
-                async tx =>
+    public async Task FixDistance()
+    {
+        string distanceQuery = @"MATCH (n:nodes)-[p:PATH]->(b:nodes)
+        WHERE p.distance > 1000
+        RETURN n.nodeid, b.nodeid, n.longitude, n.latitude, b.longitude, b.latitude";
+
+        string distanceUpdate = @"
+        MATCH (n:nodes{nodeid:$nodea})-[p:PATH]-(b:nodes{nodeid:$nodeb})
+        SET p.distance = $dist";
+
+        var results = await RunQuery(distanceQuery, []);
+
+        foreach (var result in results)
+        {
+            var lat1 = result["n.latitude"];
+            var lat2 = result["b.latitude"];
+            var lon1 = result["n.longitude"];
+            var lon2 = result["b.longitude"];
+            var nodea = result["n.nodeid"];
+            var nodeb = result["b.nodeid"];
+            var tempDist = HaversineCalculator.CalculateDistance((double)lat1, (double) lon1, (double)lat2, (double)lon2);
+            Console.WriteLine($"Distance = {tempDist}, {lat1}, {lon1}, {lat2}, {lon2}");
+
+            Dictionary<string, object> parameter = new()
             {
-                await tx.RunAsync(query);
-            });
+                {"nodea", nodea},
+                {"nodeb", nodeb},
+                {"dist", tempDist}
+            };
+
+            await WriteQuery(distanceUpdate, parameter);
+        }
     }
 
     public void Dispose()
