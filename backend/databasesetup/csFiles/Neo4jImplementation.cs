@@ -385,6 +385,7 @@ public class Neo4jImplementation : IDisposable
                 writetext.WriteLine(record["n.nodeid"]);
             }
         }
+    }
 
 
     public async Task WriteQuery(string query, Dictionary<string, object> parameters)
