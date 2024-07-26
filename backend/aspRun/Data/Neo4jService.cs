@@ -119,8 +119,6 @@ namespace aspRun.Data
         {
             var StopGraph = @"CALL gds.graph.drop('NYC1')";
             await RunQuery(StopGraph, []);
-            StopGraph = @"CALL gds.graph.drop('NYC1Loud')";
-            await RunQuery(StopGraph, []);
             Console.WriteLine($"Graph stopped");
         }
 
@@ -137,7 +135,8 @@ namespace aspRun.Data
             },
             {
                 PATH: {
-                properties: ['distance', 'quietscore', 'loudscore']
+                properties: ['distance', 'quietscore', 'loudscore'],
+                orientation: 'UNDIRECTED'
                 }
             });";
             await RunQuery(StartGraph, []);
@@ -492,7 +491,7 @@ namespace aspRun.Data
         {
             var nodea = await FindNode(latitude, longitude);
             var nodeb = await FindNode(finLatitude, finLongitude);
-            Console.WriteLine($"Looprun: {nodea}, {nodeb}");
+            // Console.WriteLine($"Looprun: {nodea}, {nodeb}");
 
             var CheckGraph = @"
             CALL gds.graph.exists('NYC1')
