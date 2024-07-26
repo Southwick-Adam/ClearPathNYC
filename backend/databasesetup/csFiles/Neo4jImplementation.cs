@@ -385,7 +385,7 @@ public class Neo4jImplementation : IDisposable
                 writetext.WriteLine(record["n.nodeid"]);
             }
         }
-    }
+
 
     public async Task WriteQuery(string query, Dictionary<string, object> parameters)
     {
@@ -417,13 +417,14 @@ public class Neo4jImplementation : IDisposable
             var nodea = result["n.nodeid"];
             var nodeb = result["b.nodeid"];
             var tempDist = HaversineCalculator.CalculateDistance((double)lat1, (double) lon1, (double)lat2, (double)lon2);
-            Console.WriteLine($"Distance = {tempDist}, {lat1}, {lon1}, {lat2}, {lon2}");
+            var roundTempDist = Math.Round(tempDist, 2);
+            Console.WriteLine($"Distance = {roundTempDist}, {lat1}, {lon1}, {lat2}, {lon2}");
 
             Dictionary<string, object> parameter = new()
             {
                 {"nodea", nodea},
                 {"nodeb", nodeb},
-                {"dist", tempDist}
+                {"dist", roundTempDist}
             };
 
             await WriteQuery(distanceUpdate, parameter);
