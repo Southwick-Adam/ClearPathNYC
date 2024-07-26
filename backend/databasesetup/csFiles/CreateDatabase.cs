@@ -11,6 +11,7 @@ class CreateDatabase
     private PedestrianData pedestrianData;
     private Parks parks;
     private ThreeOneOne threeOneOne;
+    private Polygon polygon
     public CreateDatabase(string taxiData, string metroData, string pedestrianCsv, string csvParks, string csvThreeOneOne)
     {
         taxiZones = new TaxiZones(taxiData);
@@ -18,6 +19,32 @@ class CreateDatabase
         pedestrianData = new PedestrianData(pedestrianCsv);
         parks = new Parks(csvParks);
         threeOneOne = new ThreeOneOne(csvThreeOneOne);
+        var reader = new GeoJsonReader();
+        try
+        {
+            using (var streamReader = new StreamReader("island.txt"))
+            {
+                string geoJson = streamReader.ReadToEnd();
+                var featureCollection = reader.Read<FeatureCollection>(geoJson);
+                var feature = featureCollection[0];
+                polygon = feature.Geometry as Polygon;
+
+                if (polygon == null)
+                {
+                    throw new InvalidOperationException("The geometry in the provided GeoJSON is not a polygon.");
+                }
+            }
+        }
+        catch (FileNotFoundException ex)
+        {
+            Console.WriteLine($"Error: The file 'loopPolygon.txt' was not found. {ex.Message}");
+            // Handle the error as needed
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error reading GeoJSON file: {ex.Message}");
+            // Handle the error as needed
+        }
     }
     
     /// <summary>
@@ -53,6 +80,7 @@ class CreateDatabase
             // used to filter to just the selected area 
             var filtered = source.FilterBox((float)left, (float)top, (float)right, (float)bottom); // left, top, right, bottom
 
+            var ignoredWays = new List<long> {225870532}
             var ignoredTags = new List<string> {"freeway", "service"};
             // Enumerate through the OSM data and display it
             foreach (var osmGeo in filtered)
@@ -105,6 +133,13 @@ class CreateDatabase
             {
                 if (node.Longitude.HasValue && node.Latitude.HasValue)
                 {
+                    NetTopologySuite.Geometries.Point point = new(longitude, latitude);
+                    if (polygon.Contains(point))
+                    {
+                        Console.WriteLine("Point on island, skipping");
+                        continue;
+                    }
+
                     // populates the Node object and adds it to the database
                     MapNode tempNode = new MapNode(node.Id.Value, node.Latitude.Value, node.Longitude.Value);
                     int tempTaxiZone = taxiZones.PointInTaxiZone(node.Latitude.Value, node.Longitude.Value);
