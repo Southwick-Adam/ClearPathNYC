@@ -8,13 +8,13 @@ import useStore from '../../store/store';
 
 function Loop({ onFormSubmit, geocoderRef }) {
   const {
-    loopCord, setLoopCord, loopIsQuiet, toggleLoopIsQuiet, loopDistance, setLoopDistance, setIsSidebarOpen
+    loopCord, setLoopCord, loopIsQuiet, toggleLoopIsQuiet, loopDistance, setLoopDistance, setIsSidebarOpen, clearWaypointData
   } = useStore();
 
   const [isGoButtonDisabled, setGoButtonDisabled] = useState(true);
 
   useEffect(() => {
-    const isDisabled = loopCord === null || loopDistance === 0 || !loopDistance;
+    const isDisabled = loopCord === null || loopDistance === null || loopDistance === 0;
     setGoButtonDisabled(isDisabled);
   }, [loopCord, loopDistance]);
 
@@ -28,6 +28,7 @@ function Loop({ onFormSubmit, geocoderRef }) {
 
   function handleSubmit(event) {
     setIsSidebarOpen(false); // Close the sidebar upon form submission
+    clearWaypointData(); // Clear waypoint data
     event.preventDefault();
     const formData = {
       coordinates: loopCord,
@@ -40,11 +41,10 @@ function Loop({ onFormSubmit, geocoderRef }) {
   return (
     <form className="loop_container" onSubmit={handleSubmit}>
       <div>
-      <div className="ptp_row">
-        <div className="ptp_label">Start</div>
-        <LocationFinder setCoordinates={setLoopCord} geocoderRef={geocoderRef} />
-      </div>
-        
+        <div className="ptp_row">
+          <div className="ptp_label">Start</div>
+          <LocationFinder setCoordinates={setLoopCord} geocoderRef={geocoderRef} />
+        </div>
       </div>
       <div className="loop_distance_selector">
         <div className="dist_label">Dist</div>

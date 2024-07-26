@@ -335,14 +335,6 @@ export function addMapFeatures(mapRef, helpers) {
   const {
     simulateFetchParks,
     convertToGeoJSON,
-    floraImage,
-    noiseHighImage,
-    noiseVeryHighImage,
-    garbageHighImage,
-    otherHighImage,
-    multiHighImage,
-    multiVeryHighImage,
-    poiImage,
     setStartCord,
     setEndCord,
     setWaypointAndIncrease,
@@ -355,46 +347,6 @@ export function addMapFeatures(mapRef, helpers) {
   const parkData = simulateFetchParks();
   const parkGeoJson = convertToGeoJSON(parkData);
   plotRoutePOI(mapRef, poijson, helpers);
-
-  mapRef.current.loadImage(floraImage, (error, image) => {
-    if (error) throw error;
-    mapRef.current.addImage('flora-marker', image);
-  });
-
-  mapRef.current.loadImage(noiseHighImage, (error, image) => {
-    if (error) throw error;
-    mapRef.current.addImage('noise-high-marker', image);
-  });
-
-  mapRef.current.loadImage(noiseVeryHighImage, (error, image) => {
-    if (error) throw error;
-    mapRef.current.addImage('noise-veryhigh-marker', image);
-  });
-
-  mapRef.current.loadImage(garbageHighImage, (error, image) => {
-    if (error) throw error;
-    mapRef.current.addImage('garbage-high-marker', image);
-  });
-
-  mapRef.current.loadImage(otherHighImage, (error, image) => {
-    if (error) throw error;
-    mapRef.current.addImage('other-high-marker', image);
-  });
-
-  mapRef.current.loadImage(multiHighImage, (error, image) => {
-    if (error) throw error;
-    mapRef.current.addImage('multi-high-marker', image);
-  });
-
-  mapRef.current.loadImage(multiVeryHighImage, (error, image) => {
-    if (error) throw error;
-    mapRef.current.addImage('multi-veryhigh-marker', image);
-  });
-
-  mapRef.current.loadImage(poiImage, (error, image) => {
-    if (error) throw error;
-    mapRef.current.addImage('poi-marker', image);
-  });
 
   mapRef.current.addSource('parks', {
     type: 'geojson',
@@ -572,20 +524,11 @@ export function reloadParkFeature(mapRef) {
     ]);
   }
 
-  // Reload markers based on color-blind mode
-  const floraMarkerImage = isColorBlindMode ? floraCBImage : floraImage;
-
-  if (mapRef.current.hasImage('flora-marker')) {
-    mapRef.current.removeImage('flora-marker');
-  }
-  mapRef.current.loadImage(floraMarkerImage, (error, image) => {
-    if (error) throw error;
-    mapRef.current.addImage('flora-marker', image);
-  });
+  const floraMarkerId = isColorBlindMode ? 'flora-marker-CB' : 'flora-marker';
 
   // Update the unclustered-point layer with the new icon image
   if (mapRef.current.getLayer('unclustered-point')) {
-    mapRef.current.setLayoutProperty('unclustered-point', 'icon-image', 'flora-marker');
+    mapRef.current.setLayoutProperty('unclustered-point', 'icon-image', floraMarkerId);
   }
 }
 

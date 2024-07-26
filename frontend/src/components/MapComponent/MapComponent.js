@@ -85,7 +85,6 @@ function MapComponent({ route, loopGeocoderRef, startGeocoderRef, endGeocoderRef
   };
 
   const restoreLayersAndSources = (map, layerCopy, sourceCopy, imageCopy) => {
-    const isColorBlindMode = useStore.getState().isColorBlindMode;
 
     Object.keys(sourceCopy).forEach((sourceId) => {
       if (!map.getSource(sourceId)) {
@@ -101,12 +100,18 @@ function MapComponent({ route, loopGeocoderRef, startGeocoderRef, endGeocoderRef
 
     imageCopy.forEach((image) => {
       if (!map.hasImage(image.id)) {
-        if (image.id === 'flora-marker') {
-          map.loadImage(isColorBlindMode ? floraImageCB : floraImage, (error, img) => {
+        if (image.id === 'flora-marker' ){
+          map.loadImage(floraImage, (error, img) => {
             if (error) throw error;
             map.addImage('flora-marker', img);
           });
-        } else if (image.id === 'poi-marker') {
+        } else if (image.id === 'flora-marker-CB') {
+          map.loadImage(floraImageCB, (error, img) => {
+            if (error) throw error;
+            map.addImage('flora-marker-CB', img);
+          });
+        } 
+          else if (image.id === 'poi-marker') {
           map.loadImage(poiImage, (error, img) => {
             if (error) throw error;
             map.addImage('poi-marker', img);
@@ -148,12 +153,12 @@ function MapComponent({ route, loopGeocoderRef, startGeocoderRef, endGeocoderRef
 
   useEffect(() => {
     if (mapRef.current) return;
-
+  
     const bounds = [
       [-74.3, 40.43], // Southwest coordinates
       [-73.5, 40.96], // Northeast coordinates
     ];
-
+  
     mapRef.current = new mapboxgl.Map({
       container: mapContainerRef.current,
       style: isNightMode ? MAPBOX_NIGHT_STYLE_URL : MAPBOX_DAY_STYLE_URL,
@@ -167,11 +172,57 @@ function MapComponent({ route, loopGeocoderRef, startGeocoderRef, endGeocoderRef
       maxBounds: bounds,
     });
 
-    mapRef.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
+    // Load images after the map is instantiated
+    mapRef.current.loadImage(floraImage, (error, image) => {
+      if (error) throw error;
+      mapRef.current.addImage('flora-marker', image);
+    });
 
+    mapRef.current.loadImage(floraImageCB, (error, image) => {
+      if (error) throw error;
+      mapRef.current.addImage('flora-marker-CB', image);
+    });
+
+    mapRef.current.loadImage(noiseHighImage, (error, image) => {
+      if (error) throw error;
+      mapRef.current.addImage('noise-high-marker', image);
+    });
+
+    mapRef.current.loadImage(noiseVeryHighImage, (error, image) => {
+      if (error) throw error;
+      mapRef.current.addImage('noise-veryhigh-marker', image);
+    });
+
+    mapRef.current.loadImage(garbageHighImage, (error, image) => {
+      if (error) throw error;
+      mapRef.current.addImage('garbage-high-marker', image);
+    });
+
+    mapRef.current.loadImage(otherHighImage, (error, image) => {
+      if (error) throw error;
+      mapRef.current.addImage('other-high-marker', image);
+    });
+
+    mapRef.current.loadImage(multiHighImage, (error, image) => {
+      if (error) throw error;
+      mapRef.current.addImage('multi-high-marker', image);
+    });
+
+    mapRef.current.loadImage(multiVeryHighImage, (error, image) => {
+      if (error) throw error;
+      mapRef.current.addImage('multi-veryhigh-marker', image);
+    });
+
+    mapRef.current.loadImage(poiImage, (error, image) => {
+      if (error) throw error;
+      mapRef.current.addImage('poi-marker', image);
+    });
+  
+    mapRef.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
+  
     mapRef.current.on('load', () => {
       isMapLoadedRef.current = true;
-
+  
       if (videoEnded) {
         addMapFeatures(mapRef, {
           fetchInitialPOI,
@@ -197,16 +248,40 @@ function MapComponent({ route, loopGeocoderRef, startGeocoderRef, endGeocoderRef
         });
       }
     });
-
+  
     const handleResize = () => {
       if (mapRef.current) {
         mapRef.current.resize();
       }
     };
-
+  
     window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+  
+    // Override addEventListener globally to force passive listeners for touch events
+    const originalAddEventListener = EventTarget.prototype.addEventListener;
+  
+    EventTarget.prototype.addEventListener = function (type, listener, options) {
+      if (type === 'touchstart' || type === 'touchmove' || type === 'touchend') {
+        if (typeof options === 'boolean') {
+          options = {
+            capture: options,
+            passive: true,
+          };
+        } else if (typeof options === 'object') {
+          options.passive = true;
+        }
+      }
+  
+      originalAddEventListener.call(this, type, listener, options);
+    };
+  
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      // Restore the original addEventListener method on cleanup
+      EventTarget.prototype.addEventListener = originalAddEventListener;
+    };
   }, []);
+  
 
   useEffect(() => {
     if (videoEnded && isMapLoadedRef.current) {
