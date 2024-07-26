@@ -1,0 +1,58 @@
+.loading-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10; 
+  }
+  
+  .loading-popup-content {
+    background: #f9faf3;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
+    font-size: 1.2em;
+    position: relative; 
+    display: flex;
+    align-items: center;
+  }
+  
+  .close-button {
+    position: absolute;
+    top: 1px;
+    right: 3px;
+    background: transparent;
+    border: none;
+    font-size: 15px;
+    cursor: pointer;
+    color: #333;
+  }
+  
+  .close-button:hover {
+    color: #000;
+  }
+
+  .loading-popup-gif, .error-icon {
+    width: 70px;
+    height: 100px;
+    margin-bottom: 20px;
+  }
+
+  .error-icon{
+    color: red;
+    width: 100px;
+    height: 100px;
+    margin-bottom: 20px;
+  }
+  
+  .loading-popup-message {
+    font-size: 16px;
+    margin-left: 20px;
+    font-weight: bold;
+  }
+  

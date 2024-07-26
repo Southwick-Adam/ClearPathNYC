@@ -41,10 +41,10 @@ namespace aspBuild.Data
 
         private async Task ExecuteTask()
         {
+            _blockOverlap = true;
             Console.WriteLine("START UPDATE");
             await _updateDatabase.RunUpdate();
             Console.WriteLine("FINISHED UPDATE");
-            _blockOverlap = false;
         }
 
         public Task StopAsync(CancellationToken cancellationToken)

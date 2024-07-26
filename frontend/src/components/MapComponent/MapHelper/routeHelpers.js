@@ -3,7 +3,6 @@ import $ from 'jquery';
 import { animateMarkers, addClusteredLayer } from './markerHelpers';
 import { convertToGeoJSON } from './geojsonHelpers.js';
 import useStore from '../../../store/store.js';
-import * as turf from '@turf/turf';
 
 export function addRouteToMap(mapRef) {
   const route = useStore.getState().routes[useStore.getState().selectedRouteIndex];
@@ -76,79 +75,6 @@ function getColorForQuietness(score, isColorBlindMode) {
   }
 }
 
-function addRouteTooltips(mapRef, coordinates, quietnessScore) {
-  const segmentLengths = {};
-  let currentColor = null;
-  let currentSegmentStart = null;
-
-  function addSegmentLength(color, start, end) {
-    if (!segmentLengths[color]) {
-      segmentLengths[color] = [];
-    }
-    const length = turf.distance(turf.point(start), turf.point(end));
-    segmentLengths[color].push({ start, end, length });
-  }
-
-  for (let i = 0; i < coordinates.length - 1; i++) {
-    const score = quietnessScore[i];
-    const color = getColorForQuietness(score);
-    const nextCoord = coordinates[i + 1];
-
-    if (color !== currentColor) {
-      if (currentColor !== null && currentSegmentStart !== null) {
-        addSegmentLength(currentColor, currentSegmentStart, coordinates[i]);
-      }
-      currentColor = color;
-      currentSegmentStart = coordinates[i];
-    }
-
-    if (i === coordinates.length - 2) {
-      addSegmentLength(currentColor, currentSegmentStart, nextCoord);
-    }
-  }
-
-  // Find the longest red segment
-  const redSegments = segmentLengths['#FF0000'];
-  if (redSegments && redSegments.length > 0) {
-    const longestRedSegment = redSegments.reduce((max, segment) => {
-      return segment.length > max.length ? segment : max;
-    });
-
-    // Find the midpoint by iterating through the coordinates
-    let cumulativeLength = 0;
-    const totalLength = longestRedSegment.length;
-    const targetLength = totalLength / 2;
-
-    let midpoint = null;
-    for (let i = 0; i < coordinates.length - 1; i++) {
-      const start = coordinates[i];
-      const end = coordinates[i + 1];
-      const segmentLength = turf.distance(turf.point(start), turf.point(end));
-
-      if (cumulativeLength + segmentLength >= targetLength) {
-        const remainingLength = targetLength - cumulativeLength;
-        const fraction = remainingLength / segmentLength;
-        midpoint = [
-          start[0] + (end[0] - start[0]) * fraction,
-          start[1] + (end[1] - start[1]) * fraction
-        ];
-        break;
-      }
-      cumulativeLength += segmentLength;
-    }
-
-    if (midpoint) {
-      new mapboxgl.Popup({
-        offset: 0,
-        className: 'busyness-tooltip',
-        anchor: 'left'
-      })
-        .setLngLat(midpoint)
-        .setHTML(`<p>Very busy</p>`)
-        .addTo(mapRef.current);
-    }
-  }
-}
 
 // Function to add markers with animations
 export function addRouteMarkers(mapRef, routeData, startMarkerRef, endMarkerRef, waypointRefs) {
@@ -174,23 +100,24 @@ export function addRouteMarkers(mapRef, routeData, startMarkerRef, endMarkerRef,
   // Add start marker
   setTimeout(() => {
     if (startMarkerRef.current) {
-      startMarkerRef.current.setLngLat(startCoord);
-    } else {
-      const startMarker = document.createElement('div');
-      startMarker.className = 'marker start_marker bounce'; // Add bounce class
-
-      startMarkerRef.current = new mapboxgl.Marker({
-        element: startMarker,
-        offset: [0, -15]
-      })
-        .setLngLat(startCoord)
-        .addTo(mapRef.current);
-
-      animateMarkers($(startMarker));
+      startMarkerRef.current.remove();
+      startMarkerRef.current = null;
     }
+
+    const startMarker = document.createElement('div');
+    startMarker.className = 'marker start_marker bounce'; // Add bounce class and identifiable class
+
+    startMarkerRef.current = new mapboxgl.Marker({
+      element: startMarker,
+      offset: [0, -15]
+    })
+      .setLngLat(startCoord)
+      .addTo(mapRef.current);
+
+    animateMarkers($(startMarker));
   }, timeout);
 
-  timeout += 1000; // Adjust delay as needed
+  timeout += 200; // Adjust delay as needed
 
   // Add waypoint markers
   for (let i = 0; i < visibleWaypoints; i++) {
@@ -209,39 +136,37 @@ export function addRouteMarkers(mapRef, routeData, startMarkerRef, endMarkerRef,
         animateMarkers($(waypointMarker));
       }, timeout);
 
-      timeout += 500; // Adjust delay as needed
+      timeout += 200; // Adjust delay as needed
     }
   }
 
-  // Check to remove any existing endmarkers (if they exist)
-  if (endMarkerRef.current) {
-    endMarkerRef.current.remove();
-    endMarkerRef.current = null;
-  }
   // Add end marker only if start and end coordinates are different
   if (startCoord[0] !== endCoord[0] || startCoord[1] !== endCoord[1]) {
     setTimeout(() => {
       if (endMarkerRef.current) {
-        endMarkerRef.current.setLngLat(endCoord);
-      } else {
-        const endMarker = document.createElement('div');
-        endMarker.className = 'marker end_marker';
-
-        endMarkerRef.current = new mapboxgl.Marker({
-          element: endMarker,
-          offset: [0, -15]
-        })
-          .setLngLat(endCoord)
-          .addTo(mapRef.current);
-
-        animateMarkers($(endMarker));
+        endMarkerRef.current.remove();
+        endMarkerRef.current = null;
       }
+
+      const endMarker = document.createElement('div');
+      endMarker.className = 'marker end_marker';
+
+      endMarkerRef.current = new mapboxgl.Marker({
+        element: endMarker,
+        offset: [0, -15]
+      })
+        .setLngLat(endCoord)
+        .addTo(mapRef.current);
+
+      animateMarkers($(endMarker));
     }, timeout);
   }
 }
 
+
+
 export function zoomToRoute(mapRef, route, helpers) {
-  const { fetchNoise311, fetchGarbage311, fetchOther311, fetchMulti311, add311Markers, add311Multiple, setPresentLayers } = helpers;
+  const { fetchNoise311, fetchGarbage311, fetchOther311, fetchMulti311, setPresentLayers } = helpers;
 
   if (!route.geometry || !Array.isArray(route.geometry.coordinates) || route.geometry.coordinates.length === 0) {
     console.error('Invalid route data');
@@ -307,13 +232,18 @@ export function clearRoute(mapRef) {
     mapRef.current.removeLayer('route');
     mapRef.current.removeSource('route');
   }
-  if (mapRef.current.getLayer('start_marker')) {
-    mapRef.current.removeLayer('start_marker');
-  }
-  if (mapRef.current.getLayer('end_marker')) {
-    mapRef.current.removeLayer('end_marker');
-  }
+
+  // Remove markers by querying their classes
+  const markerClasses = ['start_marker', 'end_marker', 'waypoint1_marker', 'waypoint2_marker', 'waypoint3_marker', 'waypoint4_marker', 'waypoint5_marker'];
+  
+  markerClasses.forEach(className => {
+    const markerElements = document.querySelectorAll(`.${className}`);
+    markerElements.forEach(markerElement => {
+      markerElement.remove();
+    });
+  });
 }
+
 
 export function updateRouteColors(mapRef) {
   const route = useStore.getState().routes[useStore.getState().selectedRouteIndex];

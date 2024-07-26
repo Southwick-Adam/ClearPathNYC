@@ -64,6 +64,7 @@ namespace aspBuild.Data
                 // loops through the result, calculating and updating the quietscore on each loop
                 foreach (var item in result)
                 {
+                    item.RelatedNodePark = item.NodePark && item.RelatedNodePark;
                     var tempQuietScore = CalculateQuietScore(item.RelatedNodeMetroZone, item.RelatedNodeRoadRank, tempTaxi, item.RelatedNodePark, item.RelatedNodeThreeOneOne, item.Distance);
                     var tempLoudScore = CalculateLoudScore(item.RelatedNodeMetroZone, item.RelatedNodeRoadRank, tempTaxiLoud, item.RelatedNodePark, item.RelatedNodeThreeOneOne, item.Distance);
                     await _neo4jService.UpdateNodeRelationship(item.NodeID, item.RelatedNodeID, tempQuietScore, key, tempLoudScore).ConfigureAwait(false);
