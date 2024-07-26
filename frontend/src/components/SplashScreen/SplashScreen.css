@@ -7,13 +7,13 @@
     height: 100vh;
     background: linear-gradient(to bottom, #cfcfca, #fefff8);
     transition: 1s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
 .logo {
-    position: absolute;
-    top: 40%;
-    left: 50%;
-    transform: translate(-50%, -50%);
     width: 500px;
     height: auto;
     opacity: 0;
@@ -22,37 +22,30 @@
 
 .logo.active {
     opacity: 1;
-    transform: translate(-50%, -40%);
+    transform: translateY(-10%);
 }
 
 .logo.fade {
     opacity: 0;
-    transform: translate(-50%, -60%);
+    transform: translateY(-30%);
 }
 
 .text {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-52%, -50%);
-    width: 100%;
-    text-align: center;
     font-size: 2rem;
     font-style: italic;
     color: #929292;
-    height: auto;
     opacity: 0;
     transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
 }
 
 .text.active {
     opacity: 1;
-    transform: translate(-52%, -45%);
+    transform: translateY(-10%);
 }
 
 .text.fade {
     opacity: 0;
-    transform: translate(-52%, -65%);
+    transform: translateY(-30%);
 }
 
 .start-button {
@@ -69,21 +62,28 @@
     opacity: 0;
 }
 
-.start-button.active
-{
+.start-button.active {
     opacity: 1;
 }
 
 .start-button:hover {
-background-color: #47c498;
+    background-color: #47c498;
 }
 
-.start_container{
-    width: 100%;
-    display:flex;
-    top:55%;
-    position: relative;
-    justify-content: center;
+@media only screen and (max-width: 768px) {
+    .logo {
+        width: 80%;
+    }
+    .text {
+        font-size: 1.5rem;
+    }
 }
 
-  
+@media only screen and (max-width: 480px) {
+    .logo {
+        width: 100%;
+    }
+    .text {
+        font-size: 1.2rem;
+    }
+}

@@ -6,13 +6,10 @@ import useStore from '../../../store/store.js';
 import * as turf from '@turf/turf';
 
 export function addRouteToMap(mapRef) {
-  const route = useStore.getState().route;
+  const route = useStore.getState().routes[useStore.getState().selectedRouteIndex];
   const isColorBlindMode = useStore.getState().isColorBlindMode;
 
-  const existingPopups = document.getElementsByClassName('mapboxgl-popup');
-    while (existingPopups.length > 0) {
-      existingPopups[0].remove();
-    }
+  console.log('Route to add to map:', route); // Debug log
 
   if (!route) {
     console.error('No route found in store.');
@@ -20,8 +17,8 @@ export function addRouteToMap(mapRef) {
   }
 
   // Extract coordinates and quietness score from the route data
-  const coordinates = route.features[0].geometry.coordinates;
-  const quietnessScore = route.features[0].properties.quietness_score;
+  const coordinates = route.geometry.coordinates;
+  const quietnessScore = route.properties.quietness_score;
 
   // Create a GeoJSON line string with properties including quietness score
   const lineString = {
@@ -63,7 +60,6 @@ export function addRouteToMap(mapRef) {
         'line-gradient': lineGradient,
       },
     });
-
   }
 }
 
@@ -79,8 +75,6 @@ function getColorForQuietness(score, isColorBlindMode) {
     if (score <= 1) return '#189e01'; // Green for scores 0-1
   }
 }
-
-
 
 function addRouteTooltips(mapRef, coordinates, quietnessScore) {
   const segmentLengths = {};
@@ -155,10 +149,11 @@ function addRouteTooltips(mapRef, coordinates, quietnessScore) {
     }
   }
 }
+
 // Function to add markers with animations
 export function addRouteMarkers(mapRef, routeData, startMarkerRef, endMarkerRef, waypointRefs) {
-  const startCoord = routeData.features[0].geometry.coordinates[0];
-  const endCoord = routeData.features[0].geometry.coordinates[routeData.features[0].geometry.coordinates.length - 1];
+  const startCoord = routeData.geometry.coordinates[0];
+  const endCoord = routeData.geometry.coordinates[routeData.geometry.coordinates.length - 1];
 
   // Clear existing waypoint markers
   waypointRefs.forEach(ref => {
@@ -218,36 +213,42 @@ export function addRouteMarkers(mapRef, routeData, startMarkerRef, endMarkerRef,
     }
   }
 
-  // Add end marker
-  setTimeout(() => {
-    if (endMarkerRef.current) {
-      endMarkerRef.current.setLngLat(endCoord);
-    } else {
-      const endMarker = document.createElement('div');
-      endMarker.className = 'marker end_marker';
+  // Check to remove any existing endmarkers (if they exist)
+  if (endMarkerRef.current) {
+    endMarkerRef.current.remove();
+    endMarkerRef.current = null;
+  }
+  // Add end marker only if start and end coordinates are different
+  if (startCoord[0] !== endCoord[0] || startCoord[1] !== endCoord[1]) {
+    setTimeout(() => {
+      if (endMarkerRef.current) {
+        endMarkerRef.current.setLngLat(endCoord);
+      } else {
+        const endMarker = document.createElement('div');
+        endMarker.className = 'marker end_marker';
 
-      endMarkerRef.current = new mapboxgl.Marker({
-        element: endMarker,
-        offset: [0, -15]
-      })
-        .setLngLat(endCoord)
-        .addTo(mapRef.current);
+        endMarkerRef.current = new mapboxgl.Marker({
+          element: endMarker,
+          offset: [0, -15]
+        })
+          .setLngLat(endCoord)
+          .addTo(mapRef.current);
 
-      animateMarkers($(endMarker));
-    }
-  }, timeout);
+        animateMarkers($(endMarker));
+      }
+    }, timeout);
+  }
 }
-
 
 export function zoomToRoute(mapRef, route, helpers) {
   const { fetchNoise311, fetchGarbage311, fetchOther311, fetchMulti311, add311Markers, add311Multiple, setPresentLayers } = helpers;
 
-  if (!route.features || !Array.isArray(route.features) || route.features.length === 0) {
+  if (!route.geometry || !Array.isArray(route.geometry.coordinates) || route.geometry.coordinates.length === 0) {
     console.error('Invalid route data');
     return;
   }
 
-  const coordinates = route.features[0].geometry.coordinates;
+  const coordinates = route.geometry.coordinates;
   let bounds = coordinates.reduce((bounds, coord) => bounds.extend(coord), new mapboxgl.LngLatBounds(coordinates[0], coordinates[0]));
 
   const expandFactor = 0.0001;
@@ -306,17 +307,16 @@ export function clearRoute(mapRef) {
     mapRef.current.removeLayer('route');
     mapRef.current.removeSource('route');
   }
-  if (mapRef.current.getLayer('start-marker')) {
-    mapRef.current.removeLayer('start-marker');
+  if (mapRef.current.getLayer('start_marker')) {
+    mapRef.current.removeLayer('start_marker');
   }
-  if (mapRef.current.getLayer('end-marker')) {
-    mapRef.current.removeLayer('end-marker');
+  if (mapRef.current.getLayer('end_marker')) {
+    mapRef.current.removeLayer('end_marker');
   }
 }
 
-
 export function updateRouteColors(mapRef) {
-  const route = useStore.getState().route;
+  const route = useStore.getState().routes[useStore.getState().selectedRouteIndex];
   const isColorBlindMode = useStore.getState().isColorBlindMode;
 
   if (!route) {
@@ -324,7 +324,7 @@ export function updateRouteColors(mapRef) {
     return;
   }
 
-  const quietnessScore = route.features[0].properties.quietness_score;
+  const quietnessScore = route.properties.quietness_score;
 
   // Prepare the line gradient stops based on quietness score
   const lineGradient = ['interpolate', ['linear'], ['line-progress']];

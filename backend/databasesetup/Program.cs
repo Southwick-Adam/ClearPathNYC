@@ -140,18 +140,18 @@ MATCH (n:nodes)-[r:PATH]->()
 WITH n, COUNT(r) AS relCount
 WHERE relCount = 0
 return n";
-while (true)
-{
-    var result = await driver.RunQuery(checkNodesQuery, []);
-    Console.WriteLine(result);
-    if (result.Count == 0)
-    {
-        Console.WriteLine("In function");
-        break; 
-    }
-    await driver.WriteQuery(delNodesQuery);
-}
-*/
+
+// while (true)
+// {
+//     var result = await driver.RunQuery(checkNodesQuery, []);
+//     Console.WriteLine(result);
+//     if (result.Count == 0)
+//     {
+//         Console.WriteLine("In function");
+//         break; 
+//     }
+//     await driver.WriteQuery(delNodesQuery);
+// }
 
 stopwatch.Stop();
 double min = stopwatch.ElapsedMilliseconds/60000;

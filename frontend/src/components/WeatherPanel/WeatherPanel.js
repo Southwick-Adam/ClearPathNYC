@@ -1,7 +1,16 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import './WeatherPanel.css';
 
 function WeatherPanel({ weather }) {
+
+  const [isMinimised, makeMinimised] = useState(false);
+
+  useEffect(() => {
+    if (window.innerWidth < 480) {
+      makeMinimised(true);
+    }
+  }, []);
+
   if (!weather) return null;
 
   const { current, location } = weather;
@@ -33,27 +42,37 @@ function WeatherPanel({ weather }) {
 
   const alertPanelClass = epa_index <= 3 ? 'alert_panel blue' : 'alert_panel red';
 
+  const handleClick = () => {
+    makeMinimised(!isMinimised);
+  };
+
   return (
     <div>
-      <div className='weather_panel'>
+      <div className={`weather_panel ${isMinimised ? 'minimised' : ''}`} onClick={handleClick}>
         <div className='weather_icon'>
           <img src={iconUrl} alt={condition.text}></img>
         </div>
-        <div className='temperature'>
-          {temp_f}°F
-        </div>
-        <div className='wind'>
-          {condition.text}
-        </div>
+        {!isMinimised && (
+          <>
+          <div className='temperature'>
+            {temp_f}°F
+          </div>
+          <div className='wind'>
+            {condition.text}
+          </div>
+        </>
+        )}
       </div>
 
-      <div className={alertPanelClass}>
+      <div className={`${alertPanelClass} ${isMinimised ? 'minimised' : ''}`} onClick={handleClick}>
         <div className='epa_icon'>
           <img src={epaImageUrl} alt={`EPA Index ${epa_index}`}></img>
         </div>
+        {!isMinimised && (
         <div className='message'>
           {epaMessage}
         </div>
+        )}
       </div>
     </div>
   );
