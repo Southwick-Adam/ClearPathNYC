@@ -106,7 +106,7 @@ function App() {
     });
     params.append('quiet', isQuiet); // Add the quiet parameter
   
-    const requestUrl = `http://asp-run:8080/route/p2p?${params.toString()}`;
+    const requestUrl = `/route/p2p?${params.toString()}`;
     console.log('Request URL:', requestUrl);
   
     try {
@@ -135,7 +135,7 @@ function App() {
     });
     params.append('quiet', isQuiet); // Add the quiet parameter
   
-    const requestUrl = `http://asp-run:8080/route/multip2p?${params.toString()}`;
+    const requestUrl = `/route/multip2p?${params.toString()}`;
     console.log('Request URL:', requestUrl);
   
     try {
@@ -164,7 +164,7 @@ function App() {
     params.append('distance', distanceMeter);
     params.append('quiet', mode);
   
-    const requestUrl = `http://asp-run:8080/route/loop?${params.toString()}`;
+    const requestUrl = `/route/loop?${params.toString()}`;
     console.log('Request URL:', requestUrl);
   
     try {
@@ -184,7 +184,7 @@ function App() {
   }
 
   async function fetchWeatherData() {
-    const apiUrl = 'http://asp-run:8080/weather';
+    const apiUrl = '/weather';
     try {
       const response = await fetch(apiUrl, {
         method: 'GET',
