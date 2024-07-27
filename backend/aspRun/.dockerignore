@@ -4,7 +4,7 @@
 
 # git folder
 .git/
-gitignore
+.gitignore
 
 # .vs folder
 **/.vs/
