@@ -5,8 +5,9 @@ WORKDIR /app
 # Restore dotnet packages
 COPY aspRun.csproj .
 RUN dotnet restore
-# Publish
+#Copy files
 COPY . .
+#publish
 RUN dotnet publish -c Release -o /app/out
 
 # RUNTIME
