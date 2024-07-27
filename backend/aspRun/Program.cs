@@ -8,8 +8,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("CorsPolicy",
     builder =>
     {
-        builder.WithOrigins("http://react-app:80")
-
+        builder.WithOrigins("http://localhost:80")
             .AllowAnyHeader()
             .AllowAnyMethod();
     });
