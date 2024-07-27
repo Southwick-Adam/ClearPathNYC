@@ -24,22 +24,20 @@ namespace aspRun.Data
             var reader = new GeoJsonReader();
             try
             {
-                using (var streamReader = new StreamReader("loopPolygon.txt"))
-                {
-                    string geoJson = streamReader.ReadToEnd();
-                    var featureCollection = reader.Read<FeatureCollection>(geoJson);
-                    var feature = featureCollection[0];
-                    polygon = feature.Geometry as Polygon;
+                using var streamReader = new StreamReader("loopPolygon.json");
+                string geoJson = streamReader.ReadToEnd();
+                var featureCollection = reader.Read<FeatureCollection>(geoJson);
+                var feature = featureCollection[0];
+                polygon = feature.Geometry as Polygon;
 
-                    if (polygon == null)
-                    {
-                        throw new InvalidOperationException("The geometry in the provided GeoJSON is not a polygon.");
-                    }
+                if (polygon == null)
+                {
+                    throw new InvalidOperationException("The geometry in the provided GeoJSON is not a polygon.");
                 }
             }
             catch (FileNotFoundException ex)
             {
-                Console.WriteLine($"Error: The file 'loopPolygon.txt' was not found. {ex.Message}");
+                Console.WriteLine($"Error: The file 'loopPolygon.json' was not found. {ex.Message}");
                 // Handle the error as needed
             }
             catch (Exception ex)
@@ -477,7 +475,7 @@ namespace aspRun.Data
                 longitude = longitudeSave;
                 if (attempt > 5) 
                 { 
-                    startDirection = startDirection + random.Next(-30, 30);
+                    startDirection += random.Next(-30, 30);
                 }
                 attempt += 1;
                 
@@ -539,10 +537,10 @@ namespace aspRun.Data
                 {
                     routeResult = await RunQuery(astarPath, parameters);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     // Specify the file name
-                    string fileName = "FailedNodes.txt";
+                    string fileName = "FailedNodes.json";
                     
                     // Specify the content to write
                     string content = $"{nodea}, {nodeb}\n";
@@ -568,7 +566,7 @@ namespace aspRun.Data
             IRecord result;
             try{result = routeResult.First();}
             catch{// Specify the file name
-                    string fileName = "FailedNodes.txt";
+                    string fileName = "FailedNodes.json";
                     
                     // Specify the content to write
                     string content = $"{nodea}, {nodeb}\n";
