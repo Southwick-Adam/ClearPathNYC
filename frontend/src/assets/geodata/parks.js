@@ -2,99 +2,99 @@ function simulateFetchParks() {
 	return [
 		{
 			name: 'Central Park',
-			coordinates: [-73.965548, 40.782474],
+			coordinates: [-73.9655479, 40.782474],
 		},
 		{
 			name: 'Riverside Park',
-			coordinates: [-73.970261, 40.804611],
+			coordinates: [-73.9702608, 40.8046109],
 		},
 		{
 			name: 'Inwood Hill Park',
-			coordinates: [-73.925871, 40.872294],
+			coordinates: [-73.9258708, 40.8722943],
 		},
 		{
 			name: 'Fort Washington Park',
-			coordinates: [-73.942303, 40.850757],
+			coordinates: [-73.9423034, 40.8507568],
 		},
 		{
 			name: 'The High Line',
-			coordinates: [-74.005232, 40.747953],
+			coordinates: [-74.0052322, 40.7479533],
 		},
 		{
 			name: 'Highbridge Park',
-			coordinates: [-73.930591, 40.846225],
+			coordinates: [-73.9305915, 40.8462249],
 		},
 		{
 			name: 'Fort Tryon Park',
-			coordinates: [-73.932241, 40.862302],
+			coordinates: [-73.9322408, 40.8623017],
 		},
 		{
 			name: 'East River Esplanade',
-			coordinates: [-73.969693, 40.745858],
+			coordinates: [-73.9696935, 40.7458577],
 		},
 		{
 			name: 'Riverside Park South',
-			coordinates: [-73.990369, 40.777031],
+			coordinates: [-73.9903686, 40.7770307],
 		},
 		{
 			name: 'Harlem River Park',
-			coordinates: [-73.933625, 40.805892],
+			coordinates: [-73.9336253, 40.8058916],
 		},
 		{
 			name: 'Morningside Park',
-			coordinates: [-73.958382, 40.805778],
+			coordinates: [-73.958382, 40.8057784],
 		},
 		{
 			name: 'Battery Park',
-			coordinates: [-74.016763, 40.712727],
+			coordinates: [-74.0167635, 40.7127268],
 		},
 		{
 			name: 'St. Nicholas Playground',
-			coordinates: [-73.947223, 40.811031],
+			coordinates: [-73.947223, 40.8110314],
 		},
 		{
 			name: 'Marcus Garvey Park',
-			coordinates: [-73.94367, 40.804484],
+			coordinates: [-73.9436698, 40.8044839],
 		},
 		{
 			name: 'Isham Park',
-			coordinates: [-73.919033, 40.869634],
+			coordinates: [-73.9190325, 40.8696338],
 		},
 		{
 			name: 'Theodore Roosevelt Park',
-			coordinates: [-73.974066, 40.781353],
+			coordinates: [-73.9740658, 40.7813532],
 		},
 		{
 			name: 'Thomas Jefferson Park',
-			coordinates: [-73.935515, 40.79321],
+			coordinates: [-73.9355154, 40.7932096],
 		},
 		{
 			name: 'Sherman Creek Park',
-			coordinates: [-73.921713, 40.85824],
+			coordinates: [-73.9217127, 40.8582399],
 		},
 		{
 			name: 'Carl Schurz Park',
-			coordinates: [-73.943612, 40.775163],
+			coordinates: [-73.9436116, 40.7751634],
 		},
 		{
 			name: 'Jackie Robinson Park',
-			coordinates: [-73.941129, 40.826598],
+			coordinates: [-73.9411287, 40.8265984],
 		},
 		{
 			name: 'Tompkins Square Park',
-			coordinates: [-73.981709, 40.726459],
+			coordinates: [-73.9817089, 40.7264589],
 		},
 		{
 			name: 'Washington Square Park',
-			coordinates: [-73.997592, 40.730883],
+			coordinates: [-73.9975925, 40.7308831],
 		},
 		{
 			name: 'Bryant Park',
-			coordinates: [-73.982967, 40.753505],
+			coordinates: [-73.9829671, 40.7535055],
 		},
 		{
 			name: 'City Hall Park',
-			coordinates: [-74.006151, 40.712818],
+			coordinates: [-74.0061506, 40.7128178],
 		},
 		{
 			name: 'Sara D. Roosevelt Park',
@@ -102,23 +102,23 @@ function simulateFetchParks() {
 		},
 		{
 			name: 'Park Avenue Plot',
-			coordinates: [-73.972748, 40.758872],
+			coordinates: [-73.9727481, 40.758872],
 		},
 		{
 			name: 'J. Hood Wright Park',
-			coordinates: [-73.94126, 40.846514],
+			coordinates: [-73.9412599, 40.8465142],
 		},
 		{
 			name: 'Col. Charles Young Playground',
-			coordinates: [-73.935535, 40.819208],
+			coordinates: [-73.9355353, 40.8192082],
 		},
 		{
 			name: 'Madison Square Park',
-			coordinates: [-73.987985, 40.742204],
+			coordinates: [-73.9879847, 40.7422037],
 		},
 		{
 			name: 'De Witt Clinton Park',
-			coordinates: [-73.994289, 40.768192],
+			coordinates: [-73.994289, 40.7681919],
 		},
 		{
 			name: 'Broadway Plots',
@@ -126,135 +126,135 @@ function simulateFetchParks() {
 		},
 		{
 			name: 'Corlears Hook Park',
-			coordinates: [-73.979521, 40.711773],
+			coordinates: [-73.9795209, 40.7117727],
 		},
 		{
 			name: 'Asphalt Green',
-			coordinates: [-73.944005, 40.778642],
+			coordinates: [-73.9440051, 40.7786422],
 		},
 		{
 			name: 'Hamilton Fish Park',
-			coordinates: [-73.980859, 40.719799],
+			coordinates: [-73.9808589, 40.7197988],
 		},
 		{
 			name: 'Stuyvesant Square',
-			coordinates: [-73.983994, 40.733648],
+			coordinates: [-73.9839935, 40.7336478],
 		},
 		{
 			name: 'Chelsea Park',
-			coordinates: [-74.000717, 40.74995],
+			coordinates: [-74.0007172, 40.7499502],
 		},
 		{
 			name: 'Jacob Schiff Playground',
-			coordinates: [-73.951994, 40.820488],
+			coordinates: [-73.9519938, 40.8204877],
 		},
 		{
 			name: 'Lincoln Center Plaza',
-			coordinates: [-73.983452, 40.772576],
+			coordinates: [-73.9834516, 40.7725755],
 		},
 		{
 			name: 'Union Square Park',
-			coordinates: [-73.990417, 40.735836],
+			coordinates: [-73.9904167, 40.735836],
 		},
 		{
 			name: 'John Jay Park',
-			coordinates: [-73.949472, 40.769244],
+			coordinates: [-73.9494715, 40.7692436],
 		},
 		{
 			name: 'Columbus Park',
-			coordinates: [-74.000018, 40.715152],
+			coordinates: [-74.000018, 40.7151524],
 		},
 		{
 			name: 'Holcombe Rucker Park',
-			coordinates: [-73.935934, 40.829302],
+			coordinates: [-73.9359343, 40.829302],
 		},
 		{
 			name: 'Alfred E. Smith Playground',
-			coordinates: [-73.997441, 40.710604],
+			coordinates: [-73.9974406, 40.7106044],
 		},
 		{
 			name: 'St. Vartan Park',
-			coordinates: [-73.973959, 40.745241],
+			coordinates: [-73.9739593, 40.7452411],
 		},
 		{
 			name: 'Louis Cuvillier Park',
-			coordinates: [-73.930877, 40.800923],
+			coordinates: [-73.9308767, 40.8009229],
 		},
 		{
 			name: 'Coleman Playground',
-			coordinates: [-73.993532, 40.711167],
+			coordinates: [-73.9935318, 40.7111674],
 		},
 		{
 			name: 'Allen Street Mall',
-			coordinates: [-73.990892, 40.718201],
+			coordinates: [-73.9908918, 40.7182006],
 		},
 		{
 			name: 'Thomas Paine Park',
-			coordinates: [-74.002571, 40.714776],
+			coordinates: [-74.0025709, 40.7147759],
 		},
 		{
 			name: 'Frederick Johnson Playground',
-			coordinates: [-73.935492, 40.824741],
+			coordinates: [-73.9354924, 40.8247412],
 		},
 		{
 			name: 'Damrosch Park',
-			coordinates: [-73.984963, 40.772236],
+			coordinates: [-73.9849628, 40.7722361],
 		},
 		{
 			name: 'Baruch Playground',
-			coordinates: [-73.976808, 40.717337],
+			coordinates: [-73.976808, 40.7173365],
 		},
 		{
 			name: 'Triboro Plaza',
-			coordinates: [-73.93247, 40.802385],
+			coordinates: [-73.9324704, 40.802385],
 		},
 		{
 			name: 'Sakura Park',
-			coordinates: [-73.962113, 40.813053],
+			coordinates: [-73.9621126, 40.8130528],
 		},
 		{
 			name: 'Frederick Douglass Playground',
-			coordinates: [-73.967565, 40.797108],
+			coordinates: [-73.9675654, 40.7971083],
 		},
 		{
 			name: 'Amelia Gorman Park',
-			coordinates: [-73.932424, 40.855709],
+			coordinates: [-73.9324244, 40.8557089],
 		},
 		{
 			name: 'Asser Levy Playground',
-			coordinates: [-73.975586, 40.736413],
+			coordinates: [-73.9755856, 40.736413],
 		},
 		{
 			name: 'Bennett Park',
-			coordinates: [-73.938104, 40.852846],
+			coordinates: [-73.9381037, 40.8528457],
 		},
 		{
 			name: 'James J Walker Park',
-			coordinates: [-74.006171, 40.729805],
+			coordinates: [-74.0061709, 40.7298047],
 		},
 		{
 			name: 'Happy Warrior Playground',
-			coordinates: [-73.968516, 40.795463],
+			coordinates: [-73.9685165, 40.7954626],
 		},
 		{
 			name: 'Washington Market Park',
-			coordinates: [-74.011473, 40.717061],
+			coordinates: [-74.0114733, 40.7170607],
 		},
 		{
 			name: 'Bellevue South Park',
-			coordinates: [-73.978066, 40.739991],
+			coordinates: [-73.978066, 40.7399912],
 		},
 		{
 			name: "Peter's Field",
-			coordinates: [-73.981604, 40.736121],
+			coordinates: [-73.9816044, 40.7361206],
 		},
 		{
 			name: 'Wagner Playground',
-			coordinates: [-73.934939, 40.799757],
+			coordinates: [-73.9349389, 40.7997574],
 		},
 		{
 			name: 'Dag Hammarskjold Plaza',
-			coordinates: [-73.968857, 40.752326],
+			coordinates: [-73.9688571, 40.7523259],
 		},
 		{
 			name: "Poor Richard's Playground",
@@ -262,103 +262,103 @@ function simulateFetchParks() {
 		},
 		{
 			name: 'Joan Of Arc Park',
-			coordinates: [-73.976525, 40.794131],
+			coordinates: [-73.9765246, 40.7941309],
 		},
 		{
 			name: 'The Battery',
-			coordinates: [-74.015472, 40.702957],
+			coordinates: [-74.0154721, 40.7029566],
 		},
 		{
 			name: 'Roger Morris Park',
-			coordinates: [-73.93847, 40.834501],
+			coordinates: [-73.9384699, 40.8345015],
 		},
 		{
 			name: 'Dry Dock Playground',
-			coordinates: [-73.975452, 40.725446],
+			coordinates: [-73.9754523, 40.7254463],
 		},
 		{
 			name: 'Marx Brothers Playground',
-			coordinates: [-73.946201, 40.784338],
+			coordinates: [-73.9462007, 40.7843377],
 		},
 		{
 			name: 'Luther Gulick Park',
-			coordinates: [-73.981875, 40.715877],
+			coordinates: [-73.9818755, 40.7158773],
 		},
 		{
 			name: 'Anibal Aviles Playground',
-			coordinates: [-73.962858, 40.80117],
+			coordinates: [-73.9628579, 40.8011698],
 		},
 		{
 			name: 'Sheltering Arms Playground',
-			coordinates: [-73.955836, 40.815031],
+			coordinates: [-73.9558362, 40.8150312],
 		},
 		{
 			name: 'First Park',
-			coordinates: [-73.989641, 40.723508],
+			coordinates: [-73.9896407, 40.7235083],
 		},
 		{
 			name: "St. Catherine's Park",
-			coordinates: [-73.958703, 40.765188],
+			coordinates: [-73.9587029, 40.7651875],
 		},
 		{
 			name: 'Robert Moses Playground',
-			coordinates: [-73.969304, 40.748158],
+			coordinates: [-73.9693045, 40.7481577],
 		},
 		{
 			name: 'Peter Detmold Park',
-			coordinates: [-73.963849, 40.753337],
+			coordinates: [-73.9638492, 40.7533369],
 		},
 		{
 			name: 'James Weldon Johnson Playground',
-			coordinates: [-73.941874, 40.797185],
+			coordinates: [-73.9418743, 40.797185],
 		},
 		{
 			name: 'Little Flower Playground',
-			coordinates: [-73.988247, 40.712454],
+			coordinates: [-73.988247, 40.7124536],
 		},
 		{
 			name: 'East River Playground',
-			coordinates: [-73.938198, 40.789302],
+			coordinates: [-73.9381984, 40.7893024],
 		},
 		{
 			name: 'Murphy Brothers Playground',
-			coordinates: [-73.973539, 40.730369],
+			coordinates: [-73.9735393, 40.7303691],
 		},
 		{
 			name: 'Annunciation Playground',
-			coordinates: [-73.952103, 40.818324],
+			coordinates: [-73.9521028, 40.8183239],
 		},
 		{
 			name: 'Queensboro Oval',
-			coordinates: [-73.960046, 40.75921],
+			coordinates: [-73.9600457, 40.75921],
 		},
 		{
 			name: 'Howard Bennett Playground',
-			coordinates: [-73.93871, 40.813676],
+			coordinates: [-73.9387104, 40.8136757],
 		},
 		{
 			name: 'Stanley Isaacs Playground',
-			coordinates: [-73.944336, 40.783104],
+			coordinates: [-73.9443359, 40.7831036],
 		},
 		{
 			name: 'Col. Charles Young Triangle',
-			coordinates: [-73.935749, 40.827228],
+			coordinates: [-73.9357487, 40.8272276],
 		},
 		{
 			name: 'Corporal John A. Seravalli Playground',
-			coordinates: [-74.004826, 40.739073],
+			coordinates: [-74.0048256, 40.7390729],
 		},
 		{
 			name: 'Martin Luther King, Jr. Playground',
-			coordinates: [-73.950432, 40.800223],
+			coordinates: [-73.9504322, 40.8002228],
 		},
 		{
 			name: 'Blake Hobbs Playground',
-			coordinates: [-73.944165, 40.788798],
+			coordinates: [-73.9441648, 40.788798],
 		},
 		{
 			name: 'Monsignor Kett Playground',
-			coordinates: [-73.92088, 40.862539],
+			coordinates: [-73.9208796, 40.8625386],
 		},
 	];
 }

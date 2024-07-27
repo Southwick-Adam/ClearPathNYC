@@ -35,9 +35,6 @@ namespace aspRun.Data
             List<double> costsLocal = [];
             for (var i = 1; i < NodeLats.Count; i++)
             {
-                // Console.WriteLine($"Lat,Long, Lat1 Long1 : {NodeLats[i-1]}, {NodeLongs[i-1]},{ NodeLats[i]}, {NodeLongs[i]}");
-                // Console.WriteLine(HaversineCalculator.CalculateDistance(NodeLats[i-1], NodeLongs[i-1], NodeLats[i], NodeLongs[i]));
-                // Console.WriteLine($"Costs: {Costs[i]-Costs[i-1]}");
                 distances.Add(HaversineCalculator.CalculateDistance(NodeLats[i-1], NodeLongs[i-1], NodeLats[i], NodeLongs[i]));
                 costsLocal.Add(Costs[i]-Costs[i-1]);
             }
@@ -45,7 +42,6 @@ namespace aspRun.Data
             List<double> finalQuietScore = [];
             for (var i = 0; i < distances.Count; i++)
             {
-                // Console.WriteLine($"{costsLocal[i]}, {distances[i]}, {Math.Round(costsLocal[i] / distances [i])}");
                 finalQuietScore.Add(Math.Round(costsLocal[i] / distances [i]));
             }
             CostsString = string.Join(", ", finalQuietScore);
@@ -61,9 +57,6 @@ namespace aspRun.Data
             List<double> costsLocal = [];
             for (var i = 1; i < NodeLats.Count; i++)
             {
-                // Console.WriteLine($"Lat,Long, Lat1 Long1 : {NodeLats[i-1]}, {NodeLongs[i-1]},{ NodeLats[i]}, {NodeLongs[i]}");
-                // Console.WriteLine(HaversineCalculator.CalculateDistance(NodeLats[i-1], NodeLongs[i-1], NodeLats[i], NodeLongs[i]));
-                // Console.WriteLine($"Costs: {Costs[i]-Costs[i-1]}");
                 distances.Add(HaversineCalculator.CalculateDistance(NodeLats[i-1], NodeLongs[i-1], NodeLats[i], NodeLongs[i]));
                 costsLocal.Add(Costs[i]-Costs[i-1]);
             }
@@ -71,7 +64,6 @@ namespace aspRun.Data
             List<double> finalLoudScore = [];
             for (var i = 0; i < distances.Count; i++)
             {
-                // Console.WriteLine($"{costsLocal[i]}, {distances[i]}, {Math.Round(costsLocal[i] / distances [i])}");
                 double tempScore = Math.Round(costsLocal[i] / distances [i]);
                 if (tempScore == 1000){finalLoudScore.Add(1000);}
                 else if (tempScore == 0){finalLoudScore.Add(5);}
@@ -82,7 +74,6 @@ namespace aspRun.Data
             {
                 totalDistance += dist;
             }
-            // Console.WriteLine($"In routeProcessor: {totalDistance}");
         }
     }
 
