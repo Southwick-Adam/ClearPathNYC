@@ -59,7 +59,7 @@ namespace aspRun.Controllers
                     }
                     finalCosts.Append(result[1]);
 
-                    totalDistance += Double.Parse(result[2]);
+                    totalDistance += double.Parse(result[2]);
                 }
             }
             catch (Exception ex)
@@ -97,9 +97,7 @@ namespace aspRun.Controllers
                 finalCoordinatesStringBuilder.Add(new StringBuilder());
                 finalCostsStringbuilder.Add(new StringBuilder());
                 finalDistancesDouble.Add(0);
-
             }
-
 
             try
             {
@@ -158,22 +156,21 @@ namespace aspRun.Controllers
 
             double longitude = coordinate[0];
             double latitude = coordinate[1];
-            string result = "";
-
             Console.WriteLine($"Coordinates: {latitude}, {longitude}");
+            string result;
             try
-            {   
-                result = await _neo4jService.Loop(latitude, longitude, distance, quiet); 
+            {
+                result = await _neo4jService.Loop(latitude, longitude, distance, quiet);
                 return Ok(result);
-            }  
+            }
             catch (Exception ex)
-            { 
+            {
                 int attempts = 0;
                 while (attempts < 5)
                 {
                     try
                     {
-                        result = await _neo4jService.Loop(latitude, longitude, distance, quiet); 
+                        result = await _neo4jService.Loop(latitude, longitude, distance, quiet);
                         return Ok(result);
                     }
                     catch
@@ -182,9 +179,7 @@ namespace aspRun.Controllers
                     }
                 }
                 return BadRequest($"An error occurred while processing your request: {ex}");
-            }        
-
-
+            }
         }
     }
 }
