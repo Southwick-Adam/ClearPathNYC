@@ -5,3 +5,4 @@
 docker-compose-neo4j.yaml
 docker-compose-test.yaml
 backend/.vscode/settings.json
+.env
