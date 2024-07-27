@@ -539,7 +539,7 @@ namespace aspRun.Data
                 {
                     routeResult = await RunQuery(astarPath, parameters);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     // Specify the file name
                     string fileName = "FailedNodes.txt";
