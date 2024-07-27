@@ -184,7 +184,7 @@ function App() {
   }
 
   async function fetchWeatherData() {
-    const apiUrl = 'http://asp-run:8080/weather';
+    const apiUrl = 'http://asp-run:5000/weather';
     try {
       const response = await fetch(apiUrl, {
         method: 'GET',
