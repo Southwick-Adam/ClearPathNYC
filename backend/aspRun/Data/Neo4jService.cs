@@ -478,6 +478,11 @@ namespace aspRun.Data
                     startDirection += random.Next(-30, 30);
                 }
                 attempt += 1;
+                if (attempt > 8)
+                {
+                    distanceHit = true;
+                    break;
+                }
                 
             }
 
