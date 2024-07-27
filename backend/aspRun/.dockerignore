@@ -1,12 +1,12 @@
 # Build folders
- **/bin/
- **/obj/
+**/bin/
+**/obj/
 
- git folder
- .git/
- gitignore
+# git folder
+.git/
+gitignore
 
- .vs folder
- **/.vs/
+# .vs folder
+**/.vs/
 
- .env
+.env
