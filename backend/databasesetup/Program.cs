@@ -155,6 +155,7 @@ return n";
 // }
 
 await driver.FixDistance();
+await driver.deleteBadNodes();
 
 stopwatch.Stop();
 double min = stopwatch.ElapsedMilliseconds/60000;
