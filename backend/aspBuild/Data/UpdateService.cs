@@ -22,7 +22,7 @@ namespace aspBuild.Data
         public Task StartAsync(CancellationToken cancellationToken)
         {
             _logger.LogInformation("Starting background service...");
-            _timer = new Timer(async state => await CheckTime(state), null, TimeSpan.FromMinutes(1), TimeSpan.FromMinutes(2));
+            _timer = new Timer(async state => await CheckTime(state), null, TimeSpan.FromMinutes(3), TimeSpan.FromMinutes(3));
             return Task.CompletedTask;
         }
 
