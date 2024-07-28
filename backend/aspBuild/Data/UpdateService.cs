@@ -30,7 +30,7 @@ namespace aspBuild.Data
         {
             Console.WriteLine("Called");
             Console.WriteLine("_blockOverlap");
-                Console.WriteLine(_blockOverlap);
+            Console.WriteLine(_blockOverlap);
             if (_blockOverlap) {
                 Console.WriteLine("Not in task");
                 return;
