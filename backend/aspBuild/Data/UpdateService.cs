@@ -22,30 +22,22 @@ namespace aspBuild.Data
         public Task StartAsync(CancellationToken cancellationToken)
         {
             _logger.LogInformation("Starting background service...");
-            _timer = new Timer(async state => await CheckTime(state), null, TimeSpan.FromMinutes(2), TimeSpan.FromMinutes(2));
+            _timer = new Timer(async state => await CheckTime(state), null, TimeSpan.FromMinutes(3), TimeSpan.FromMinutes(10));
             return Task.CompletedTask;
         }
 
         private async Task CheckTime(object? state)
         {
-            Console.WriteLine("Called");
-            Console.WriteLine("_blockOverlap");
-            Console.WriteLine(_blockOverlap);
             if (_blockOverlap) {
-                Console.WriteLine("Not in task");
                 return;
             }
-            Console.WriteLine("In task before minute check");
             var now = DateTime.Now.TimeOfDay;
-            Console.WriteLine(now.Minutes);
-            if (now.Minutes < 5)
+            if (now.Minutes < 15)
             {
                 _blockOverlap = true;
                 Console.WriteLine(DateTime.Now.TimeOfDay);
                 await ExecuteTask();
                 _blockOverlap = false;
-                Console.WriteLine("_blockOverlap after");
-                Console.WriteLine(_blockOverlap);
             }
         }
 
