@@ -166,7 +166,7 @@ namespace aspRun.Controllers
             catch (Exception ex)
             {
                 int attempts = 0;
-                while (attempts < 5)
+                while (attempts < 3)
                 {
                     try
                     {

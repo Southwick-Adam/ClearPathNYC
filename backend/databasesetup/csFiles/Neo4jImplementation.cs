@@ -432,6 +432,53 @@ public class Neo4jImplementation : IDisposable
         }
     }
 
+    public async Task deleteBadNodes() 
+    {
+        List<long> badNodes = new List<long>
+        {
+            8313261673,
+            8304497436,
+            3957128585,
+            2714777673,
+            3957128583,
+            2714921369,
+            3957128579,
+            6415163311,
+            5008036443,
+            6415163315,
+            2711393518,
+            5035490224,
+            9168415895,
+            2895918400,
+            3273685797,
+            2711232798,
+            11931861940,
+            7323390480,
+            7925258977,
+            7924099777,
+            8266104430,
+            3584444476,
+            5008036382,
+            1805328663,
+            11028158746,
+            11028158747
+
+        };
+        string query = @"
+        MATCH (n:nodes{nodeid :$nodeid})-[*]-(connected)
+        detach delete connected, n
+        ";
+
+        foreach (var node in badNodes)
+        {
+            Dictionary<string, object> parameters = new()
+            {
+                {"nodeid", node}
+            };
+            await WriteQuery(query, parameters);
+        }
+    }
+
     public void Dispose()
     {
         _driver?.Dispose();
