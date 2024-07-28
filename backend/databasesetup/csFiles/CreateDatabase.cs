@@ -83,7 +83,7 @@ class CreateDatabase
             // used to filter to just the selected area 
             var filtered = source.FilterBox((float)left, (float)top, (float)right, (float)bottom); // left, top, right, bottom
 
-            var ignoredTags = new List<string> {"freeway", "service"};
+            var ignoredTags = new List<string> {"freeway", "service", "motorway", "	elevator"};
             // Enumerate through the OSM data and display it
             foreach (var osmGeo in filtered)
             {
@@ -94,7 +94,15 @@ class CreateDatabase
                     {
                         foreach (var tag in tempWay.Tags)
                         {
-                        if (tag.Key == "highway" && !ignoredTags.Contains(tag.Value)) 
+                            if (tag.Key == "area" && tag.Value == "yes")
+                            {
+                                break;
+                            }
+                            if (tag.Key == "access" && tag.Value == "private")
+                            {
+                                break;
+                            }
+                            if (tag.Key == "highway" && !ignoredTags.Contains(tag.Value)) 
                             {
                                 ways.Add(tempWay);
                                 break;

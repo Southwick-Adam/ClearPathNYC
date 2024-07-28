@@ -456,13 +456,19 @@ public class Neo4jImplementation : IDisposable
             7323390480,
             7925258977,
             7924099777,
-            8266104430
+            8266104430,
+            3584444476,
+            5008036382,
+            1805328663,
+            11028158746,
+            11028158747
+
         };
         string query = @"
         MATCH (n:nodes{nodeid :$nodeid})-[*]-(connected)
         detach delete connected, n
         ";
-        
+
         foreach (var node in badNodes)
         {
             Dictionary<string, object> parameters = new()
