@@ -3,7 +3,7 @@ name: main-push
 on:
   push:
     branches:
-      - main
+      - NONE
 
 jobs:
   publish:
