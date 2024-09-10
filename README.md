@@ -1,1 +1,1 @@
-ClearPath NYC is a jogging and walking app for desktop and mobile. It's goal is to help walkers and joggers in manhattan avoid loud areas, busy streets, and the piles of garbage that gather on the streets, so that our users can have an enjoyable time outside.
+ClearPath NYC is a jogging and walking app for desktop and mobile. It's goal is to help our users in Manhattan avoid loud areas, busy streets, and the piles of garbage that gather on the streets, so that they can have an enjoyable time outside. ![alt text](xxx?raw=true)
