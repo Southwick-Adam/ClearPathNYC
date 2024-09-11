@@ -12,7 +12,7 @@ The app is full of useful features like the ability to start and end routes by c
 
 There are also tons of quality of life features like night mode, colorblind mode, weather and air quality reports, and even the ability to export your favorite routes to Strava and Garmin.
 
-We built each of the services in this app as seperate microservices and deployed them with Docker. Here is a diagram of how they work together.
+We built each of the services in this app as seperate microservices and deployed them with Docker. These services include a JavaScript React frontend, a C# Dotnet backend, a Neo4j Graph Database for holding our specialized routing info, and a seperate Dotnet service for updating othat database. We also use XGBoost data models and a flask service to interact with those models for predictive crowding and disturbance capabilities. Here is a diagram of how they work together.
 
 <img src="https://github.com/Southwick-Adam/ClearPathNYC/blob/main/images/diagram_bw.jpeg" width="450">
 
